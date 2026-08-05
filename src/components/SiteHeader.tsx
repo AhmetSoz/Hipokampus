@@ -7,8 +7,9 @@ import { Logo } from "./Logo";
 
 const nav = [
   { href: "/nasil-calisir", label: "Nasıl çalışır" },
-  { href: "/dogrulama", label: "Uzman doğrulama" },
-  { href: "/uzman-basvurusu", label: "Uzman başvurusu" },
+  { href: "/uzmanlar", label: "Uzmanlar" },
+  { href: "/dogrulama", label: "Doğrulama" },
+  { href: "/uzman", label: "Uzman mısınız?" },
 ];
 
 export function SiteHeader() {

@@ -197,16 +197,16 @@ export default function AnaSayfa() {
               </h2>
               <p className="text-lg text-teal-100">
                 Hipokampüs&apos;ü uzman ve akademisyenlerin katkısıyla
-                geliştiriyoruz. Ön başvuru formunu doldurarak sürece
-                katılabilirsiniz.
+                geliştiriyoruz. Ücretinizi ve takviminizi siz belirlersiniz;
+                sıralamada yerinizi kimse satın alamaz.
               </p>
             </div>
             <div className="md:justify-self-end">
               <ButtonLink
-                href="/uzman-basvurusu"
+                href="/uzman"
                 className="!bg-white !text-teal-800 hover:!bg-sand-100"
               >
-                Uzman ön başvurusu
+                Bizimle çalışın
               </ButtonLink>
             </div>
           </div>

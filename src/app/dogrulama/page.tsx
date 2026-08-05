@@ -157,7 +157,7 @@ export default function DogrulamaSayfasi() {
           </Notice>
 
           <div className="mt-10">
-            <ButtonLink href="/uzman-basvurusu">
+            <ButtonLink href="/uzman/basvuru">
               Uzman ön başvurusu
             </ButtonLink>
           </div>

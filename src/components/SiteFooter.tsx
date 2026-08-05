@@ -31,6 +31,11 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/uzmanlar" className="hover:text-teal-700">
+                  Uzmanlar
+                </Link>
+              </li>
+              <li>
                 <Link href="/dogrulama" className="hover:text-teal-700">
                   Uzman doğrulama
                 </Link>
@@ -41,8 +46,8 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/uzman-basvurusu" className="hover:text-teal-700">
-                  Uzman başvurusu
+                <Link href="/uzman" className="hover:text-teal-700">
+                  Uzmanlar için
                 </Link>
               </li>
             </ul>

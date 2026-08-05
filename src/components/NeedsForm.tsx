@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { NEED_AREAS } from "@/data/needs";
 import { ButtonLink, Notice } from "./ui";
 
 /**
@@ -26,51 +27,6 @@ const RECIPIENTS: Recipient[] = [
   { id: "es", label: "Eşim için" },
   { id: "yakin", label: "Bir yakınım için" },
   { id: "kendim", label: "Kendim için" },
-];
-
-type NeedArea = { id: string; label: string; hint: string };
-
-const NEED_AREAS: NeedArea[] = [
-  {
-    id: "gunluk",
-    label: "Günlük yaşam desteği",
-    hint: "Alışveriş, yemek, ev işleri, ilaçların düzenli alınması.",
-  },
-  {
-    id: "ev-guvenlik",
-    label: "Ev güvenliği ve düzenlemeler",
-    hint: "Düşme riski, banyo ve merdiven, aydınlatma, kolay ulaşılabilirlik.",
-  },
-  {
-    id: "hafiza",
-    label: "Hafıza ve yön bulmada değişiklikler",
-    hint: "Fark ettiğiniz değişiklikleri bir uzmanla konuşmak istiyorsanız.",
-  },
-  {
-    id: "saglik-koordinasyon",
-    label: "Sağlık randevularının koordinasyonu",
-    hint: "Randevuların takibi, hangi bölüme başvurulacağının netleşmesi.",
-  },
-  {
-    id: "bakim-veren",
-    label: "Bakım verenin yükü",
-    hint: "Yorgunluk, tükenmişlik, sorumluluğun tek kişide toplanması.",
-  },
-  {
-    id: "sosyal",
-    label: "Sosyal bağ ve yalnızlık",
-    hint: "Gün içinde temas, komşuluk, sosyal etkinliklere katılım.",
-  },
-  {
-    id: "secenekler",
-    label: "Bakım seçenekleri ve bütçe planlaması",
-    hint: "Evde bakım, gündüz merkezi, kurum bakımı gibi seçeneklerin karşılaştırılması.",
-  },
-  {
-    id: "aile-karar",
-    label: "Aile içi karar ve iletişim",
-    hint: "Kardeşler arası görüş ayrılığı, kararın kim tarafından verileceği.",
-  },
 ];
 
 type Stage = "guvenlik" | "acil" | "kim" | "konular" | "sonuc";
@@ -326,13 +282,12 @@ export function NeedsForm() {
       <div className="mt-10 rounded-xl border border-ink-200 bg-paper-warm p-7">
         <h3 className="mb-3 text-xl">Sırada ne var?</h3>
         <p className="mb-6 text-ink-700">
-          Uzman eşleştirme henüz açık değildir. Hipokampüs geliştirme
-          aşamasındadır ve şu anda yayında bir hizmet yoktur. Uzmansanız ön
-          başvuru formunu doldurarak sürece katılabilirsiniz.
+          İlk başlığınızda çalışan uzmanlara bakabilirsiniz. Görüşme başlatma
+          henüz açık değildir; Hipokampüs geliştirme aşamasındadır.
         </p>
         <div className="flex flex-wrap gap-4">
-          <ButtonLink href="/uzman-basvurusu" variant="secondary">
-            Uzman ön başvurusu
+          <ButtonLink href={`/uzmanlar?konu=${chosen[0].id}`}>
+            Bu konuda çalışan uzmanlar
           </ButtonLink>
           <button
             type="button"

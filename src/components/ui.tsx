@@ -107,6 +107,27 @@ export function Notice({
   );
 }
 
+/**
+ * Örnek veri uyarısı.
+ *
+ * Prototipte gösterilen uzmanlar, danışanlar ve mesajlar temsilîdir.
+ * Kullanıcının bunu her gördüğü yerde bilmesi gerekiyor — prototip,
+ * alınmamış kararları alınmış gibi göstermemeli.
+ */
+export function DemoNotice({ children }: { children?: React.ReactNode }) {
+  return (
+    <p className="flex items-start gap-3 rounded-lg border border-sand-300 bg-sand-100 px-5 py-4 text-base text-ink-700">
+      <span aria-hidden className="mt-0.5 shrink-0 font-semibold text-ink-900">
+        Örnek
+      </span>
+      <span>
+        {children ??
+          "Bu sayfadaki kişiler ve bilgiler temsilîdir. Hipokampüs geliştirme aşamasındadır; platformda henüz gerçek uzman bulunmuyor."}
+      </span>
+    </p>
+  );
+}
+
 /** Numaralı adım kartı — "nasıl çalışır" akışında kullanılır. */
 export function StepCard({
   step,
