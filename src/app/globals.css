@@ -12,6 +12,11 @@
 
   v1'de KARANLIK MOD YOKTUR (kilitli karar). Bu dosyada
   prefers-color-scheme: dark kuralı bilerek bulunmaz.
+
+  YÖN (2026-08-05 güncellemesi): Cafcaflı arka plan animasyonu / video YOK
+  — WebGL hero kaldırıldı. Bunun yerine işçilik; renk, tipografi, buton ve
+  geçişlerde göze hitap eden ama sakin bir ürün hissi hedefleniyor. Ana menü
+  önceliği: kullanışlı, akıcı, sade.
 */
 
 @theme {
@@ -32,6 +37,7 @@
   --color-sky-100: #e6f2f5;
   --color-sky-200: #cfe6ec;
   --color-sky-300: #aed4de;
+  --color-sky-400: #8dc3d1;
 
   /* Sıcak kum — vurgu */
   --color-sand-100: #f7efe1;
@@ -39,6 +45,7 @@
   --color-sand-300: #e5cba4;
   --color-sand-400: #d8b07a;
   --color-sand-500: #c49a62;
+  --color-sand-600: #a97f47;
 
   /* Mürekkep */
   --color-ink-900: #1f1f1f;
@@ -83,8 +90,26 @@
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
 
+  /* Geçiş zamanlaması — tek bir yerden yönetiliyor, tutarlılık için. */
   --ease-calm: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 150ms;
+  --dur-base: 220ms;
+  --dur-slow: 420ms;
+
+  /* Ilık gölgeler — nötr gri yerine mürekkep/turkuaz tonunda, sıcak zemine
+     oturuyor. "Her yerde düz kenarlık" hissini kırmak için. */
+  --shadow-soft: 0 1px 2px rgba(31, 31, 31, 0.04), 0 2px 8px rgba(31, 31, 31, 0.05);
+  --shadow-card: 0 2px 6px rgba(31, 31, 31, 0.05), 0 8px 24px rgba(14, 92, 99, 0.07);
+  --shadow-lift: 0 8px 20px rgba(31, 31, 31, 0.07), 0 16px 40px rgba(14, 92, 99, 0.12);
+  --shadow-pop: 0 4px 10px rgba(14, 92, 99, 0.18), 0 12px 28px rgba(14, 92, 99, 0.16);
+
+  --shadow-color-soft: var(--shadow-soft);
+  --shadow-color-card: var(--shadow-card);
+  --shadow-color-lift: var(--shadow-lift);
+  --shadow-color-pop: var(--shadow-pop);
 }
 
 /* ------------------------------------------------------------------ */
@@ -104,29 +129,59 @@ html[data-text-size="cok-buyuk"] {
   font-size: 125%;
 }
 
-body {
-  background-color: var(--color-paper);
-  color: var(--color-ink-800);
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: 1.75;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
+/*
+  ÖNEMLİ: Aşağıdaki taban stiller `@layer base` İÇİNDE tanımlanıyor.
+  Tailwind v4'te katmansız (unlayered) CSS, katmanlı Tailwind yardımcı
+  sınıflarını (`.text-white` gibi) HER ZAMAN eziyor — sıra veya özgüllük
+  fark etmez, bu CSS katman kaskadının kuralı. Bu kural katmansız
+  yazılmıştı ve `text-white` gibi sınıfların koyu zeminlerde hiç
+  çalışmamasına yol açıyordu (başlıklar görünmez oluyordu). Buradaki her
+  şey `@layer base` içinde kalmalı ki bileşenler ihtiyaç duyduğunda
+  override edebilsin. */
+@layer base {
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink-800);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display);
-  color: var(--color-ink-900);
-  font-weight: 400;
-  letter-spacing: -0.011em;
-  text-wrap: balance;
-}
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    color: var(--color-ink-900);
+    font-weight: 400;
+    letter-spacing: -0.011em;
+    text-wrap: balance;
+  }
 
-p {
-  text-wrap: pretty;
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Etkileşimli öğelerde varsayılan olarak yumuşak geçiş — her bileşende
+     tek tek transition yazmaya gerek kalmasın diye taban katmanda
+     tanımlı. Bileşenler dilerse kendi transition-* sınıflarıyla üzerine
+     yazabilir. */
+  a,
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea {
+    transition:
+      background-color var(--dur-base) var(--ease-calm),
+      border-color var(--dur-base) var(--ease-calm),
+      color var(--dur-base) var(--ease-calm),
+      box-shadow var(--dur-base) var(--ease-calm),
+      transform var(--dur-fast) var(--ease-calm),
+      opacity var(--dur-base) var(--ease-calm);
+  }
 }
 
 /* ÇİFT TONLU ODAK HALKASI
@@ -152,7 +207,7 @@ p {
 }
 
 /* Hareket duyarlılığı: sistem ayarı VEYA arayüzdeki "hareketi azalt"
-   anahtarı. İkisi de aynı sonucu verir. WebGL sahnesi ikisini de okur. */
+   anahtarı. İkisi de aynı sonucu verir. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -180,7 +235,7 @@ html[data-motion="az"] *::after {
 }
 
 /* ------------------------------------------------------------------ */
-/* Giriş hareketi — ölçülü, tek seferlik                                */
+/* Giriş hareketleri — ölçülü, tek seferlik                             */
 
 @keyframes hk-fade-up {
   from {
@@ -193,6 +248,89 @@ html[data-motion="az"] *::after {
   }
 }
 
+@keyframes hk-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hk-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hk-slide-down {
+  animation: hk-slide-down var(--dur-base) var(--ease-calm) both;
+}
+
+@keyframes hk-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hero zemini için çok yavaş, çok hafif bir nefes efekti. Arka plan
+   animasyonu DEĞİL — sabit bir gradyan kompozisyonunun üstünde, saatte
+   bir kez fark edilecek kadar yavaş bir odak kayması. hareketi azalt
+   açıkken (yukarıdaki kural) tamamen durur. */
+@keyframes hk-drift {
+  0%,
+  100% {
+    background-position:
+      18% 12%,
+      82% 78%;
+  }
+  50% {
+    background-position:
+      24% 18%,
+      76% 72%;
+  }
+}
+
 .hk-enter {
   animation: hk-fade-up 0.7s var(--ease-calm) both;
+}
+
+.hk-fade {
+  animation: hk-fade-in 0.5s var(--ease-calm) both;
+}
+
+.hk-pop {
+  animation: hk-scale-in var(--dur-slow) var(--ease-calm) both;
+}
+
+/* Sıcak zemin kompozisyonu — WebGL/video yerine geçen, saf CSS,
+   GPU'da ucuz, tek seferlik boyanan katman. */
+.hk-atmosphere {
+  background-image:
+    radial-gradient(
+      42rem 34rem at 14% 8%,
+      color-mix(in oklab, var(--color-teal-300) 65%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      38rem 32rem at 86% 82%,
+      color-mix(in oklab, var(--color-sand-400) 55%, transparent),
+      transparent 68%
+    ),
+    radial-gradient(
+      30rem 26rem at 70% 6%,
+      color-mix(in oklab, var(--color-sky-300) 55%, transparent),
+      transparent 70%
+    );
+  animation: hk-drift 26s ease-in-out infinite;
 }

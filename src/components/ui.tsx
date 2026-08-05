@@ -35,7 +35,7 @@ export function Section({
     paper: "bg-paper",
     warm: "bg-paper-warm",
     sky: "bg-linear-to-b from-white to-sky-100",
-    teal: "bg-teal-800 text-teal-50",
+    teal: "bg-linear-to-br from-teal-800 to-teal-900 text-teal-50",
   } as const;
   return (
     <section className={`py-16 sm:py-24 ${tones[tone]} ${className}`}>
@@ -47,39 +47,101 @@ export function Section({
 type ButtonProps = {
   href: string;
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "quiet";
+  variant?: "primary" | "secondary" | "quiet" | "onDark";
   className?: string;
+  /** Sağda ince bir ok göster; hover'da bir tık kayar. */
+  withArrow?: boolean;
 };
 
-/* Dokunma hedefleri bilerek büyük: min-h 3.25rem.
-   İleri yaştaki kullanıcılar da bu arayüzü doğrudan kullanabilmeli. */
+/*
+ * Dokunma hedefleri bilerek büyük: min-h 3.25rem. İleri yaştaki kullanıcılar
+ * da bu arayüzü doğrudan kullanabilmeli.
+ *
+ * Etkileşim: hafif kalkma (hover'da -1px + gölge büyür), basınca geri çöker
+ * (active:scale). Cafcaflı değil — 150-220ms, tek yönlü, fiziksel bir his.
+ */
 export function ButtonLink({
   href,
   children,
   variant = "primary",
   className = "",
+  withArrow = false,
 }: ButtonProps) {
   const base =
-    "inline-flex min-h-[3.25rem] items-center justify-center gap-2 rounded-lg px-7 text-lg font-semibold transition-colors duration-200";
+    "group inline-flex min-h-[3.25rem] items-center justify-center gap-2 rounded-xl px-7 text-lg font-semibold active:scale-[0.97]";
   const variants = {
-    primary: "bg-teal-700 text-white hover:bg-teal-800",
+    primary:
+      "bg-teal-700 text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)]",
     secondary:
-      "border-2 border-teal-700 bg-white text-teal-800 hover:bg-teal-50",
+      "border-2 border-teal-700 bg-white text-teal-800 hover:-translate-y-px hover:border-teal-800 hover:bg-teal-50 hover:shadow-[var(--shadow-card)]",
+    onDark:
+      "bg-white text-teal-800 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-sand-100 hover:shadow-[var(--shadow-pop)]",
     quiet: "text-teal-800 underline underline-offset-4 hover:text-teal-600",
   } as const;
 
   return (
     <Link href={href} className={`${base} ${variants[variant]} ${className}`}>
       {children}
+      {withArrow && (
+        <svg
+          aria-hidden
+          width="18"
+          height="18"
+          viewBox="0 0 18 18"
+          className="transition-transform duration-200 group-hover:translate-x-0.5"
+        >
+          <path
+            d="M4 9h9.5M9 4.5 14 9l-5 4.5"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+        </svg>
+      )}
     </Link>
   );
 }
 
-export function Eyebrow({ children }: { children: React.ReactNode }) {
+export function Eyebrow({
+  children,
+  tone = "teal",
+}: {
+  children: React.ReactNode;
+  tone?: "teal" | "onDark";
+}) {
+  const color = tone === "onDark" ? "text-sand-300" : "text-teal-600";
   return (
-    <p className="mb-4 text-sm font-semibold tracking-[0.14em] text-teal-600 uppercase">
+    <p
+      className={`mb-4 flex items-center gap-2 text-base font-semibold tracking-[0.14em] uppercase ${color}`}
+    >
+      <span aria-hidden className="h-px w-6 bg-current opacity-60" />
       {children}
     </p>
+  );
+}
+
+/** Kart yüzeyi — dinlenirken sakin, hover'da bir tık kalkan. */
+export function Card({
+  children,
+  className = "",
+  interactive = false,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  interactive?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] ${
+        interactive
+          ? "hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-[var(--shadow-card)]"
+          : ""
+      } ${className}`}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -98,10 +160,8 @@ export function Notice({
     teal: "border-teal-300 bg-teal-50 text-ink-800",
   } as const;
   return (
-    <div className={`rounded-lg border-l-4 p-6 ${tones[tone]}`}>
-      {title && (
-        <p className="mb-2 font-semibold text-ink-900">{title}</p>
-      )}
+    <div className={`rounded-xl border-l-4 p-6 shadow-[var(--shadow-soft)] ${tones[tone]}`}>
+      {title && <p className="mb-2 font-semibold text-ink-900">{title}</p>}
       <div className="[&_p+p]:mt-3">{children}</div>
     </div>
   );
@@ -116,7 +176,7 @@ export function Notice({
  */
 export function DemoNotice({ children }: { children?: React.ReactNode }) {
   return (
-    <p className="flex items-start gap-3 rounded-lg border border-sand-300 bg-sand-100 px-5 py-4 text-base text-ink-700">
+    <p className="flex items-start gap-3 rounded-xl border border-sand-300 bg-sand-100 px-5 py-4 text-base text-ink-700">
       <span aria-hidden className="mt-0.5 shrink-0 font-semibold text-ink-900">
         Örnek
       </span>
@@ -141,10 +201,10 @@ export function StepCard({
   meta?: string;
 }) {
   return (
-    <div className="relative rounded-xl border border-ink-200 bg-white p-7">
+    <div className="group relative rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-[var(--shadow-lift)]">
       <span
         aria-hidden
-        className="mb-4 flex size-11 items-center justify-center rounded-full bg-teal-700 font-[family-name:var(--font-display)] text-xl text-white"
+        className="mb-4 flex size-11 items-center justify-center rounded-full bg-linear-to-br from-teal-600 to-teal-800 font-[family-name:var(--font-display)] text-xl text-white shadow-[var(--shadow-soft)] transition-transform duration-300 group-hover:scale-110"
       >
         {step}
       </span>

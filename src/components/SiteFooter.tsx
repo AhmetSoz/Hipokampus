@@ -46,6 +46,11 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/giris" className="hover:text-teal-700">
+                  Demo paneli
+                </Link>
+              </li>
+              <li>
                 <Link href="/uzman" className="hover:text-teal-700">
                   Uzmanlar için
                 </Link>
@@ -65,7 +70,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-ink-200 pt-8">
+        <div className="mt-12 rounded-2xl border border-sand-300 bg-sand-100 p-6 sm:p-7">
           <p className="font-semibold text-ink-900">
             Hipokampüs bir sağlık kuruluşu değildir.
           </p>
@@ -74,11 +79,12 @@ export function SiteFooter() {
             yapmaz. Acil bir durumda{" "}
             <strong className="text-ink-900">112&apos;yi arayın.</strong>
           </p>
-          <p className="mt-6 text-base text-ink-500">
-            © {new Date().getFullYear()} Hipokampüs · Geliştirme aşamasındadır,
-            yayında bir hizmet yoktur.
-          </p>
         </div>
+
+        <p className="mt-8 text-base text-ink-500">
+          © {new Date().getFullYear()} Hipokampüs · Geliştirme aşamasındadır,
+          yayında bir hizmet yoktur.
+        </p>
       </div>
     </footer>
   );

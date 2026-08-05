@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Logo } from "@/components/Logo";
 import {
   ButtonLink,
+  Card,
   Container,
   Eyebrow,
   Notice,
@@ -19,28 +20,37 @@ export const metadata: Metadata = {
 export default function UzmanTanitimSayfasi() {
   return (
     <>
-      <div className="bg-teal-800 py-16 text-teal-50 sm:py-24">
+      <div className="bg-linear-to-br from-teal-800 to-teal-900 py-16 text-teal-50 sm:py-24">
         <Container width="wide">
-          <Logo variant="lockupReverse" decorative className="mb-8 h-16 sm:h-20" />
-          <Eyebrow>Uzmanlar için</Eyebrow>
-          <h1 className="mb-6 max-w-3xl text-4xl text-white sm:text-6xl">
+          <Logo
+            variant="lockupReverse"
+            decorative
+            className="hk-enter mb-8 h-16 sm:h-20"
+          />
+          <Eyebrow tone="onDark">Uzmanlar için</Eyebrow>
+          <h1
+            className="hk-enter mb-6 max-w-3xl text-4xl text-white sm:text-6xl"
+            style={{ animationDelay: "70ms" }}
+          >
             Danışanla aranıza kimse girmesin
           </h1>
-          <p className="max-w-2xl text-xl text-teal-100">
-            Hipokampüs, ileri yaştaki bireyler ve aileleri ile doğrulanmış
-            uzmanları buluşturan bir koordinasyon platformu. Ücretinizi ve
-            takviminizi siz belirlersiniz; sıralamada yerinizi kimse satın alamaz.
+          <p
+            className="hk-enter max-w-2xl text-xl text-teal-100"
+            style={{ animationDelay: "140ms" }}
+          >
+            Ücretinizi ve takviminizi siz belirlersiniz; sıralamada yerinizi
+            kimse satın alamaz.
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <ButtonLink
-              href="/uzman/basvuru"
-              className="!bg-white !text-teal-800 hover:!bg-sand-100"
-            >
+          <div
+            className="hk-enter mt-10 flex flex-wrap gap-4"
+            style={{ animationDelay: "210ms" }}
+          >
+            <ButtonLink href="/uzman/basvuru" variant="onDark" withArrow>
               Ön başvuru yapın
             </ButtonLink>
             <ButtonLink
               href="/dogrulama"
-              className="!border-2 !border-teal-300 !bg-transparent !text-white hover:!bg-teal-700"
+              className="border-2 border-teal-300 bg-transparent text-white hover:-translate-y-px hover:border-white hover:bg-teal-700"
             >
               Doğrulama süreci
             </ButtonLink>
@@ -51,31 +61,29 @@ export default function UzmanTanitimSayfasi() {
       <Section tone="paper">
         <Container width="wide">
           <Eyebrow>Nasıl işler</Eyebrow>
-          <h2 className="mb-12 max-w-2xl text-3xl sm:text-4xl">
+          <h2 className="mb-10 max-w-2xl text-3xl sm:text-4xl">
             Üç adım, sonunda yazılı bir plan
           </h2>
 
           <div className="grid gap-6 md:grid-cols-3">
             <StepCard step={1} title="Danışan size ulaşır">
               <p>
-                Danışan ihtiyacını netleştirir ve konuya göre uzman listesine
-                bakar. Size en fazla üç kişilik bir öneri içinde ulaşabilir;
-                seçimi her zaman danışan yapar.
+                En fazla üç kişilik bir öneri içinde ulaşabilir; seçimi her
+                zaman danışan yapar.
               </p>
             </StepCard>
 
             <StepCard step={2} title="Yazışarak görüşürsünüz">
               <p>
-                Görüşme site üzerinden mesajlaşarak yapılır. Görüntülü görüşme
-                yoktur, görüşme kaydı alınmaz. Kendi çalışma saatlerinizde
+                Görüntülü görüşme ve kayıt yok. Kendi çalışma saatlerinizde
                 yanıt verirsiniz.
               </p>
             </StepCard>
 
             <StepCard step={3} title="Planı siz yazarsınız">
               <p>
-                Görüşmenin çıktısı, maddeler hâlinde yazılı bir bakım planıdır.
-                Danışanla neyi paylaşacağınıza siz karar verirsiniz.
+                Çıktı, maddeler hâlinde yazılı bir plan. Neyi paylaşacağınıza
+                siz karar verirsiniz.
               </p>
             </StepCard>
           </div>
@@ -92,8 +100,7 @@ export default function UzmanTanitimSayfasi() {
               </h2>
               <p className="text-ink-700">
                 Bir platformun uzmana verebileceği en somut güvence, neyi
-                yapmayacağını baştan söylemesidir. Bunları sonradan
-                değiştirmeyeceğiz.
+                yapmayacağını baştan söylemesidir.
               </p>
             </div>
 
@@ -101,7 +108,7 @@ export default function UzmanTanitimSayfasi() {
               {[
                 {
                   t: "Sıralamanız satılamaz",
-                  d: "Hiçbir uzman ücret ödeyerek listede üste çıkamaz. Sıralama müsaitlik ve deneyime göredir.",
+                  d: "Ücret sıralamaya girmez; liste günlük dönüşümlüdür, kimse kalıcı olarak üstte kalmaz.",
                 },
                 {
                   t: "Puanınız gizli kalır",
@@ -120,14 +127,13 @@ export default function UzmanTanitimSayfasi() {
                   d: "Size yapay zekâ tarafından danışan atanmaz. Öneri gösterilir, seçimi danışan yapar.",
                 },
               ].map((item) => (
-                <li
-                  key={item.t}
-                  className="rounded-lg border border-ink-200 bg-white p-6"
-                >
-                  <p className="mb-1 text-lg font-semibold text-ink-900">
-                    {item.t}
-                  </p>
-                  <p className="text-base text-ink-700">{item.d}</p>
+                <li key={item.t}>
+                  <Card className="p-6">
+                    <p className="mb-1 text-lg font-semibold text-ink-900">
+                      {item.t}
+                    </p>
+                    <p className="text-base text-ink-700">{item.d}</p>
+                  </Card>
                 </li>
               ))}
             </ul>
@@ -141,12 +147,14 @@ export default function UzmanTanitimSayfasi() {
             <p>
               Hipokampüs geliştirme aşamasındadır. Platformda henüz doğrulanmış
               uzman bulunmuyor ve başvuru toplama açılmadı. Ön başvuru formunu
-              şimdiden inceleyebilir, sürecin nasıl işleyeceğini görebilirsiniz.
+              şimdiden inceleyebilirsiniz.
             </p>
           </Notice>
 
           <div className="mt-10">
-            <ButtonLink href="/uzman/basvuru">Ön başvuru formu</ButtonLink>
+            <ButtonLink href="/uzman/basvuru" withArrow>
+              Ön başvuru formu
+            </ButtonLink>
           </div>
         </Container>
       </Section>
