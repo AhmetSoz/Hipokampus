@@ -96,12 +96,17 @@ export default function DogrulamaSayfasi() {
             <div>
               <Eyebrow>Profilde ne var</Eyebrow>
               <h2 className="mb-5 text-3xl sm:text-4xl">
-                Karar vermenize yarayan dört bilgi
+                Kıyaslatan değil, eşleştiren bilgi
               </h2>
+              <p className="mb-4 text-ink-700">
+                Yıldız puanı, kullanıcı yorumu, deneyim yılı ve yanıt hızı gibi
+                sıralanabilir ölçütler göstermiyoruz. Böyle ölçütler bir
+                hiyerarşi kurar; hiyerarşi de herkesi aynı birkaç kişiye yığar.
+              </p>
               <p className="text-ink-700">
-                Yıldız puanı ve kullanıcı yorumu yok. Bakım kararlarının
-                memnuniyet oylamasıyla verilmesini doğru bulmuyoruz. Onun yerine
-                doğrulanabilir ve karşılaştırılabilir bilgiler gösteriyoruz.
+                Doğrulama sürecini geçen herkes bu iş için yeterlidir. Gösterdiğimiz
+                bilgi, kimin daha iyi olduğunu değil, kimin sizin konunuzda
+                çalıştığını anlatır.
               </p>
               <p className="mt-5 font-semibold text-ink-900">
                 Uzman sıralaması hiçbir koşulda ücret karşılığı değiştirilemez.
@@ -125,10 +130,10 @@ export default function DogrulamaSayfasi() {
 
               <dl className="space-y-4">
                 {[
-                  ["Deneyim yılı", "Alanında geçirilen süre"],
-                  ["Yanıt süresi", "Mesajlara ortalama dönüş süresi"],
+                  ["Uzmanlık alanları", "Neyin üzerine çalıştığı"],
                   ["Doğrulama", "Hipokampüs doğrulama sürecini tamamladı"],
                   ["Müsaitlik", "Yakın dönemde görüşmeye açık mı"],
+                  ["Görüşme dili", "Hangi dillerde görüşebildiği"],
                 ].map(([k, v]) => (
                   <div
                     key={k}

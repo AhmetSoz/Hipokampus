@@ -34,14 +34,12 @@ export function AvailabilityTag({ expert }: { expert: Expert }) {
   return (
     <span
       className={`inline-flex items-center gap-2 text-base ${
-        busy ? "text-ink-500" : "text-teal-700"
+        busy ? "text-ink-600" : "text-teal-700"
       }`}
     >
       <span
         aria-hidden
-        className={`size-2.5 rounded-full ${
-          busy ? "bg-ink-300" : "bg-teal-500"
-        }`}
+        className={`size-2.5 rounded-full ${busy ? "bg-ink-300" : "bg-teal-500"}`}
       />
       {AVAILABILITY_LABEL[expert.availability]}
     </span>
@@ -65,9 +63,16 @@ function Monogram({ name }: { name: string }) {
   );
 }
 
+/**
+ * Uzman kartı.
+ *
+ * BİLEREK YOK: deneyim yılı, yanıt süresi, puan, ücret — yani kartları yan yana
+ * koyup "hangisi daha iyi" diye kıyaslatan hiçbir sayı. Doğrulamayı geçen
+ * herkes kalifiye; kartın işi kıyaslatmak değil, uygunluğu göstermek.
+ */
 export function ExpertCard({ expert }: { expert: Expert }) {
   return (
-    <article className="rounded-xl border border-ink-200 bg-white p-6 transition-colors hover:border-teal-300">
+    <article className="flex h-full flex-col rounded-xl border border-ink-200 bg-white p-6 transition-colors hover:border-teal-300">
       <div className="flex items-start gap-4">
         <Monogram name={expert.name} />
         <div className="min-w-0 flex-1">
@@ -85,25 +90,22 @@ export function ExpertCard({ expert }: { expert: Expert }) {
         </div>
       </div>
 
-      <dl className="mt-5 grid gap-x-6 gap-y-2 border-y border-ink-100 py-4 sm:grid-cols-2">
-        <div className="flex justify-between gap-4 sm:block">
-          <dt className="text-base text-ink-500">Deneyim</dt>
-          <dd className="font-semibold text-ink-900">
-            {expert.experienceYears} yıl
-          </dd>
-        </div>
-        <div className="flex justify-between gap-4 sm:block">
-          <dt className="text-base text-ink-500">Yanıt süresi</dt>
-          <dd className="font-semibold text-ink-900">{expert.responseTime}</dd>
-        </div>
-      </dl>
-
-      <div className="mt-4">
-        <AvailabilityTag expert={expert} />
+      <div className="mt-5 border-t border-ink-100 pt-5">
+        <h4 className="mb-3 text-base font-semibold text-ink-900">
+          Neyin üzerine çalışıyor
+        </h4>
+        <ul className="space-y-2">
+          {expert.specialties.map((s) => (
+            <li key={s} className="flex gap-3 text-ink-700">
+              <span aria-hidden className="mt-2.5 size-1.5 shrink-0 rounded-full bg-sand-400" />
+              <span>{s}</span>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      <ul className="mt-4 flex flex-wrap gap-2">
-        {expert.needAreas.slice(0, 3).map((id) => (
+      <ul className="mt-5 flex flex-wrap gap-2">
+        {expert.needAreas.map((id) => (
           <li
             key={id}
             className="rounded-md bg-sand-100 px-3 py-1 text-base text-ink-700"
@@ -111,18 +113,20 @@ export function ExpertCard({ expert }: { expert: Expert }) {
             {needArea(id).label}
           </li>
         ))}
-        {expert.needAreas.length > 3 && (
-          <li className="px-1 py-1 text-base text-ink-500">
-            +{expert.needAreas.length - 3}
-          </li>
-        )}
       </ul>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-ink-100 pt-5">
+        <AvailabilityTag expert={expert} />
+        <span className="text-base text-ink-600">
+          {expert.languages.join(", ")}
+        </span>
+      </div>
+
+      <div className="mt-auto flex flex-wrap items-center justify-between gap-4 pt-5">
         <VerifiedBadge />
         <Link
           href={`/uzmanlar/${expert.slug}`}
-          className="inline-flex min-h-[3rem] items-center rounded-lg border-2 border-teal-700 px-5 font-semibold text-teal-800 transition-colors hover:bg-teal-50"
+          className="inline-flex min-h-[3.25rem] items-center rounded-lg border-2 border-teal-700 px-5 font-semibold text-teal-800 transition-colors hover:bg-teal-50"
         >
           Profili görün
         </Link>

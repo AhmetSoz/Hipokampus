@@ -4,14 +4,13 @@ import type { Availability, Expert, NeedAreaId } from "./types";
  * ÖRNEK UZMAN VERİSİ — TAMAMI TEMSİLÎDİR.
  *
  * Buradaki kişiler gerçek değildir. Gerçek kişi adı, gerçek kurum adı veya
- * gerçek diploma bilgisi kullanılmamıştır. Arayüz bunu kullanıcıya görünür
- * şekilde söyler.
+ * gerçek diploma bilgisi kullanılmamıştır.
  *
- * Uzmanlık alanları da TEMSİLÎDİR: ilk fazda hangi uzman türlerinin yer
- * alacağı henüz karara bağlanmadı (açık soru 3). Bu liste bir karar değildir.
+ * Meslek alanları TEMSİLÎDİR: ilk fazda hangi uzman türlerinin yer alacağı
+ * henüz karara bağlanmadı (açık soru 3).
  *
- * Bilerek YOK: ücret, yıldız puanı, kullanıcı yorumu, adli sicil durumu,
- * değerlendirme puanı. Hepsi kilitli kararların gereği.
+ * BİLEREK YOK: deneyim yılı, kişi bazlı yanıt süresi, ücret, yıldız puanı,
+ * kullanıcı yorumu, adli sicil durumu, değerlendirme puanı.
  */
 const EXPERTS: Expert[] = [
   {
@@ -20,8 +19,11 @@ const EXPERTS: Expert[] = [
     name: "Elif Tanyeri",
     field: "Gerontoloji",
     city: "İstanbul",
-    experienceYears: 12,
-    responseTime: "Genellikle 1 gün içinde",
+    specialties: [
+      "Evde bakım düzeni kurma",
+      "Bakım seçeneklerinin karşılaştırılması",
+      "Aile içi rol paylaşımı",
+    ],
     availability: "bu-hafta",
     verifiedAt: "2026-06-14",
     about:
@@ -35,8 +37,11 @@ const EXPERTS: Expert[] = [
     name: "Murat Şencan",
     field: "Gerontoloji",
     city: "Ankara",
-    experienceYears: 8,
-    responseTime: "Genellikle 2 gün içinde",
+    specialties: [
+      "Hafıza değişikliklerinde ilk adımlar",
+      "Hangi uzmana başvurulacağının netleştirilmesi",
+      "Tanı sürecinde aileye eşlik etme",
+    ],
     availability: "bu-hafta",
     verifiedAt: "2026-06-28",
     about:
@@ -50,8 +55,11 @@ const EXPERTS: Expert[] = [
     name: "Ayşe Kurtoğlu",
     field: "Sosyal hizmet",
     city: "İzmir",
-    experienceYears: 15,
-    responseTime: "Genellikle aynı gün",
+    specialties: [
+      "Ulaşılabilecek destek ve hakların çıkarılması",
+      "Kurum bakımına geçiş süreci",
+      "Sosyal izolasyonun kırılması",
+    ],
     availability: "gelecek-hafta",
     verifiedAt: "2026-05-30",
     about:
@@ -65,8 +73,11 @@ const EXPERTS: Expert[] = [
     name: "Hakan Devrim",
     field: "Fizyoterapi",
     city: "İstanbul",
-    experienceYears: 10,
-    responseTime: "Genellikle 1 gün içinde",
+    specialties: [
+      "Düşme riskinin azaltılması",
+      "Ev içi güvenlik düzenlemeleri",
+      "Hareket korkusuyla baş etme",
+    ],
     availability: "bu-hafta",
     verifiedAt: "2026-07-02",
     about:
@@ -80,8 +91,10 @@ const EXPERTS: Expert[] = [
     name: "Zeynep Arslan",
     field: "Beslenme ve diyetetik",
     city: "Bursa",
-    experienceYears: 6,
-    responseTime: "Genellikle 2 gün içinde",
+    specialties: [
+      "İleri yaşta iştah ve beslenme değişiklikleri",
+      "Evdeki mevcut düzeni bozmadan iyileştirme",
+    ],
     availability: "dolu",
     verifiedAt: "2026-07-11",
     about:
@@ -95,8 +108,11 @@ const EXPERTS: Expert[] = [
     name: "Necla Boran",
     field: "Psikoloji",
     city: "Ankara",
-    experienceYears: 18,
-    responseTime: "Genellikle 3 gün içinde",
+    specialties: [
+      "Bakım verenin tükenmişliği",
+      "Sorumluluğun tek kişide toplanması",
+      "Aile içi çatışmanın yumuşatılması",
+    ],
     availability: "gelecek-hafta",
     verifiedAt: "2026-04-19",
     about:
@@ -110,8 +126,11 @@ const EXPERTS: Expert[] = [
     name: "Serkan Ulutaş",
     field: "Geriatri hemşireliği",
     city: "İzmir",
-    experienceYears: 14,
-    responseTime: "Genellikle aynı gün",
+    specialties: [
+      "Çoklu ilaç kullanımının takibi",
+      "Randevu takviminin sadeleştirilmesi",
+      "Evde işleyen basit düzenler kurma",
+    ],
     availability: "bu-hafta",
     verifiedAt: "2026-06-05",
     about:
@@ -125,8 +144,11 @@ const EXPERTS: Expert[] = [
     name: "Pınar Esen",
     field: "Gerontoloji",
     city: "Antalya",
-    experienceYears: 5,
-    responseTime: "Genellikle 1 gün içinde",
+    specialties: [
+      "Kardeşler arası karar ayrılıkları",
+      "Herkesin aynı bilgiyle konuşabilmesi",
+      "Uzaktan bakım koordinasyonu",
+    ],
     availability: "bu-hafta",
     verifiedAt: "2026-07-21",
     about:
@@ -142,7 +164,15 @@ export const AVAILABILITY_LABEL: Record<Availability, string> = {
   dolu: "Şu anda dolu",
 };
 
-/** Süzme kutusunda gösterilecek uzmanlık alanları. */
+/**
+ * Platform yanıt taahhüdü.
+ *
+ * Kişi bazlı yanıt süresi BİLEREK gösterilmiyor: uzmanları birbiriyle
+ * kıyaslatan bir ölçüt olurdu. Bunun yerine tek bir kurumsal taahhüt var —
+ * kim olursa olsun aynı söz geçerli.
+ */
+export const RESPONSE_COMMITMENT = "En geç 2 iş günü içinde";
+
 export async function listFields(): Promise<string[]> {
   return [...new Set(EXPERTS.map((e) => e.field))].sort((a, b) =>
     a.localeCompare(b, "tr"),
@@ -156,33 +186,43 @@ export async function listCities(): Promise<string[]> {
 }
 
 /**
- * Uzman listesi.
+ * Günlük dönüşümlü sıra.
  *
- * Sıralama: müsaitlik, sonra deneyim yılı. Ücret sıralamaya HİÇBİR şekilde
- * girmez — kilitli karar. Buradaki sıra bir eşleştirme kararı da değildir;
- * eşleştirme kriterleri henüz kararlaştırılmadı (açık soru 7).
+ * Uygun uzmanlar arasında kimse kalıcı olarak üstte kalmasın diye liste her
+ * gün kaydırılıyor. Gün içinde sabit, günler arasında dönüşümlü. Ücretin
+ * sıralamaya etkisi yok — kilitli karar.
  */
+function dailyRotation(count: number): number {
+  const day = Math.floor(Date.now() / 86_400_000);
+  return count > 0 ? day % count : 0;
+}
+
 export async function listExperts(filter?: {
   field?: string;
   city?: string;
   needArea?: NeedAreaId;
 }): Promise<Expert[]> {
-  const order: Record<Availability, number> = {
+  // Müsait olanlar önce; dolu olanlar sona. Bunun dışında hiyerarşi yok.
+  const rank: Record<Availability, number> = {
     "bu-hafta": 0,
-    "gelecek-hafta": 1,
-    dolu: 2,
+    "gelecek-hafta": 0,
+    dolu: 1,
   };
 
-  return EXPERTS.filter((e) => {
+  const matched = EXPERTS.filter((e) => {
     if (filter?.field && e.field !== filter.field) return false;
     if (filter?.city && e.city !== filter.city) return false;
     if (filter?.needArea && !e.needAreas.includes(filter.needArea)) return false;
     return true;
-  }).sort(
-    (a, b) =>
-      order[a.availability] - order[b.availability] ||
-      b.experienceYears - a.experienceYears,
-  );
+  });
+
+  const available = matched.filter((e) => rank[e.availability] === 0);
+  const busy = matched.filter((e) => rank[e.availability] === 1);
+
+  const offset = dailyRotation(available.length);
+  const rotated = [...available.slice(offset), ...available.slice(0, offset)];
+
+  return [...rotated, ...busy];
 }
 
 export async function getExpert(slug: string): Promise<Expert | null> {

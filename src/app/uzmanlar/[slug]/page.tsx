@@ -3,7 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AvailabilityTag, VerifiedBadge } from "@/components/ExpertCard";
 import { ButtonLink, Container, DemoNotice, Notice } from "@/components/ui";
-import { getExpert, listExpertSlugs } from "@/data/experts";
+import {
+  getExpert,
+  listExpertSlugs,
+  RESPONSE_COMMITMENT,
+} from "@/data/experts";
 import { needArea } from "@/data/needs";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -19,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!expert) return { title: "Uzman bulunamadı" };
   return {
     title: `${expert.name} — ${expert.field}`,
-    description: `${expert.field} alanında ${expert.experienceYears} yıllık deneyim. ${expert.city}.`,
+    description: `${expert.field} · ${expert.city}. Çalıştığı konular: ${expert.specialties.join(", ")}.`,
   };
 }
 
@@ -58,16 +62,6 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
 
           <dl className="mt-7 grid gap-x-8 gap-y-5 border-t border-ink-100 pt-7 sm:grid-cols-3">
             <div>
-              <dt className="text-base text-ink-500">Deneyim</dt>
-              <dd className="text-xl text-ink-900">
-                {expert.experienceYears} yıl
-              </dd>
-            </div>
-            <div>
-              <dt className="text-base text-ink-500">Yanıt süresi</dt>
-              <dd className="text-xl text-ink-900">{expert.responseTime}</dd>
-            </div>
-            <div>
               <dt className="text-base text-ink-500">Müsaitlik</dt>
               <dd className="mt-1">
                 <AvailabilityTag expert={expert} />
@@ -77,7 +71,7 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
               <dt className="text-base text-ink-500">Doğrulama</dt>
               <dd className="text-xl text-ink-900">{verified}</dd>
             </div>
-            <div className="sm:col-span-2">
+            <div>
               <dt className="text-base text-ink-500">Görüşme dili</dt>
               <dd className="text-xl text-ink-900">
                 {expert.languages.join(", ")}
@@ -85,6 +79,29 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
             </div>
           </dl>
         </header>
+
+        <section className="mt-8 rounded-xl border border-ink-200 bg-white p-7 sm:p-9">
+          <h2 className="mb-2 text-2xl">Neyin üzerine çalışıyor</h2>
+          <p className="mb-6 text-ink-600">
+            Bu profilde deneyim yılı, yanıt hızı veya puan yer almaz. Doğrulama
+            sürecini geçen herkes bu iş için yeterlidir; önemli olan konunuzun
+            burada olup olmadığıdır.
+          </p>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {expert.specialties.map((s) => (
+              <li
+                key={s}
+                className="flex gap-3 rounded-lg border border-ink-200 bg-paper-warm p-5 text-ink-800"
+              >
+                <span
+                  aria-hidden
+                  className="mt-2.5 size-2 shrink-0 rounded-full bg-sand-400"
+                />
+                <span className="text-lg">{s}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section className="mt-8 rounded-xl border border-ink-200 bg-white p-7 sm:p-9">
           <h2 className="mb-4 text-2xl">Kendi ifadesiyle</h2>
@@ -114,10 +131,16 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
 
         <div className="mt-8 rounded-xl border-2 border-teal-300 bg-teal-50 p-7 sm:p-9">
           <h2 className="mb-3 text-2xl">Görüşme nasıl işler?</h2>
-          <p className="mb-6 text-ink-700">
+          <p className="mb-4 text-ink-700">
             Görüşmeler site üzerinden <strong>yazışarak</strong> yapılır;
             görüntülü görüşme yoktur. Görüşmenin sonunda size maddeler hâlinde
             yazılı bir bakım planı iletilir. Görüşme kaydı alınmaz.
+          </p>
+          <p className="mb-6 text-ink-700">
+            Yanıt taahhüdü uzmana göre değişmez:{" "}
+            <strong>
+              {RESPONSE_COMMITMENT.toLocaleLowerCase("tr")} yanıt alırsınız.
+            </strong>
           </p>
           <div className="flex flex-wrap gap-4">
             <ButtonLink href="/ihtiyac-formu">

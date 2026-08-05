@@ -78,18 +78,6 @@ export function ExpertApplicationForm() {
           />
         </Field>
 
-        <Field label="Alanınızdaki deneyim yılı" htmlFor="deneyim">
-          <input
-            id="deneyim"
-            name="deneyim"
-            type="number"
-            min={0}
-            max={70}
-            required
-            className={FIELD}
-          />
-        </Field>
-
         <Field label="Şehir" htmlFor="sehir">
           <input id="sehir" name="sehir" type="text" className={FIELD} />
         </Field>
@@ -100,10 +88,24 @@ export function ExpertApplicationForm() {
       </div>
 
       <Field
+        label="Neyin üzerine çalışıyorsunuz?"
+        htmlFor="uzmanlik"
+        hint="Profilinizde gösterilecek asıl bilgi budur. Her satıra bir konu yazın — örneğin “evde bakım düzeni kurma”, “bakım verenin tükenmişliği”."
+      >
+        <textarea
+          id="uzmanlik"
+          name="uzmanlik"
+          rows={4}
+          required
+          className={`${FIELD} py-3 leading-relaxed`}
+        />
+      </Field>
+
+      <Field
         label="Kısaca kendinizden söz eder misiniz?"
         htmlFor="hakkinda"
         optional
-        hint="Hangi konularda çalıştığınız ve kimlerle görüştüğünüz bize yardımcı olur."
+        hint="Danışanlar bu metni profilinizde okuyacak."
       >
         <textarea
           id="hakkinda"

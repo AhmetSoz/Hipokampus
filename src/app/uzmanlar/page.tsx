@@ -3,7 +3,12 @@ import { Suspense } from "react";
 import { ExpertCard } from "@/components/ExpertCard";
 import { ExpertFilters } from "@/components/ExpertFilters";
 import { Container, DemoNotice, Notice } from "@/components/ui";
-import { listCities, listExperts, listFields } from "@/data/experts";
+import {
+  listCities,
+  listExperts,
+  listFields,
+  RESPONSE_COMMITMENT,
+} from "@/data/experts";
 import { NEED_AREAS } from "@/data/needs";
 import type { NeedAreaId } from "@/data/types";
 
@@ -47,8 +52,9 @@ export default async function UzmanlarSayfasi({
       <Container width="wide">
         <h1 className="mb-4 text-4xl sm:text-5xl">Uzmanlar</h1>
         <p className="mb-8 max-w-2xl text-xl text-ink-700">
-          Doğrulama sürecini tamamlamış uzmanlar. Sıralama; müsaitlik ve deneyim
-          yılına göredir, hiçbir uzman ücret ödeyerek üste çıkamaz.
+          Buradaki herkes doğrulama sürecini tamamladı. Sorunuz &ldquo;kim daha
+          iyi?&rdquo; değil, &ldquo;kim bana uygun?&rdquo; olsun — konuya göre
+          süzün, kimin neyin üzerine çalıştığına bakın.
         </p>
 
         <div className="mb-8">
@@ -88,13 +94,30 @@ export default async function UzmanlarSayfasi({
           </div>
         )}
 
-        <div className="mt-12">
-          <Notice title="Ne gösteriyoruz, ne göstermiyoruz">
+        <div className="mt-12 grid gap-6 md:grid-cols-2">
+          <Notice title="Neden burada hiç puan yok?">
             <p>
-              Profillerde deneyim yılı, yanıt süresi, doğrulama rozeti ve
-              müsaitlik yer alır. <strong>Yıldız puanı ve kullanıcı yorumu
-              yoktur.</strong> Adli sicil durumu ve değerlendirme puanı da
-              kamuya gösterilmez.
+              Yıldız puanı, yorum, deneyim yılı ve yanıt hızı gibi
+              karşılaştırılabilir ölçütleri <strong>bilerek göstermiyoruz.</strong>{" "}
+              Böyle ölçütler bir sıralama kurar; sıralama da herkesi aynı birkaç
+              kişiye yığar ve geri kalanı değersizleştirir.
+            </p>
+            <p>
+              Doğrulama sürecini geçen herkes bu iş için yeterlidir. Geriye kalan
+              soru, kimin sizin konunuzda çalıştığıdır.
+            </p>
+          </Notice>
+
+          <Notice tone="teal" title="Yanıt süresi kişiye göre değişmez">
+            <p>
+              Uzmanların yanıt hızını tek tek göstermiyoruz. Bunun yerine
+              platform olarak tek bir söz veriyoruz:{" "}
+              <strong>{RESPONSE_COMMITMENT.toLocaleLowerCase("tr")} yanıt.</strong>{" "}
+              Kim olursa olsun aynı taahhüt geçerlidir.
+            </p>
+            <p className="text-ink-600">
+              Ayrıca liste sırası her gün dönüşümlü değişir; kimse kalıcı olarak
+              üstte kalmaz.
             </p>
           </Notice>
         </div>

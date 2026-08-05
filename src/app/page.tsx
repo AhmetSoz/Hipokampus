@@ -134,17 +134,18 @@ export default function AnaSayfa() {
             <div>
               <Eyebrow>Güven</Eyebrow>
               <h2 className="mb-5 text-3xl sm:text-4xl">
-                Yıldız puanı yok. Bunun bir sebebi var.
+                Burada kimse puanlanmıyor. Bunun bir sebebi var.
               </h2>
               <p className="mb-5 text-ink-700">
-                Bakım kararları, memnuniyet puanıyla verilecek kararlar değil. Bu
-                yüzden uzmanları beş yıldız üzerinden sıralamıyoruz ve kullanıcı
-                yorumu yayınlamıyoruz.
+                Yıldız puanı, yorum, deneyim yılı, yanıt hızı — hiçbirini
+                göstermiyoruz. Böyle ölçütler bir sıralama kurar; sıralama da
+                herkesi aynı birkaç kişiye yığar ve geri kalanı değersizleştirir.
               </p>
               <p className="text-ink-700">
-                Bunun yerine karar vermenize yarayacak somut bilgileri
-                gösteriyoruz. Sıralama hiçbir koşulda ücret karşılığı
-                değiştirilemez.
+                Doğrulama sürecini geçen herkes bu iş için yeterlidir. Sizin
+                sorunuz &ldquo;kim daha iyi?&rdquo; değil, &ldquo;kim bana
+                uygun?&rdquo; olmalı. Liste sırası her gün dönüşümlü değişir ve
+                hiçbir koşulda ücret karşılığı değiştirilemez.
               </p>
               <div className="mt-8">
                 <ButtonLink href="/dogrulama" variant="secondary">
@@ -155,10 +156,13 @@ export default function AnaSayfa() {
 
             <ul className="grid gap-4 sm:grid-cols-2">
               {[
-                { t: "Deneyim yılı", d: "Uzmanın alanında geçirdiği süre." },
                 {
-                  t: "Yanıt süresi",
-                  d: "Mesajlara ortalama ne kadar sürede döndüğü.",
+                  t: "Uzmanlık alanları",
+                  d: "Neyin üzerine çalıştığı — asıl ayırt edici bilgi budur.",
+                },
+                {
+                  t: "Çalıştığı konular",
+                  d: "İhtiyaç formunda seçtiğiniz başlıklarla eşleşen konular.",
                 },
                 {
                   t: "Doğrulama rozeti",

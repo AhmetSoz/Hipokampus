@@ -78,7 +78,7 @@ export default async function PanelGenelBakis() {
               <h2 className="mb-4 text-2xl">Görüştüğünüz uzman</h2>
               <p className="text-lg text-ink-900">{expert.name}</p>
               <p className="mb-4 text-ink-600">
-                {expert.field} · {expert.responseTime}
+                {expert.field} · {expert.city}
               </p>
               <Link
                 href="/panel/mesajlar"

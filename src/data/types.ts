@@ -28,17 +28,29 @@ export type NeedArea = {
 /** Uzmanın yakın dönemdeki durumu. Takvim değil, kaba bir işaret. */
 export type Availability = "bu-hafta" | "gelecek-hafta" | "dolu";
 
+/**
+ * Uzman.
+ *
+ * BİLEREK YOK: deneyim yılı, kişi bazlı yanıt süresi, yıldız puanı, yorum,
+ * ücret, adli sicil durumu, değerlendirme puanı.
+ *
+ * Gerekçe: doğrulama sürecini geçen herkes kalifiyedir. Karşılaştırılabilir
+ * sayısal ölçüt göstermek zorunlu olarak bir hiyerarşi kurar; bu hem
+ * uzmanları değersizleştirir hem de kullanıcıyı tek bir kişiye yığar.
+ * Kullanıcının sorusu "kim daha iyi" değil, "kim bana uygun" olmalı.
+ *
+ * Yanıt süresi kişi bazında değil, PLATFORM TAAHHÜDÜ olarak tek yerde verilir.
+ */
 export type Expert = {
   id: string;
   slug: string;
   /** Temsilî isim. Gerçek kişi değildir. */
   name: string;
-  /** Uzmanlık alanı. Alan listesi TEMSİLÎDİR — açık soru 3 kapanmadı. */
+  /** Meslek alanı. Alan listesi TEMSİLÎDİR — açık soru 3 kapanmadı. */
   field: string;
   city: string;
-  experienceYears: number;
-  /** "Genellikle 1 gün içinde" gibi. Taahhüt değil, gözlem. */
-  responseTime: string;
+  /** Asıl ayırt edici bilgi: neyin üzerine çalışıyor. Sıralanabilir değil. */
+  specialties: string[];
   availability: Availability;
   /** Doğrulama sürecinin tamamlandığı tarih (ISO). */
   verifiedAt: string;
