@@ -53,7 +53,7 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
           </DemoNotice>
         </div>
 
-        <header className="rounded-xl border border-ink-200 bg-white p-7 sm:p-9">
+        <header className="rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)] sm:p-9">
           <h1 className="mb-2 text-4xl sm:text-5xl">{expert.name}</h1>
           <p className="mb-6 text-xl text-ink-600">
             {expert.field} · {expert.city}
@@ -80,7 +80,7 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
           </dl>
         </header>
 
-        <section className="mt-8 rounded-xl border border-ink-200 bg-white p-7 sm:p-9">
+        <section className="mt-8 rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)] sm:p-9">
           <h2 className="mb-2 text-2xl">Neyin üzerine çalışıyor</h2>
           <p className="mb-6 text-ink-600">
             Bu profilde deneyim yılı, yanıt hızı veya puan yer almaz. Doğrulama
@@ -91,7 +91,7 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
             {expert.specialties.map((s) => (
               <li
                 key={s}
-                className="flex gap-3 rounded-lg border border-ink-200 bg-paper-warm p-5 text-ink-800"
+                className="flex gap-3 rounded-xl border border-ink-200 bg-paper-warm p-5 text-ink-800 shadow-[var(--shadow-soft)]"
               >
                 <span
                   aria-hidden
@@ -103,12 +103,12 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
           </ul>
         </section>
 
-        <section className="mt-8 rounded-xl border border-ink-200 bg-white p-7 sm:p-9">
+        <section className="mt-8 rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)] sm:p-9">
           <h2 className="mb-4 text-2xl">Kendi ifadesiyle</h2>
           <p className="text-lg text-ink-700">{expert.about}</p>
         </section>
 
-        <section className="mt-8 rounded-xl border border-ink-200 bg-white p-7 sm:p-9">
+        <section className="mt-8 rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)] sm:p-9">
           <h2 className="mb-2 text-2xl">Çalıştığı konular</h2>
           <p className="mb-6 text-ink-600">
             İhtiyaç formunda seçtiğiniz başlıklarla eşleşen konular.
@@ -119,7 +119,7 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
               return (
                 <li
                   key={id}
-                  className="rounded-lg border border-ink-200 bg-paper-warm p-5"
+                  className="rounded-xl border border-ink-200 bg-paper-warm p-5 shadow-[var(--shadow-soft)]"
                 >
                   <p className="font-semibold text-teal-800">{area.label}</p>
                   <p className="text-base text-ink-600">{area.hint}</p>
@@ -129,7 +129,7 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
           </ul>
         </section>
 
-        <div className="mt-8 rounded-xl border-2 border-teal-300 bg-teal-50 p-7 sm:p-9">
+        <div className="mt-8 rounded-2xl border-2 border-teal-300 bg-teal-50 p-7 shadow-[var(--shadow-soft)] sm:p-9">
           <h2 className="mb-3 text-2xl">Görüşme nasıl işler?</h2>
           <p className="mb-4 text-ink-700">
             Görüşmeler site üzerinden <strong>yazışarak</strong> yapılır;
@@ -143,7 +143,7 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
             </strong>
           </p>
           <div className="flex flex-wrap gap-4">
-            <ButtonLink href="/ihtiyac-formu">
+            <ButtonLink href="/ihtiyac-formu" withArrow>
               Önce ihtiyacınızı netleştirin
             </ButtonLink>
             <ButtonLink href="/nasil-calisir" variant="secondary">

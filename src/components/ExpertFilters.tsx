@@ -43,10 +43,10 @@ export function ExpertFilters({
   const hasFilter = params.size > 0;
 
   const select =
-    "min-h-[3.25rem] w-full rounded-lg border-2 border-ink-200 bg-white px-4 text-lg text-ink-900 transition-colors focus:border-teal-600";
+    "min-h-[3.25rem] w-full rounded-xl border-2 border-ink-200 bg-white px-4 text-lg text-ink-900 focus:border-teal-600";
 
   return (
-    <div className="rounded-xl border border-ink-200 bg-white p-6">
+    <div className="rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)]">
       <div className="grid gap-5 sm:grid-cols-3">
         <div>
           <label

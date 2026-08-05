@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { NEED_AREAS } from "@/data/needs";
-import { ButtonLink, Notice } from "./ui";
+import { ButtonLink, Card, Notice } from "./ui";
 
 /**
  * İHTİYAÇ FORMU — DEMO
@@ -31,6 +31,18 @@ const RECIPIENTS: Recipient[] = [
 
 type Stage = "guvenlik" | "acil" | "kim" | "konular" | "sonuc";
 
+const OPTION_CARD =
+  "flex cursor-pointer items-center gap-4 rounded-xl border-2 px-5 shadow-[var(--shadow-soft)]";
+const OPTION_CARD_STATE = (active: boolean) =>
+  active
+    ? "border-teal-700 bg-teal-50 shadow-[var(--shadow-card)]"
+    : "border-ink-200 bg-white hover:-translate-y-px hover:border-teal-300 hover:shadow-[var(--shadow-card)]";
+
+const PRIMARY_BTN =
+  "min-h-[3.25rem] rounded-xl bg-teal-700 px-7 text-lg font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.97] disabled:pointer-events-none disabled:translate-y-0 disabled:bg-ink-300 disabled:shadow-none";
+const GHOST_BTN =
+  "min-h-[3.25rem] rounded-xl px-4 text-lg text-teal-800 underline underline-offset-4 hover:text-teal-600";
+
 export function NeedsForm() {
   const [stage, setStage] = useState<Stage>("guvenlik");
   const [recipient, setRecipient] = useState<string | null>(null);
@@ -52,7 +64,7 @@ export function NeedsForm() {
 
   if (stage === "guvenlik") {
     return (
-      <Shell step={1} total={3} title="Önce tek bir soru">
+      <Shell key="guvenlik" step={1} total={3} title="Önce tek bir soru">
         <fieldset>
           <legend className="mb-6 text-2xl text-ink-900">
             Şu anda kişinin veya bir başkasının güvenliğiyle ilgili acil bir
@@ -62,14 +74,14 @@ export function NeedsForm() {
             <button
               type="button"
               onClick={() => setStage("acil")}
-              className="min-h-[3.5rem] flex-1 rounded-lg border-2 border-sand-400 bg-sand-100 px-6 text-lg font-semibold text-ink-900 transition-colors hover:bg-sand-200"
+              className="min-h-[3.5rem] flex-1 rounded-xl border-2 border-sand-400 bg-sand-100 px-6 text-lg font-semibold text-ink-900 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-sand-200 active:scale-[0.98]"
             >
               Evet, var
             </button>
             <button
               type="button"
               onClick={() => setStage("kim")}
-              className="min-h-[3.5rem] flex-1 rounded-lg border-2 border-teal-700 bg-white px-6 text-lg font-semibold text-teal-800 transition-colors hover:bg-teal-50"
+              className="min-h-[3.5rem] flex-1 rounded-xl border-2 border-teal-700 bg-white px-6 text-lg font-semibold text-teal-800 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-50 active:scale-[0.98]"
             >
               Hayır, yok
             </button>
@@ -84,7 +96,27 @@ export function NeedsForm() {
 
   if (stage === "acil") {
     return (
-      <div className="rounded-xl border-2 border-sand-400 bg-sand-100 p-8 sm:p-10">
+      <div className="hk-pop rounded-2xl border-2 border-sand-400 bg-sand-100 p-8 sm:p-10">
+        <span
+          aria-hidden
+          className="mb-5 flex size-14 items-center justify-center rounded-full bg-sand-400 text-white"
+        >
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path
+              d="M14 3 2 24h24L14 3Z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M14 11v6"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+            />
+            <circle cx="14" cy="20.2" r="1.4" fill="currentColor" />
+          </svg>
+        </span>
         <h2 className="mb-4 text-3xl text-ink-900">Lütfen 112&apos;yi arayın.</h2>
         <p className="mb-4 text-lg text-ink-800">
           Acil bir tehlike varsa doğru adres Hipokampüs değildir. Hipokampüs
@@ -105,7 +137,7 @@ export function NeedsForm() {
         <button
           type="button"
           onClick={reset}
-          className="min-h-[3.25rem] rounded-lg border-2 border-ink-300 bg-white px-7 text-lg font-semibold text-ink-800 transition-colors hover:bg-white/60"
+          className="min-h-[3.25rem] rounded-xl border-2 border-ink-300 bg-white px-7 text-lg font-semibold text-ink-800 hover:-translate-y-px hover:bg-white/70 active:scale-[0.97]"
         >
           Başa dön
         </button>
@@ -118,18 +150,14 @@ export function NeedsForm() {
 
   if (stage === "kim") {
     return (
-      <Shell step={2} total={3} title="Kimin için buradasınız?">
+      <Shell key="kim" step={2} total={3} title="Kimin için buradasınız?">
         <fieldset>
           <legend className="sr-only">Kimin için destek arıyorsunuz?</legend>
           <div className="grid gap-3 sm:grid-cols-2">
             {RECIPIENTS.map((r) => (
               <label
                 key={r.id}
-                className={`flex min-h-[3.5rem] cursor-pointer items-center gap-4 rounded-lg border-2 px-5 transition-colors ${
-                  recipient === r.id
-                    ? "border-teal-700 bg-teal-50"
-                    : "border-ink-200 bg-white hover:border-teal-300"
-                }`}
+                className={`min-h-[3.5rem] ${OPTION_CARD} ${OPTION_CARD_STATE(recipient === r.id)}`}
               >
                 <input
                   type="radio"
@@ -150,14 +178,14 @@ export function NeedsForm() {
             type="button"
             disabled={!recipient}
             onClick={() => setStage("konular")}
-            className="min-h-[3.25rem] rounded-lg bg-teal-700 px-7 text-lg font-semibold text-white transition-colors hover:bg-teal-800 disabled:cursor-not-allowed disabled:bg-ink-300"
+            className={PRIMARY_BTN}
           >
             Devam edin
           </button>
           <button
             type="button"
             onClick={() => setStage("guvenlik")}
-            className="min-h-[3.25rem] rounded-lg px-4 text-lg text-teal-800 underline underline-offset-4"
+            className={GHOST_BTN}
           >
             Geri
           </button>
@@ -172,6 +200,7 @@ export function NeedsForm() {
   if (stage === "konular") {
     return (
       <Shell
+        key="konular"
         step={3}
         total={3}
         title="Hangi konularda destek arıyorsunuz?"
@@ -185,11 +214,7 @@ export function NeedsForm() {
               return (
                 <label
                   key={area.id}
-                  className={`flex cursor-pointer items-start gap-4 rounded-lg border-2 p-5 transition-colors ${
-                    active
-                      ? "border-teal-700 bg-teal-50"
-                      : "border-ink-200 bg-white hover:border-teal-300"
-                  }`}
+                  className={`items-start p-5 ${OPTION_CARD} ${OPTION_CARD_STATE(active)}`}
                 >
                   <input
                     type="checkbox"
@@ -216,14 +241,14 @@ export function NeedsForm() {
             type="button"
             disabled={selected.length === 0}
             onClick={() => setStage("sonuc")}
-            className="min-h-[3.25rem] rounded-lg bg-teal-700 px-7 text-lg font-semibold text-white transition-colors hover:bg-teal-800 disabled:cursor-not-allowed disabled:bg-ink-300"
+            className={PRIMARY_BTN}
           >
             Başlıkları görün
           </button>
           <button
             type="button"
             onClick={() => setStage("kim")}
-            className="min-h-[3.25rem] rounded-lg px-4 text-lg text-teal-800 underline underline-offset-4"
+            className={GHOST_BTN}
           >
             Geri
           </button>
@@ -238,7 +263,7 @@ export function NeedsForm() {
   const chosen = NEED_AREAS.filter((a) => selected.includes(a.id));
 
   return (
-    <div>
+    <div className="hk-pop">
       <p className="mb-3 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
         İhtiyaç başlıklarınız
       </p>
@@ -247,26 +272,28 @@ export function NeedsForm() {
       </h2>
       <p className="mb-10 max-w-2xl text-ink-700">
         Aşağıdakiler sizin seçtiğiniz başlıklardır. Hipokampüs bunlara bir puan,
-        yüzde veya risk değeri vermez; bir değerlendirme sonucu üretmez. Bu
-        yalnızca konuşmanın nereden başlayacağını netleştirmek içindir.
+        yüzde veya risk değeri vermez; bir değerlendirme sonucu üretmez.
       </p>
 
       <ol className="mb-10 space-y-4">
         {chosen.map((area, i) => (
-          <li
-            key={area.id}
-            className="flex gap-5 rounded-lg border border-ink-200 bg-white p-6"
-          >
-            <span
-              aria-hidden
-              className="flex size-9 shrink-0 items-center justify-center rounded-full bg-teal-100 font-[family-name:var(--font-display)] text-teal-800"
-            >
-              {i + 1}
-            </span>
-            <span>
-              <span className="block text-xl text-ink-900">{area.label}</span>
-              <span className="block text-base text-ink-600">{area.hint}</span>
-            </span>
+          <li key={area.id}>
+            <Card className="flex gap-5 p-6">
+              <span
+                aria-hidden
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-teal-600 to-teal-800 font-[family-name:var(--font-display)] text-white shadow-[var(--shadow-soft)]"
+              >
+                {i + 1}
+              </span>
+              <span>
+                <span className="block text-xl text-ink-900">
+                  {area.label}
+                </span>
+                <span className="block text-base text-ink-600">
+                  {area.hint}
+                </span>
+              </span>
+            </Card>
           </li>
         ))}
       </ol>
@@ -279,29 +306,26 @@ export function NeedsForm() {
         </p>
       </Notice>
 
-      <div className="mt-10 rounded-xl border border-ink-200 bg-paper-warm p-7">
+      <div className="mt-10 rounded-2xl border border-ink-200 bg-paper-warm p-7">
         <h3 className="mb-3 text-xl">Sırada ne var?</h3>
         <p className="mb-6 text-ink-700">
           İlk başlığınızda çalışan uzmanlara bakabilirsiniz. Görüşme başlatma
           henüz açık değildir; Hipokampüs geliştirme aşamasındadır.
         </p>
         <div className="flex flex-wrap gap-4">
-          <ButtonLink href={`/uzmanlar?konu=${chosen[0].id}`}>
+          <ButtonLink href={`/uzmanlar?konu=${chosen[0].id}`} withArrow>
             Bu konuda çalışan uzmanlar
           </ButtonLink>
-          <button
-            type="button"
-            onClick={reset}
-            className="min-h-[3.25rem] rounded-lg px-4 text-lg text-teal-800 underline underline-offset-4"
-          >
+          <button type="button" onClick={reset} className={GHOST_BTN}>
             Formu baştan doldurun
           </button>
         </div>
       </div>
 
       <p className="mt-10 text-base text-ink-600">
-        Durum acil hâle gelirse <strong className="text-ink-900">112&apos;yi
-        arayın.</strong> Hipokampüs acil müdahale sunmaz.
+        Durum acil hâle gelirse{" "}
+        <strong className="text-ink-900">112&apos;yi arayın.</strong>{" "}
+        Hipokampüs acil müdahale sunmaz.
       </p>
     </div>
   );
@@ -323,7 +347,7 @@ function Shell({
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className="hk-pop">
       <div className="mb-8">
         <p className="mb-3 text-base text-ink-600">
           Adım {step} / {total}
@@ -337,7 +361,7 @@ function Shell({
           aria-label="Form ilerlemesi"
         >
           <div
-            className="h-full rounded-full bg-teal-600 transition-[width] duration-500"
+            className="h-full rounded-full bg-linear-to-r from-teal-500 to-teal-700 transition-[width] duration-500"
             style={{ width: `${(step / total) * 100}%` }}
           />
         </div>

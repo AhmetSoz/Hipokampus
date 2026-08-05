@@ -56,7 +56,7 @@ function Monogram({ name }: { name: string }) {
   return (
     <span
       aria-hidden
-      className="flex size-14 shrink-0 items-center justify-center rounded-full bg-teal-700 font-[family-name:var(--font-display)] text-xl text-white"
+      className="flex size-14 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-teal-600 to-teal-800 font-[family-name:var(--font-display)] text-xl text-white shadow-[var(--shadow-soft)]"
     >
       {initials}
     </span>
@@ -72,7 +72,7 @@ function Monogram({ name }: { name: string }) {
  */
 export function ExpertCard({ expert }: { expert: Expert }) {
   return (
-    <article className="flex h-full flex-col rounded-xl border border-ink-200 bg-white p-6 transition-colors hover:border-teal-300">
+    <article className="flex h-full flex-col rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)] hover:-translate-y-0.5 hover:border-teal-200 hover:shadow-[var(--shadow-lift)]">
       <div className="flex items-start gap-4">
         <Monogram name={expert.name} />
         <div className="min-w-0 flex-1">
@@ -126,7 +126,7 @@ export function ExpertCard({ expert }: { expert: Expert }) {
         <VerifiedBadge />
         <Link
           href={`/uzmanlar/${expert.slug}`}
-          className="inline-flex min-h-[3.25rem] items-center rounded-lg border-2 border-teal-700 px-5 font-semibold text-teal-800 transition-colors hover:bg-teal-50"
+          className="inline-flex min-h-[3.25rem] items-center rounded-xl border-2 border-teal-700 px-5 font-semibold text-teal-800 hover:-translate-y-px hover:bg-teal-50 hover:shadow-[var(--shadow-card)] active:scale-[0.97]"
         >
           Profili görün
         </Link>

@@ -63,7 +63,7 @@ export default async function UzmanlarSayfasi({
 
         <Suspense
           fallback={
-            <div className="h-52 rounded-xl border border-ink-200 bg-white" />
+            <div className="h-52 animate-pulse rounded-2xl border border-ink-200 bg-white" />
           }
         >
           <ExpertFilters
