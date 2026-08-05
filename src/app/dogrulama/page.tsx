@@ -6,7 +6,7 @@ import {
   Notice,
   Section,
 } from "@/components/ui";
-import { LogoMark } from "@/components/Logo";
+import { Logo } from "@/components/Logo";
 
 export const metadata: Metadata = {
   title: "Uzman doğrulama",
@@ -110,8 +110,8 @@ export default function DogrulamaSayfasi() {
 
             <div className="rounded-xl border border-ink-200 bg-white p-7">
               <div className="mb-6 flex items-center gap-4 border-b border-ink-100 pb-6">
-                <span className="flex size-14 items-center justify-center rounded-full bg-teal-50 text-teal-700">
-                  <LogoMark size={30} showTrail={false} />
+                <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-teal-50">
+                  <Logo variant="symbol" height={30} decorative />
                 </span>
                 <span>
                   <span className="block text-lg font-semibold text-ink-900">

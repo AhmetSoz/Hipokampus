@@ -20,11 +20,11 @@ export function SiteHeader() {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4 sm:px-8">
         <Link
           href="/"
-          className="text-teal-700 transition-opacity hover:opacity-80"
+          className="transition-opacity hover:opacity-80"
           aria-label="Hipokampüs ana sayfa"
           onClick={() => setOpen(false)}
         >
-          <Logo size={34} />
+          <Logo height={40} priority />
         </Link>
 
         <nav aria-label="Ana menü" className="hidden items-center gap-1 md:flex">

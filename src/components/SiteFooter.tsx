@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogoMark } from "./Logo";
+import { Logo } from "./Logo";
 
 /**
  * Altbilgi metinleri karar kaydına bağlıdır. Aşağıdaki ifadeler
@@ -15,13 +15,8 @@ export function SiteFooter() {
       <div className="mx-auto w-full max-w-6xl px-6 py-14 sm:px-8">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <span className="inline-flex items-center gap-3 text-teal-700">
-              <LogoMark size={38} showTrail />
-              <span className="font-[family-name:var(--font-display)] text-2xl text-ink-900">
-                Hipokampüs
-              </span>
-            </span>
-            <p className="mt-5 max-w-sm text-ink-700">
+            <Logo height={52} />
+            <p className="mt-6 max-w-sm text-ink-700">
               Bakım sürecini birlikte planlamak için kurulan dijital koordinasyon
               platformu. Uzman ve akademisyenlerin katkısıyla geliştiriliyor.
             </p>

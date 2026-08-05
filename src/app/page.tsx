@@ -1,3 +1,4 @@
+import { Logo } from "@/components/Logo";
 import { MemoryTrail } from "@/components/MemoryTrail";
 import {
   ButtonLink,
@@ -186,6 +187,7 @@ export default function AnaSayfa() {
         <Container width="wide">
           <div className="grid items-center gap-10 md:grid-cols-[1.5fr_1fr]">
             <div>
+              <Logo variant="lockupReverse" height={56} decorative className="mb-8" />
               <h2 className="mb-4 text-3xl text-white sm:text-4xl">
                 Gerontolog veya ilgili alanda uzman mısınız?
               </h2>

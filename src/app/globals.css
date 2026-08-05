@@ -139,16 +139,7 @@ p {
 }
 
 /* ------------------------------------------------------------------ */
-/* İmza hareket: "hafıza yolu" izinin çizilmesi (Konsept 3 motifi)      */
-
-@keyframes hk-draw {
-  from {
-    stroke-dashoffset: var(--hk-dash, 1200);
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
+/* Giriş hareketi — ölçülü, tek seferlik                                */
 
 @keyframes hk-fade-up {
   from {
@@ -159,11 +150,6 @@ p {
     opacity: 1;
     transform: none;
   }
-}
-
-.hk-draw {
-  stroke-dasharray: var(--hk-dash, 1200);
-  animation: hk-draw 2.6s var(--ease-calm) forwards;
 }
 
 .hk-enter {
