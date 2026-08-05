@@ -41,18 +41,22 @@ export default async function DanisanlarSayfasi() {
           <h3 className="mb-3 text-lg font-semibold text-ink-900">
             Dosyalar
           </h3>
-          <ul className="space-y-2">
-            {conversations.map((c) => (
-              <li key={c.id}>
-                <Link
-                  href={`/uzman-panel/mesajlar/${c.id}`}
-                  className="text-teal-800 underline underline-offset-4"
-                >
-                  {c.subject}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {conversations.length === 0 ? (
+            <p className="text-ink-600">Bu danışanla henüz açık dosya yok.</p>
+          ) : (
+            <ul className="space-y-2">
+              {conversations.map((c) => (
+                <li key={c.id}>
+                  <Link
+                    href={`/uzman-panel/mesajlar/${c.id}`}
+                    className="text-teal-800 underline underline-offset-4"
+                  >
+                    {c.subject}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </article>
 

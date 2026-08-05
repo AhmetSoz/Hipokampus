@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Card, Notice } from "@/components/ui";
+import { Card, Eyebrow, Notice } from "@/components/ui";
 import { listConversations } from "@/data/conversations";
 import { getExpertById } from "@/data/experts";
 import { getCurrentMember } from "@/data/session";
@@ -45,9 +45,7 @@ export default async function OdemeSayfasi() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="mb-2 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
-          Ödeme ve abonelik
-        </p>
+        <Eyebrow>Ödeme ve abonelik</Eyebrow>
         <h1 className="text-3xl sm:text-4xl">Hizmet kalemleriniz</h1>
       </div>
 
@@ -59,39 +57,43 @@ export default async function OdemeSayfasi() {
         </p>
       </Notice>
 
-      <ul className="space-y-4">
-        {conversations.map((c, i) => {
-          const expert = experts[i];
-          return (
-            <li key={c.id}>
-              <Card className="flex flex-wrap items-center justify-between gap-4 p-6">
-                <div>
-                  <p className="text-lg font-semibold text-ink-900">
-                    Uzman görüşmesi — {expert?.name}
-                  </p>
-                  <p className="text-base text-ink-600">
-                    {expert?.field} ·{" "}
-                    {new Date(c.startedAt).toLocaleDateString("tr-TR", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-                <span
-                  className={`rounded-full px-3 py-1 text-base font-semibold ${
-                    c.status === "tamamlandi"
-                      ? "bg-teal-100 text-teal-900"
-                      : "bg-sky-200 text-ink-900"
-                  }`}
-                >
-                  {STATUS_LABEL[c.status]}
-                </span>
-              </Card>
-            </li>
-          );
-        })}
-      </ul>
+      {conversations.length === 0 ? (
+        <p className="text-ink-700">Henüz bir hizmet kalemi yok.</p>
+      ) : (
+        <ul className="space-y-4">
+          {conversations.map((c, i) => {
+            const expert = experts[i];
+            return (
+              <li key={c.id}>
+                <Card className="flex flex-wrap items-center justify-between gap-4 p-6">
+                  <div>
+                    <p className="text-lg font-semibold text-ink-900">
+                      Uzman görüşmesi — {expert?.name}
+                    </p>
+                    <p className="text-base text-ink-600">
+                      {expert?.field} ·{" "}
+                      {new Date(c.startedAt).toLocaleDateString("tr-TR", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+                  <span
+                    className={`rounded-full px-3 py-1 text-base font-semibold ${
+                      c.status === "tamamlandi"
+                        ? "bg-teal-100 text-teal-900"
+                        : "bg-sky-200 text-ink-900"
+                    }`}
+                  >
+                    {STATUS_LABEL[c.status]}
+                  </span>
+                </Card>
+              </li>
+            );
+          })}
+        </ul>
+      )}
 
       <Notice tone="teal" title="Tutar neden gösterilmiyor?">
         <p>

@@ -43,42 +43,46 @@ export default async function MesajlarSayfasi() {
         </p>
       </div>
 
-      <ul className="space-y-4">
-        {conversations.map((c, i) => {
-          const expert = experts[i];
-          const last = c.messages.at(-1);
-          return (
-            <li key={c.id}>
-              <Link
-                href={`/panel/mesajlar/${c.id}`}
-                className="block rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-[var(--shadow-lift)]"
-              >
-                <div className="mb-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                  <h2 className="text-xl text-ink-900">{c.subject}</h2>
-                  <span
-                    className={`rounded-full px-3 py-1 text-base font-semibold ${
-                      c.status === "tamamlandi"
-                        ? "bg-teal-100 text-teal-900"
-                        : "bg-sky-200 text-ink-900"
-                    }`}
-                  >
-                    {STATUS_LABEL[c.status]}
-                  </span>
-                </div>
-                <p className="mb-3 text-ink-600">
-                  {expert?.name} · {expert?.field}
-                </p>
-                {last && (
-                  <p className="line-clamp-2 text-ink-700">
-                    <span className="font-semibold">{last.authorName}:</span>{" "}
-                    {last.body.split("\n")[0]}
+      {conversations.length === 0 ? (
+        <p className="text-ink-700">Henüz danışma dosyanız yok.</p>
+      ) : (
+        <ul className="space-y-4">
+          {conversations.map((c, i) => {
+            const expert = experts[i];
+            const last = c.messages.at(-1);
+            return (
+              <li key={c.id}>
+                <Link
+                  href={`/panel/mesajlar/${c.id}`}
+                  className="block rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-[var(--shadow-lift)]"
+                >
+                  <div className="mb-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                    <h2 className="text-xl text-ink-900">{c.subject}</h2>
+                    <span
+                      className={`rounded-full px-3 py-1 text-base font-semibold ${
+                        c.status === "tamamlandi"
+                          ? "bg-teal-100 text-teal-900"
+                          : "bg-sky-200 text-ink-900"
+                      }`}
+                    >
+                      {STATUS_LABEL[c.status]}
+                    </span>
+                  </div>
+                  <p className="mb-3 text-ink-600">
+                    {expert?.name} · {expert?.field}
                   </p>
-                )}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+                  {last && (
+                    <p className="line-clamp-2 text-ink-700">
+                      <span className="font-semibold">{last.authorName}:</span>{" "}
+                      {last.body.split("\n")[0]}
+                    </p>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
 
       <Notice tone="teal" title="Yanıt süresi kişiye göre değişmez">
         <p>

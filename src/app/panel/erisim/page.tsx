@@ -169,32 +169,36 @@ export default async function ErisimSayfasi() {
           Kim, ne zaman, hangi bölümü açtı. Bu kayıt {consultant.name} ve
           birincil bakım verene görünür.
         </p>
-        <ul className="space-y-3">
-          {log.map((entry) => {
-            const who = byId.get(entry.memberId);
-            return (
-              <li
-                key={entry.id}
-                className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ink-100 pb-3 last:border-0 last:pb-0"
-              >
-                <span className="text-ink-900">
-                  <strong className="font-semibold">
-                    {who?.name ?? "Bilinmeyen"}
-                  </strong>{" "}
-                  <span className="text-ink-600">{entry.section}</span>
-                </span>
-                <span className="text-base text-ink-600">
-                  {new Date(entry.at).toLocaleString("tr-TR", {
-                    day: "numeric",
-                    month: "long",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
+        {log.length === 0 ? (
+          <p className="text-ink-600">Henüz bir erişim kaydı yok.</p>
+        ) : (
+          <ul className="space-y-3">
+            {log.map((entry) => {
+              const who = byId.get(entry.memberId);
+              return (
+                <li
+                  key={entry.id}
+                  className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ink-100 pb-3 last:border-0 last:pb-0"
+                >
+                  <span className="text-ink-900">
+                    <strong className="font-semibold">
+                      {who?.name ?? "Bilinmeyen"}
+                    </strong>{" "}
+                    <span className="text-ink-600">{entry.section}</span>
+                  </span>
+                  <span className="text-base text-ink-600">
+                    {new Date(entry.at).toLocaleString("tr-TR", {
+                      day: "numeric",
+                      month: "long",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </section>
     </div>
   );

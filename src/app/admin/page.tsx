@@ -33,12 +33,15 @@ export default async function AdminSayfasi({
           <p className="mb-2 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
             Test / admin
           </p>
-          <h1 className="mb-6 text-2xl">Devam etmek için parola</h1>
+          <h1 className="mb-6 text-2xl" id="admin-parola-baslik">
+            Devam etmek için parola
+          </h1>
 
           <form action={adminLogin} className="space-y-4">
             <input
               type="password"
               name="parola"
+              aria-labelledby="admin-parola-baslik"
               autoComplete="current-password"
               required
               autoFocus
