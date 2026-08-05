@@ -95,7 +95,7 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
               >
                 <span
                   aria-hidden
-                  className="mt-2.5 size-2 shrink-0 rounded-full bg-sand-400"
+                  className="mt-2.5 size-2 shrink-0 rounded-full bg-sky-500"
                 />
                 <span className="text-lg">{s}</span>
               </li>

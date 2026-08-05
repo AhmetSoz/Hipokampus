@@ -18,7 +18,7 @@ const STATUS: Record<
   acik: { label: "Bilgi toplanıyor", tone: "bg-teal-100 text-teal-900", step: 1 },
   "yanit-bekliyor": {
     label: "Uzman yanıtı bekleniyor",
-    tone: "bg-sand-200 text-ink-900",
+    tone: "bg-sky-200 text-ink-900",
     step: 2,
   },
   tamamlandi: {

@@ -121,7 +121,7 @@ export default async function GirisSayfasi() {
                           {m.scopes.map((s) => (
                             <span
                               key={s}
-                              className="rounded-md bg-sand-100 px-3 py-1 text-base text-ink-700"
+                              className="rounded-md bg-sky-100 px-3 py-1 text-base text-ink-700"
                             >
                               {SCOPE_LABEL[s]}
                             </span>

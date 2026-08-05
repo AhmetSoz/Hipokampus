@@ -18,7 +18,7 @@ export default async function PanelLayout({
     return (
       <div className="bg-paper-warm py-20">
         <div className="mx-auto max-w-2xl px-6">
-          <div className="rounded-2xl border-2 border-sand-400 bg-sand-100 p-8 shadow-[var(--shadow-soft)] sm:p-10">
+          <div className="rounded-2xl border-2 border-ink-300 bg-paper-warm p-8 shadow-[var(--shadow-soft)] sm:p-10">
             <h1 className="mb-4 text-3xl">Erişiminiz şu anda askıda</h1>
             <p className="mb-4 text-lg text-ink-800">
               {consultant.name}, bu panele erişiminizi geçici olarak durdurdu.

@@ -82,7 +82,7 @@ export default async function OdemeSayfasi() {
                   className={`rounded-full px-3 py-1 text-base font-semibold ${
                     c.status === "tamamlandi"
                       ? "bg-teal-100 text-teal-900"
-                      : "bg-sand-200 text-ink-900"
+                      : "bg-sky-200 text-ink-900"
                   }`}
                 >
                   {STATUS_LABEL[c.status]}

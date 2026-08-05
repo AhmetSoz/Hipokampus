@@ -100,7 +100,7 @@ export function SiteHeader() {
                 {active && (
                   <span
                     aria-hidden
-                    className="absolute right-4 -bottom-0.5 left-4 h-0.5 rounded-full bg-sand-400"
+                    className="absolute right-4 -bottom-0.5 left-4 h-0.5 rounded-full bg-teal-600"
                   />
                 )}
               </Link>

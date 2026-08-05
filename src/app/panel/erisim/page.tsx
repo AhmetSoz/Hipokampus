@@ -90,7 +90,7 @@ export default async function ErisimSayfasi() {
                       {m.relation} · {ROLE_LABEL[m.relationRole]}
                     </span>
                     {m.payer && (
-                      <span className="mt-2 inline-block rounded-md bg-sand-100 px-3 py-1 text-base text-ink-700">
+                      <span className="mt-2 inline-block rounded-md bg-sky-100 px-3 py-1 text-base text-ink-700">
                         Ödemeyi bu kişi yapıyor
                       </span>
                     )}

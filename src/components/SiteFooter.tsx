@@ -70,7 +70,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 rounded-2xl border border-sand-300 bg-sand-100 p-6 sm:p-7">
+        <div className="mt-12 rounded-2xl border border-ink-200 bg-paper-warm p-6 sm:p-7">
           <p className="font-semibold text-ink-900">
             Hipokampüs bir sağlık kuruluşu değildir.
           </p>

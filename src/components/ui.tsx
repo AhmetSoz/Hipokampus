@@ -75,7 +75,7 @@ export function ButtonLink({
     secondary:
       "border-2 border-teal-700 bg-white text-teal-800 hover:-translate-y-px hover:border-teal-800 hover:bg-teal-50 hover:shadow-[var(--shadow-card)]",
     onDark:
-      "bg-white text-teal-800 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-sand-100 hover:shadow-[var(--shadow-pop)]",
+      "bg-white text-teal-800 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-sky-100 hover:shadow-[var(--shadow-pop)]",
     quiet: "text-teal-800 underline underline-offset-4 hover:text-teal-600",
   } as const;
 
@@ -111,7 +111,7 @@ export function Eyebrow({
   children: React.ReactNode;
   tone?: "teal" | "onDark";
 }) {
-  const color = tone === "onDark" ? "text-sand-300" : "text-teal-600";
+  const color = tone === "onDark" ? "text-sky-300" : "text-teal-600";
   return (
     <p
       className={`mb-4 flex items-center gap-2 text-base font-semibold tracking-[0.14em] uppercase ${color}`}
@@ -156,7 +156,7 @@ export function Notice({
   tone?: "sand" | "teal";
 }) {
   const tones = {
-    sand: "border-sand-400 bg-sand-100 text-ink-800",
+    sand: "border-ink-300 bg-paper-warm text-ink-800",
     teal: "border-teal-300 bg-teal-50 text-ink-800",
   } as const;
   return (
@@ -176,7 +176,7 @@ export function Notice({
  */
 export function DemoNotice({ children }: { children?: React.ReactNode }) {
   return (
-    <p className="flex items-start gap-3 rounded-xl border border-sand-300 bg-sand-100 px-5 py-4 text-base text-ink-700">
+    <p className="flex items-start gap-3 rounded-xl border border-sky-200 bg-sky-50 px-5 py-4 text-base text-ink-700">
       <span aria-hidden className="mt-0.5 shrink-0 font-semibold text-ink-900">
         Örnek
       </span>

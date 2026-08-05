@@ -115,7 +115,7 @@ export default function AnaSayfa() {
       <div className="hk-atmosphere relative isolate overflow-hidden bg-linear-to-b from-white via-sky-50 to-sky-100">
         <Container width="wide" className="py-16 sm:py-24">
           <p className="hk-enter mb-6 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-white/80 px-4 py-2 text-base text-teal-800 backdrop-blur-sm">
-            <span aria-hidden className="size-2 rounded-full bg-sand-400" />
+            <span aria-hidden className="size-2 rounded-full bg-sky-500" />
             Geliştirme aşamasında — yayında bir hizmet yok
           </p>
 

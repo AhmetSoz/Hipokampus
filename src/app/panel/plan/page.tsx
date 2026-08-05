@@ -9,7 +9,7 @@ import type { PlanItemStatus } from "@/data/types";
 export const metadata: Metadata = { title: "Bakım planı" };
 
 const STATUS: Record<PlanItemStatus, { label: string; tone: string }> = {
-  yapilacak: { label: "Yapılacak", tone: "bg-sand-200 text-ink-900" },
+  yapilacak: { label: "Yapılacak", tone: "bg-sky-200 text-ink-900" },
   surüyor: { label: "Sürüyor", tone: "bg-teal-100 text-teal-900" },
   tamamlandi: { label: "Tamamlandı", tone: "bg-teal-700 text-white" },
 };

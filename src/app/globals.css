@@ -32,20 +32,26 @@
   --color-teal-800: #0a484e;
   --color-teal-900: #06373c;
 
-  /* Açık mavi — kilitli renk yönünün üçüncü bileşeni */
+  /* Açık mavi — kilitli renk yönünün üçüncü bileşeni.
+     TURUNCU ASLA KULLANILMAZ (sahibinin kararı, 2026-08-05). Önceki "Sıcak
+     Kum" vurgu rengi (#D8B07A ve türevleri) arayüzden tamamen kaldırıldı;
+     ikincil vurgu artık bu ailedeki koyu tonlar (500/600). */
   --color-sky-50: #f5fafb;
   --color-sky-100: #e6f2f5;
   --color-sky-200: #cfe6ec;
   --color-sky-300: #aed4de;
   --color-sky-400: #8dc3d1;
+  --color-sky-500: #4f96ac;
+  --color-sky-600: #35768c;
 
-  /* Sıcak kum — vurgu */
-  --color-sand-100: #f7efe1;
-  --color-sand-200: #efdec4;
-  --color-sand-300: #e5cba4;
-  --color-sand-400: #d8b07a;
-  --color-sand-500: #c49a62;
-  --color-sand-600: #a97f47;
+  /* Yalnızca gerçek acil/uyarı durumları için — sınırlı ve seyrek kullanım.
+     Genel "dikkat" kutuları için DEĞİL, o rol nötr (ink/paper-warm) tonlara
+     taşındı. */
+  --color-danger-50: #fdf2f1;
+  --color-danger-100: #f8dedb;
+  --color-danger-300: #e3a39c;
+  --color-danger-600: #b3453b;
+  --color-danger-700: #8f342c;
 
   /* Mürekkep */
   --color-ink-900: #1f1f1f;
@@ -313,8 +319,9 @@ html[data-motion="az"] *::after {
   animation: hk-scale-in var(--dur-slow) var(--ease-calm) both;
 }
 
-/* Sıcak zemin kompozisyonu — WebGL/video yerine geçen, saf CSS,
-   GPU'da ucuz, tek seferlik boyanan katman. */
+/* Zemin kompozisyonu — WebGL/video yerine geçen, saf CSS, GPU'da ucuz,
+   tek seferlik boyanan katman. Yalnızca kilitli iki renk (turkuaz + açık
+   mavi) kullanılır; turuncu/sıcak kum tamamen çıkarıldı. */
 .hk-atmosphere {
   background-image:
     radial-gradient(
@@ -324,7 +331,7 @@ html[data-motion="az"] *::after {
     ),
     radial-gradient(
       38rem 32rem at 86% 82%,
-      color-mix(in oklab, var(--color-sand-400) 55%, transparent),
+      color-mix(in oklab, var(--color-sky-500) 45%, transparent),
       transparent 68%
     ),
     radial-gradient(

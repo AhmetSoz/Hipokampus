@@ -74,7 +74,7 @@ export function NeedsForm() {
             <button
               type="button"
               onClick={() => setStage("acil")}
-              className="min-h-[3.5rem] flex-1 rounded-xl border-2 border-sand-400 bg-sand-100 px-6 text-lg font-semibold text-ink-900 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-sand-200 active:scale-[0.98]"
+              className="min-h-[3.5rem] flex-1 rounded-xl border-2 border-danger-600 bg-danger-50 px-6 text-lg font-semibold text-ink-900 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-danger-100 active:scale-[0.98]"
             >
               Evet, var
             </button>
@@ -96,10 +96,10 @@ export function NeedsForm() {
 
   if (stage === "acil") {
     return (
-      <div className="hk-pop rounded-2xl border-2 border-sand-400 bg-sand-100 p-8 sm:p-10">
+      <div className="hk-pop rounded-2xl border-2 border-danger-600 bg-danger-50 p-8 sm:p-10">
         <span
           aria-hidden
-          className="mb-5 flex size-14 items-center justify-center rounded-full bg-sand-400 text-white"
+          className="mb-5 flex size-14 items-center justify-center rounded-full bg-danger-600 text-white"
         >
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
             <path

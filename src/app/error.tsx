@@ -37,7 +37,7 @@ export default function HataSayfasi({ reset }: { reset: () => void }) {
           </Link>
         </div>
 
-        <p className="mt-12 rounded-lg border-l-4 border-sand-400 bg-sand-100 p-6 text-ink-800">
+        <p className="mt-12 rounded-lg border-l-4 border-ink-300 bg-paper-warm p-6 text-ink-800">
           Acil bir durumdaysanız beklemeyin —{" "}
           <strong className="text-ink-900">112&apos;yi arayın.</strong>{" "}
           Hipokampüs acil müdahale sunmaz.

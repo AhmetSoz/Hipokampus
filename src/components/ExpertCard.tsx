@@ -97,7 +97,7 @@ export function ExpertCard({ expert }: { expert: Expert }) {
         <ul className="space-y-2">
           {expert.specialties.map((s) => (
             <li key={s} className="flex gap-3 text-ink-700">
-              <span aria-hidden className="mt-2.5 size-1.5 shrink-0 rounded-full bg-sand-400" />
+              <span aria-hidden className="mt-2.5 size-1.5 shrink-0 rounded-full bg-sky-500" />
               <span>{s}</span>
             </li>
           ))}
@@ -108,7 +108,7 @@ export function ExpertCard({ expert }: { expert: Expert }) {
         {expert.needAreas.map((id) => (
           <li
             key={id}
-            className="rounded-md bg-sand-100 px-3 py-1 text-base text-ink-700"
+            className="rounded-md bg-sky-100 px-3 py-1 text-base text-ink-700"
           >
             {needArea(id).label}
           </li>
