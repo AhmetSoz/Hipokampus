@@ -1,7 +1,10 @@
-import type { Conversation, MessageAuthor } from "./types";
+import { asc, desc, eq, sql as rawSql } from "drizzle-orm";
+import { db } from "@/db/client";
+import { conversations, messages } from "@/db/schema";
+import type { Conversation, ConversationStatus, MessageAuthor } from "./types";
 
 /**
- * ÖRNEK DANIŞMA DOSYALARI — TEMSİLÎDİR.
+ * Danışma dosyaları veritabanından okunur (bkz. scripts/seed.ts).
  *
  * Araştırma bulgularının kod karşılığı (bkz. context/07-RESEARCH.md, A bölümü):
  *  - "Sohbet" değil, adı ve kapsamı olan bir DOSYA. Wellthy'nin Care Project
@@ -12,91 +15,38 @@ import type { Conversation, MessageAuthor } from "./types";
  *  - Görüşme kaydı alınmaz — kalıcı çıktı yazılı bakım planıdır.
  */
 
-const CONVERSATIONS: Conversation[] = [
-  {
-    id: "g1",
-    expertId: "u1",
-    consultantId: "d1",
-    subject: "Annem için evde bakım düzeni",
-    status: "tamamlandi",
-    startedAt: "2026-07-02",
-    messages: [
-      {
-        id: "m1",
-        author: "danisan",
-        authorName: "Ayşe Demir",
-        body: "Merhaba, annem İzmir'de tek başına yaşıyor. Günlük işlerin çoğunu kendisi yapıyor ama alışveriş ve ilaç takibinde zorlanmaya başladı. Nereden başlayacağımı bilmiyorum.",
-        sentAt: "2026-07-02T14:20:00",
-      },
-      {
-        id: "m2",
-        author: "uzman",
-        authorName: "Elif Tanyeri",
-        body: "Merhaba Ayşe Hanım, ben Elif Tanyeri. Gerontoloji alanında çalışıyorum ve bu süreçte size eşlik edeceğim.\n\nÖnce annenizin günü nasıl geçiyor onu anlamak isterim: sabah kalktığında ilk ne yapıyor, gün içinde evden çıkıyor mu, akşam yemeğini kim hazırlıyor?",
-        sentAt: "2026-07-03T09:15:00",
-      },
-      {
-        id: "m3",
-        author: "danisan",
-        authorName: "Ayşe Demir",
-        body: "Sabah erken kalkıyor, kahvaltısını kendi yapıyor. Haftada bir markete gidiyor ama son zamanlarda ağır poşetleri taşımakta zorlanıyor. Akşam yemeğini genelde öğleden kalanla geçiştiriyor.",
-        sentAt: "2026-07-03T20:40:00",
-      },
-      {
-        id: "m4",
-        author: "uzman",
-        authorName: "Elif Tanyeri",
-        body: "Teşekkür ederim, bu tablo epey şey anlatıyor. İlaçlar konusunda da birkaç şey sorayım: kaç farklı ilaç kullanıyor ve hangilerini ne zaman alması gerekiyor?",
-        sentAt: "2026-07-04T10:05:00",
-      },
-      {
-        id: "m5",
-        author: "danisan",
-        authorName: "Ayşe Demir",
-        body: "Dört ilaç var. İkisi sabah, biri akşam, biri de haftada bir. Bazen aldı mı almadı mı emin olamıyor, ben de her akşam telefonla soruyorum.",
-        sentAt: "2026-07-04T19:12:00",
-      },
-      {
-        id: "m6",
-        author: "uzman",
-        authorName: "Elif Tanyeri",
-        body: "Anlıyorum. Sizin her akşam telefonla kontrol etmeniz uzun vadede ikinizi de yoruyor olabilir.\n\nKonuştuklarımızdan bir bakım planı hazırladım. Dört madde var; ikisi hemen uygulanabilir, ikisi biraz hazırlık istiyor. Planı aşağıdan açabilirsiniz.",
-        sentAt: "2026-07-08T11:30:00",
-      },
-    ],
-  },
-  {
-    id: "g2",
-    expertId: "u4",
-    consultantId: "d1",
-    subject: "Banyo düzenlemesi ve düşme riski",
-    status: "yanit-bekliyor",
-    startedAt: "2026-08-03",
-    messages: [
-      {
-        id: "m7",
-        author: "danisan",
-        authorName: "Ayşe Demir",
-        body: "Merhaba, bakım planında banyo için tutunma barı önerilmişti. Nereye ve nasıl monte edileceği konusunda kararsızız. Küvet var, duş kabini yok.",
-        sentAt: "2026-08-03T16:45:00",
-      },
-      {
-        id: "m8",
-        author: "uzman",
-        authorName: "Hakan Devrim",
-        body: "Merhaba Ayşe Hanım, ben Hakan Devrim, fizyoterapistim.\n\nKüvetli banyolarda en kritik nokta giriş-çıkış anı. Barın yeri, annenizin hangi tarafa ağırlık vererek girdiğine göre değişiyor. Küveti kullanırken hangi eliyle tutunuyor, biliyor musunuz?",
-        sentAt: "2026-08-04T09:20:00",
-      },
-    ],
-  },
-];
+async function attachMessages(
+  rows: (typeof conversations.$inferSelect)[],
+): Promise<Conversation[]> {
+  const result: Conversation[] = [];
+  for (const row of rows) {
+    const msgRows = await db
+      .select()
+      .from(messages)
+      .where(eq(messages.conversationId, row.id))
+      .orderBy(asc(messages.sentAt));
+
+    result.push({
+      id: row.id,
+      expertId: row.expertId,
+      consultantId: row.consultantId,
+      subject: row.subject,
+      status: row.status,
+      startedAt: row.startedAt.toISOString(),
+      messages: msgRows.map((m) => ({
+        id: m.id,
+        author: m.author,
+        authorName: m.authorName,
+        body: m.body,
+        sentAt: m.sentAt.toISOString(),
+      })),
+    });
+  }
+  return result;
+}
 
 /**
  * Mesaj ekler.
- *
- * Prototipte veri bellekte tutuluyor; sunucu yeniden başlayınca sıfırlanır.
- * Veritabanına geçildiğinde yalnızca bu fonksiyonun içi değişecek —
- * çağıran ekranlar aynı kalacak.
  *
  * NOT: Riskli ifade tetikleyicisi (anahtar kelime taraması) BİLEREK
  * uygulanmadı. Kilitli karar: "v1'de NLP/otomatik acil durum tespiti yok."
@@ -108,34 +58,54 @@ export async function addMessage(
   authorName: string,
   body: string,
 ): Promise<void> {
-  const conversation = CONVERSATIONS.find((c) => c.id === conversationId);
-  if (!conversation || conversation.status === "tamamlandi") return;
-
   const text = body.trim();
   if (!text) return;
 
-  conversation.messages.push({
+  const [conversation] = await db
+    .select({ status: conversations.status })
+    .from(conversations)
+    .where(eq(conversations.id, conversationId));
+  if (!conversation || conversation.status === "tamamlandi") return;
+
+  await db.insert(messages).values({
     id: `m${Date.now()}`,
+    conversationId,
     author,
     authorName,
     body: text,
-    sentAt: new Date().toISOString(),
+    sentAt: new Date(),
   });
 
   // Danışan yazdıysa top uzmanda; uzman yazdıysa dosya yeniden açık.
-  conversation.status = author === "danisan" ? "yanit-bekliyor" : "acik";
+  const nextStatus: ConversationStatus =
+    author === "danisan" ? "yanit-bekliyor" : "acik";
+  await db
+    .update(conversations)
+    .set({ status: nextStatus })
+    .where(eq(conversations.id, conversationId));
 }
 
 export async function listConversations(): Promise<Conversation[]> {
-  return [...CONVERSATIONS].sort((a, b) => {
-    const aLast = a.messages.at(-1)?.sentAt ?? a.startedAt;
-    const bLast = b.messages.at(-1)?.sentAt ?? b.startedAt;
-    return bLast.localeCompare(aLast);
-  });
+  // Son mesaj zamanına göre sırala; hiç mesajı yoksa açılış tarihine göre.
+  const rows = await db
+    .select()
+    .from(conversations)
+    .orderBy(
+      desc(
+        rawSql`coalesce((select max(${messages.sentAt}) from ${messages} where ${messages.conversationId} = ${conversations.id}), ${conversations.startedAt})`,
+      ),
+    );
+  return attachMessages(rows);
 }
 
 export async function getConversation(id: string): Promise<Conversation | null> {
-  return CONVERSATIONS.find((c) => c.id === id) ?? null;
+  const [row] = await db
+    .select()
+    .from(conversations)
+    .where(eq(conversations.id, id));
+  if (!row) return null;
+  const [full] = await attachMessages([row]);
+  return full;
 }
 
 export async function listConversationsForExpert(
