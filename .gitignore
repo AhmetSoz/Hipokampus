@@ -30,6 +30,8 @@ yarn-error.log*
 # Geçici
 *.tmp
 .cache/
+*.tsbuildinfo
+.vercel
 
 # İç bağlam belgeleri — depo public olduğu için gönderilmiyor.
 # Depo Private yapılırsa bu satır kaldırılabilir.

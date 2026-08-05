@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+/*
+  HİPOKAMPÜS — TASARIM BELİRTEÇLERİ
+
+  Renk yönü KİLİTLİ karardır: turkuaz ana + beyaz gradyan + açık mavi.
+  Somut değerler logo Konsept 3 "Hafıza Yolu" paletinden alınmıştır:
+    Petrol Teal   #0E5C63
+    Koyu Antrasit #1F1F1F
+    Sıcak Kum     #D8B07A
+  Ara tonlar ve açık mavi ailesi bu üç renkten türetilmiştir.
+
+  v1'de KARANLIK MOD YOKTUR (kilitli karar). Bu dosyada
+  prefers-color-scheme: dark kuralı bilerek bulunmaz.
+*/
+
+@theme {
+  /* Ana turkuaz */
+  --color-teal-50: #f0f8f9;
+  --color-teal-100: #d7ebed;
+  --color-teal-200: #b0d8dc;
+  --color-teal-300: #7fc0c7;
+  --color-teal-400: #45a2ac;
+  --color-teal-500: #1e8f9a;
+  --color-teal-600: #14757e;
+  --color-teal-700: #0e5c63;
+  --color-teal-800: #0a484e;
+  --color-teal-900: #06373c;
+
+  /* Açık mavi — kilitli renk yönünün üçüncü bileşeni */
+  --color-sky-50: #f5fafb;
+  --color-sky-100: #e6f2f5;
+  --color-sky-200: #cfe6ec;
+  --color-sky-300: #aed4de;
+
+  /* Sıcak kum — vurgu */
+  --color-sand-100: #f7efe1;
+  --color-sand-200: #efdec4;
+  --color-sand-300: #e5cba4;
+  --color-sand-400: #d8b07a;
+  --color-sand-500: #c49a62;
+
+  /* Mürekkep */
+  --color-ink-900: #1f1f1f;
+  --color-ink-800: #2c3133;
+  --color-ink-700: #3f4547;
+  --color-ink-600: #5c6467;
+  --color-ink-500: #7a8285;
+  --color-ink-300: #b7bdbf;
+  --color-ink-200: #dfe3e4;
+  --color-ink-100: #eef1f1;
+
+  /* Yüzeyler */
+  --color-paper: #fdfdfc;
+  --color-paper-warm: #faf8f4;
+
+  /* Tipografi — ÖNERİ statüsündedir, karar değildir.
+     Değiştirmek için bu iki satır ve layout.tsx yeterlidir. */
+  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* İleri yaştaki kullanıcılar da doğrudan kullanabilmeli:
+     taban punto normalden büyük tutulmuştur. */
+  --text-base: 1.125rem;
+  --text-base--line-height: 1.75;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.7;
+  --text-xl: 1.4rem;
+  --text-xl--line-height: 1.6;
+
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  --ease-calm: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ------------------------------------------------------------------ */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink-800);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  color: var(--color-ink-900);
+  font-weight: 400;
+  letter-spacing: -0.011em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Odak halkası her yerde görünür ve kalın — klavye veya ekran büyüteci
+   kullananlar için tasarımın sessizce kaybolmaması gerekiyor. */
+:focus-visible {
+  outline: 3px solid var(--color-teal-600);
+  outline-offset: 3px;
+  border-radius: var(--radius-xs);
+}
+
+::selection {
+  background-color: var(--color-teal-100);
+  color: var(--color-teal-900);
+}
+
+/* Hareket duyarlılığı: tüm imza hareketleri kapanır.
+   WebGL sahnesi bu tercihi ayrıca okur ve hiç başlatılmaz. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* İmza hareket: "hafıza yolu" izinin çizilmesi (Konsept 3 motifi)      */
+
+@keyframes hk-draw {
+  from {
+    stroke-dashoffset: var(--hk-dash, 1200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hk-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hk-draw {
+  stroke-dasharray: var(--hk-dash, 1200);
+  animation: hk-draw 2.6s var(--ease-calm) forwards;
+}
+
+.hk-enter {
+  animation: hk-fade-up 0.7s var(--ease-calm) both;
+}
