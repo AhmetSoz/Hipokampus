@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   ButtonLink,
+  Card,
   Container,
   Eyebrow,
   Notice,
@@ -18,10 +19,10 @@ export const metadata: Metadata = {
 export default function NasilCalisirSayfasi() {
   return (
     <>
-      <div className="bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
+      <div className="hk-atmosphere bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
         <Container>
-          <h1 className="mb-5 text-4xl sm:text-5xl">Nasıl çalışır</h1>
-          <p className="max-w-2xl text-xl text-ink-700">
+          <h1 className="hk-enter mb-5 text-4xl sm:text-5xl">Nasıl çalışır</h1>
+          <p className="hk-enter max-w-2xl text-xl text-ink-700" style={{ animationDelay: "70ms" }}>
             Üç adım var ve ilki ücretsiz. Ödeme kararını, ne alacağınızı
             gördükten sonra veriyorsunuz.
           </p>
@@ -104,14 +105,13 @@ export default function NasilCalisirSayfasi() {
                 d: "Görüşme kaydı alınmaz. Elinizde kalan, üzerinde anlaştığınız yazılı plandır.",
               },
             ].map((item) => (
-              <li
-                key={item.t}
-                className="rounded-lg border border-ink-200 bg-white p-6"
-              >
-                <p className="mb-1 text-lg font-semibold text-ink-900">
-                  {item.t}
-                </p>
-                <p className="text-base text-ink-700">{item.d}</p>
+              <li key={item.t}>
+                <Card className="h-full p-6">
+                  <p className="mb-1 text-lg font-semibold text-ink-900">
+                    {item.t}
+                  </p>
+                  <p className="text-base text-ink-700">{item.d}</p>
+                </Card>
               </li>
             ))}
           </ul>
@@ -152,7 +152,7 @@ export default function NasilCalisirSayfasi() {
           </div>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <ButtonLink href="/ihtiyac-formu">
+            <ButtonLink href="/ihtiyac-formu" withArrow>
               İhtiyaç formunu deneyin
             </ButtonLink>
             <ButtonLink href="/dogrulama" variant="secondary">

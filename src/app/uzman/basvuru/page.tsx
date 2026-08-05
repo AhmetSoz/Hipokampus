@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ExpertApplicationForm } from "@/components/ExpertApplicationForm";
-import { Container, Eyebrow } from "@/components/ui";
+import { Card, Container, Eyebrow } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Uzman ön başvurusu",
@@ -11,11 +11,16 @@ export const metadata: Metadata = {
 
 export default function UzmanBasvurusuSayfasi() {
   return (
-    <div className="bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
+    <div className="hk-atmosphere bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
       <Container>
         <Eyebrow>Uzmanlar için</Eyebrow>
-        <h1 className="mb-5 text-4xl sm:text-5xl">Uzman ön başvurusu</h1>
-        <p className="mb-10 max-w-2xl text-xl text-ink-700">
+        <h1 className="hk-enter mb-5 text-4xl sm:text-5xl">
+          Uzman ön başvurusu
+        </h1>
+        <p
+          className="hk-enter mb-10 max-w-2xl text-xl text-ink-700"
+          style={{ animationDelay: "70ms" }}
+        >
           Hipokampüs&apos;ü uzman ve akademisyenlerin katkısıyla geliştiriyoruz.
           Platformun nasıl kurulacağına dair kararlar hâlâ alınıyor; bu süreçte
           yanımızda olmak isterseniz ön başvurunuzu bırakabilirsiniz.
@@ -36,17 +41,14 @@ export default function UzmanBasvurusuSayfasi() {
               d: "Adli sicil durumu ve değerlendirme puanı kamuya gösterilmez.",
             },
           ].map((item) => (
-            <div
-              key={item.t}
-              className="rounded-lg border border-ink-200 bg-white p-6"
-            >
+            <Card key={item.t} className="p-6">
               <p className="mb-1 font-semibold text-teal-800">{item.t}</p>
               <p className="text-base text-ink-700">{item.d}</p>
-            </div>
+            </Card>
           ))}
         </div>
 
-        <div className="rounded-xl border border-ink-200 bg-white p-7 sm:p-10">
+        <div className="rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)] sm:p-10">
           <ExpertApplicationForm />
         </div>
       </Container>

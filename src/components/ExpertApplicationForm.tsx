@@ -15,14 +15,14 @@ import { Notice } from "./ui";
  */
 
 const FIELD =
-  "min-h-[3.25rem] w-full rounded-lg border-2 border-ink-200 bg-white px-4 text-lg text-ink-900 transition-colors focus:border-teal-600";
+  "min-h-[3.25rem] w-full rounded-xl border-2 border-ink-200 bg-white px-4 text-lg text-ink-900 focus:border-teal-600";
 
 export function ExpertApplicationForm() {
   const [submitted, setSubmitted] = useState(false);
 
   if (submitted) {
     return (
-      <div className="rounded-xl border-2 border-teal-300 bg-teal-50 p-8 sm:p-10">
+      <div className="hk-pop rounded-2xl border-2 border-teal-300 bg-teal-50 p-8 sm:p-10">
         <h2 className="mb-4 text-3xl">Başvuru toplama henüz açılmadı</h2>
         <p className="mb-4 text-lg text-ink-800">
           Girdiğiniz bilgiler <strong>hiçbir yere gönderilmedi</strong> ve
@@ -36,7 +36,7 @@ export function ExpertApplicationForm() {
         <button
           type="button"
           onClick={() => setSubmitted(false)}
-          className="min-h-[3.25rem] rounded-lg border-2 border-teal-700 bg-white px-7 text-lg font-semibold text-teal-800 transition-colors hover:bg-white/60"
+          className="min-h-[3.25rem] rounded-xl border-2 border-teal-700 bg-white px-7 text-lg font-semibold text-teal-800 hover:-translate-y-px hover:bg-white/70 active:scale-[0.97]"
         >
           Forma dönün
         </button>
@@ -54,7 +54,14 @@ export function ExpertApplicationForm() {
     >
       <div className="grid gap-7 sm:grid-cols-2">
         <Field label="Ad ve soyad" htmlFor="ad">
-          <input id="ad" name="ad" type="text" required className={FIELD} />
+          <input
+            id="ad"
+            name="ad"
+            type="text"
+            autoComplete="name"
+            required
+            className={FIELD}
+          />
         </Field>
 
         <Field label="E-posta adresi" htmlFor="eposta">
@@ -62,6 +69,7 @@ export function ExpertApplicationForm() {
             id="eposta"
             name="eposta"
             type="email"
+            autoComplete="email"
             required
             className={FIELD}
           />
@@ -79,11 +87,23 @@ export function ExpertApplicationForm() {
         </Field>
 
         <Field label="Şehir" htmlFor="sehir">
-          <input id="sehir" name="sehir" type="text" className={FIELD} />
+          <input
+            id="sehir"
+            name="sehir"
+            type="text"
+            autoComplete="address-level2"
+            className={FIELD}
+          />
         </Field>
 
         <Field label="Telefon" htmlFor="telefon" optional>
-          <input id="telefon" name="telefon" type="tel" className={FIELD} />
+          <input
+            id="telefon"
+            name="telefon"
+            type="tel"
+            autoComplete="tel"
+            className={FIELD}
+          />
         </Field>
       </div>
 
@@ -126,7 +146,7 @@ export function ExpertApplicationForm() {
 
       <button
         type="submit"
-        className="min-h-[3.5rem] w-full rounded-lg bg-teal-700 px-7 text-lg font-semibold text-white transition-colors hover:bg-teal-800 sm:w-auto"
+        className="min-h-[3.5rem] w-full rounded-xl bg-teal-700 px-7 text-lg font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.97] sm:w-auto"
       >
         Ön başvuruyu gönderin
       </button>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   ButtonLink,
+  Card,
   Container,
   Eyebrow,
   Notice,
@@ -18,10 +19,10 @@ export const metadata: Metadata = {
 export default function DogrulamaSayfasi() {
   return (
     <>
-      <div className="bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
+      <div className="hk-atmosphere bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
         <Container>
-          <h1 className="mb-5 text-4xl sm:text-5xl">Uzman doğrulama</h1>
-          <p className="max-w-2xl text-xl text-ink-700">
+          <h1 className="hk-enter mb-5 text-4xl sm:text-5xl">Uzman doğrulama</h1>
+          <p className="hk-enter max-w-2xl text-xl text-ink-700" style={{ animationDelay: "70ms" }}>
             Kimin karşınıza çıktığı, en az ne konuştuğunuz kadar önemli.
             Doğrulamayı nasıl yaptığımızı ve neyi paylaşıp neyi paylaşmadığımızı
             açıkça yazıyoruz.
@@ -59,20 +60,21 @@ export default function DogrulamaSayfasi() {
                 d: "Süreci tamamlayan uzmanın profilinde yalnızca tek bir ifade yer alır: “Hipokampüs doğrulama sürecini tamamladı.”",
               },
             ].map((item, i) => (
-              <li
-                key={item.t}
-                className="flex gap-6 rounded-lg border border-ink-200 bg-white p-6"
-              >
-                <span
-                  aria-hidden
-                  className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-700 font-[family-name:var(--font-display)] text-lg text-white"
-                >
-                  {i + 1}
-                </span>
-                <span>
-                  <span className="block text-xl text-ink-900">{item.t}</span>
-                  <span className="block text-ink-700">{item.d}</span>
-                </span>
+              <li key={item.t}>
+                <Card className="flex gap-6 p-6">
+                  <span
+                    aria-hidden
+                    className="flex size-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-teal-600 to-teal-800 font-[family-name:var(--font-display)] text-lg text-white shadow-[var(--shadow-soft)]"
+                  >
+                    {i + 1}
+                  </span>
+                  <span>
+                    <span className="block text-xl text-ink-900">
+                      {item.t}
+                    </span>
+                    <span className="block text-ink-700">{item.d}</span>
+                  </span>
+                </Card>
               </li>
             ))}
           </ol>
@@ -113,7 +115,7 @@ export default function DogrulamaSayfasi() {
               </p>
             </div>
 
-            <div className="rounded-xl border border-ink-200 bg-white p-7">
+            <div className="rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)]">
               <div className="mb-6 flex items-center gap-4 border-b border-ink-100 pb-6">
                 <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-teal-50">
                   <Logo variant="symbol" decorative className="h-9" />
@@ -162,7 +164,7 @@ export default function DogrulamaSayfasi() {
           </Notice>
 
           <div className="mt-10">
-            <ButtonLink href="/uzman/basvuru">
+            <ButtonLink href="/uzman/basvuru" withArrow>
               Uzman ön başvurusu
             </ButtonLink>
           </div>
