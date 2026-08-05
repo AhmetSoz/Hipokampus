@@ -18,7 +18,7 @@ export default async function PanelLayout({
     return (
       <div className="bg-paper-warm py-20">
         <div className="mx-auto max-w-2xl px-6">
-          <div className="rounded-xl border-2 border-sand-400 bg-sand-100 p-8 sm:p-10">
+          <div className="rounded-2xl border-2 border-sand-400 bg-sand-100 p-8 shadow-[var(--shadow-soft)] sm:p-10">
             <h1 className="mb-4 text-3xl">Erişiminiz şu anda askıda</h1>
             <p className="mb-4 text-lg text-ink-800">
               {consultant.name}, bu panele erişiminizi geçici olarak durdurdu.
@@ -30,7 +30,7 @@ export default async function PanelLayout({
             </p>
             <Link
               href="/giris"
-              className="inline-flex min-h-[3.25rem] items-center rounded-lg border-2 border-ink-300 bg-white px-7 text-lg font-semibold text-ink-800"
+              className="inline-flex min-h-[3.25rem] items-center rounded-xl border-2 border-ink-300 bg-white px-7 text-lg font-semibold text-ink-800 hover:-translate-y-px hover:bg-white/70 active:scale-[0.97]"
             >
               Başka bir kişiyle bakın
             </Link>
@@ -43,7 +43,7 @@ export default async function PanelLayout({
   return (
     <div className="bg-paper-warm">
       <div className="mx-auto w-full max-w-6xl px-6 py-10 sm:px-8">
-        <div className="mb-8 flex flex-wrap items-start justify-between gap-4 rounded-xl border border-ink-200 bg-white p-6">
+        <div className="mb-8 flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)]">
           <div>
             <p className="text-base text-ink-500">Panel sahibi</p>
             <p className="text-2xl text-ink-900">{consultant.name}</p>

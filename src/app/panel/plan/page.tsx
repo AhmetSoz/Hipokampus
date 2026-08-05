@@ -53,7 +53,7 @@ export default async function BakimPlaniSayfasi() {
           return (
             <li
               key={item.id}
-              className="rounded-xl border border-ink-200 bg-white p-7"
+              className="rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)]"
             >
               <div className="mb-3 flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
                 <h2 className="flex gap-4 text-xl text-ink-900">

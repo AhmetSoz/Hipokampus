@@ -37,7 +37,7 @@ export function PanelNav({ member }: { member: FamilyMember }) {
           if (locked) {
             return (
               <li key={item.href}>
-                <span className="flex items-center justify-between gap-3 rounded-lg border border-ink-200 bg-ink-100 px-5 py-4 text-ink-600">
+                <span className="flex items-center justify-between gap-3 rounded-xl border border-ink-200 bg-ink-100 px-5 py-4 text-ink-600">
                   <span>{item.label}</span>
                   <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden>
                     <path
@@ -61,10 +61,10 @@ export function PanelNav({ member }: { member: FamilyMember }) {
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-[3.5rem] items-center rounded-lg border px-5 py-4 transition-colors ${
+                className={`flex min-h-[3.5rem] items-center rounded-xl border px-5 py-4 ${
                   active
-                    ? "border-teal-700 bg-teal-700 font-semibold text-white"
-                    : "border-ink-200 bg-white text-ink-800 hover:border-teal-400 hover:bg-teal-50"
+                    ? "border-teal-700 bg-teal-700 font-semibold text-white shadow-[var(--shadow-card)]"
+                    : "border-ink-200 bg-white text-ink-800 hover:-translate-y-px hover:border-teal-300 hover:bg-teal-50 hover:shadow-[var(--shadow-soft)]"
                 }`}
               >
                 {item.label}
@@ -74,7 +74,7 @@ export function PanelNav({ member }: { member: FamilyMember }) {
         })}
       </ul>
 
-      <p className="mt-5 rounded-lg border border-ink-200 bg-white px-5 py-4 text-base text-ink-600">
+      <p className="mt-5 rounded-xl border border-ink-200 bg-white px-5 py-4 text-base text-ink-600 shadow-[var(--shadow-soft)]">
         Kilitli bölümler, erişim yetkiniz olmadığı için kapalıdır. Yetkiyi
         yalnızca panel sahibi verebilir.
       </p>

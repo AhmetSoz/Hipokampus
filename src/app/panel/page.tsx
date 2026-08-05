@@ -40,7 +40,7 @@ export default async function PanelGenelBakis() {
 
       {canSeeHealth ? (
         <>
-          <section className="rounded-xl border border-ink-200 bg-white p-7">
+          <section className="rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-7">
             <div className="mb-6 flex flex-wrap items-baseline justify-between gap-4">
               <h2 className="text-2xl">Sıradaki adımlar</h2>
               <Link
@@ -59,7 +59,7 @@ export default async function PanelGenelBakis() {
               {open.slice(0, 3).map((item) => (
                 <li
                   key={item.id}
-                  className="rounded-lg border border-ink-200 bg-paper-warm p-5"
+                  className="rounded-xl border border-ink-200 bg-paper-warm p-5 shadow-[var(--shadow-soft)]"
                 >
                   <p className="mb-1 text-lg font-semibold text-ink-900">
                     {item.title}
@@ -74,7 +74,7 @@ export default async function PanelGenelBakis() {
           </section>
 
           {expert && (
-            <section className="rounded-xl border border-ink-200 bg-white p-7">
+            <section className="rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-7">
               <h2 className="mb-4 text-2xl">Görüştüğünüz uzman</h2>
               <p className="text-lg text-ink-900">{expert.name}</p>
               <p className="mb-4 text-ink-600">
@@ -82,7 +82,7 @@ export default async function PanelGenelBakis() {
               </p>
               <Link
                 href="/panel/mesajlar"
-                className="inline-flex min-h-[3.25rem] items-center rounded-lg border-2 border-teal-700 px-6 font-semibold text-teal-800 transition-colors hover:bg-teal-50"
+                className="inline-flex min-h-[3.25rem] items-center rounded-xl border-2 border-teal-700 px-6 font-semibold text-teal-800 hover:-translate-y-px hover:bg-teal-50 hover:shadow-[var(--shadow-card)] active:scale-[0.97]"
               >
                 Danışma dosyasını açın
               </Link>
@@ -102,7 +102,7 @@ export default async function PanelGenelBakis() {
         </Notice>
       )}
 
-      <section className="rounded-xl border border-ink-200 bg-white p-7">
+      <section className="rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-7">
         <h2 className="mb-4 text-2xl">Erişiminiz</h2>
         <p className="mb-5 text-ink-700">
           Panelde neyi görüp neyi göremediğinizi ve bunu kimin belirlediğini
@@ -110,7 +110,7 @@ export default async function PanelGenelBakis() {
         </p>
         <Link
           href="/panel/erisim"
-          className="inline-flex min-h-[3.25rem] items-center rounded-lg border-2 border-teal-700 px-6 font-semibold text-teal-800 transition-colors hover:bg-teal-50"
+          className="inline-flex min-h-[3.25rem] items-center rounded-xl border-2 border-teal-700 px-6 font-semibold text-teal-800 hover:-translate-y-px hover:bg-teal-50 hover:shadow-[var(--shadow-card)] active:scale-[0.97]"
         >
           Erişim ve izinler
         </Link>

@@ -16,6 +16,26 @@ const ROLE_LABEL = {
   "aile-uyesi": "Aile üyesi",
 } as const;
 
+function Avatar({ name, muted }: { name: string; muted: boolean }) {
+  const initials = name
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("");
+  return (
+    <span
+      aria-hidden
+      className={`flex size-14 shrink-0 items-center justify-center rounded-full font-[family-name:var(--font-display)] text-xl text-white shadow-[var(--shadow-soft)] ${
+        muted
+          ? "bg-ink-300"
+          : "bg-linear-to-br from-teal-600 to-teal-800"
+      }`}
+    >
+      {initials}
+    </span>
+  );
+}
+
 export default async function GirisSayfasi() {
   const [members, consultant] = await Promise.all([
     listDemoMembers(),
@@ -23,23 +43,34 @@ export default async function GirisSayfasi() {
   ]);
 
   return (
-    <div className="bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
+    <div className="hk-atmosphere bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
       <Container>
-        <h1 className="mb-4 text-4xl sm:text-5xl">Panele giriş</h1>
-        <p className="mb-8 max-w-2xl text-xl text-ink-700">
-          Hipokampüs geliştirme aşamasındadır ve <strong>kayıt kapalıdır</strong>.
-          Paneli, {consultant.name} ailesinin örnek kaydı üzerinden
-          inceleyebilirsiniz.
+        <p className="hk-enter mb-4 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
+          Demo panel
+        </p>
+        <h1 className="hk-enter mb-4 text-4xl sm:text-5xl" style={{ animationDelay: "60ms" }}>
+          Anlatmak yerine gösterelim
+        </h1>
+        <p
+          className="hk-enter mb-8 max-w-2xl text-xl text-ink-700"
+          style={{ animationDelay: "120ms" }}
+        >
+          Kayıt kapalı. Paneli, {consultant.name} ailesinin örnek kaydı
+          üzerinden hemen inceleyebilirsiniz.
         </p>
 
-        <div className="mb-8">
+        <div className="hk-enter mb-8" style={{ animationDelay: "160ms" }}>
           <DemoNotice>
             Parola sorulmuyor, hesap açılmıyor, hiçbir kişisel veri toplanmıyor.
             Yalnızca hangi kişinin gözünden bakacağınızı seçiyorsunuz.
           </DemoNotice>
         </div>
 
-        <form action={selectDemoMember}>
+        <form
+          action={selectDemoMember}
+          className="hk-enter"
+          style={{ animationDelay: "220ms" }}
+        >
           <fieldset>
             <legend className="mb-2 text-2xl text-ink-900">
               Kimin gözünden bakmak istersiniz?
@@ -55,19 +86,20 @@ export default async function GirisSayfasi() {
                 return (
                   <label
                     key={m.id}
-                    className={`flex cursor-pointer items-start gap-4 rounded-xl border-2 p-6 transition-colors ${
+                    className={`flex cursor-pointer items-start gap-4 rounded-2xl border-2 p-6 shadow-[var(--shadow-soft)] ${
                       suspended
                         ? "border-ink-200 bg-ink-100"
-                        : "border-ink-200 bg-white hover:border-teal-400"
-                    } has-checked:border-teal-700 has-checked:bg-teal-50`}
+                        : "border-ink-200 bg-white hover:-translate-y-px hover:border-teal-300 hover:shadow-[var(--shadow-card)]"
+                    } has-checked:border-teal-700 has-checked:bg-teal-50 has-checked:shadow-[var(--shadow-card)]`}
                   >
                     <input
                       type="radio"
                       name="uye"
                       value={m.id}
                       defaultChecked={i === 1}
-                      className="mt-1.5 size-5 shrink-0 accent-teal-700"
+                      className="peer sr-only"
                     />
+                    <Avatar name={m.name} muted={suspended} />
                     <span className="min-w-0 flex-1">
                       <span className="flex flex-wrap items-baseline gap-x-3">
                         <span className="text-xl font-semibold text-ink-900">
@@ -97,6 +129,26 @@ export default async function GirisSayfasi() {
                         </span>
                       )}
                     </span>
+                    <span
+                      aria-hidden
+                      className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-ink-300 text-white peer-checked:border-teal-700 peer-checked:bg-teal-700"
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 14 14"
+                        className="hidden peer-checked:block"
+                      >
+                        <path
+                          d="M2.5 7.2 5.5 10l6-7"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          fill="none"
+                        />
+                      </svg>
+                    </span>
                   </label>
                 );
               })}
@@ -105,13 +157,13 @@ export default async function GirisSayfasi() {
 
           <button
             type="submit"
-            className="mt-8 min-h-[3.5rem] w-full rounded-lg bg-teal-700 px-7 text-lg font-semibold text-white transition-colors hover:bg-teal-800 sm:w-auto"
+            className="mt-8 min-h-[3.5rem] w-full rounded-xl bg-teal-700 px-7 text-lg font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.98] sm:w-auto"
           >
             Panele girin
           </button>
         </form>
 
-        <div className="mt-12">
+        <div className="hk-enter mt-12" style={{ animationDelay: "280ms" }}>
           <Notice tone="teal" title="Neden herkes aynı şeyi görmüyor?">
             <p>
               Hipokampüs&apos;te <strong>ödeme yapmak, sağlık ve görüşme

@@ -27,7 +27,7 @@ export default async function UzmanPanelLayout({
           </DemoNotice>
         </div>
 
-        <div className="mb-8 flex flex-wrap items-start justify-between gap-4 rounded-xl border border-ink-200 bg-white p-6">
+        <div className="mb-8 flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-6">
           <div>
             <p className="text-base text-ink-500">Uzman paneli</p>
             <p className="text-2xl text-ink-900">{expert?.name}</p>
@@ -50,7 +50,7 @@ export default async function UzmanPanelLayout({
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="flex min-h-[3.5rem] items-center rounded-lg border border-ink-200 bg-white px-5 py-4 text-ink-800 transition-colors hover:border-teal-400 hover:bg-teal-50"
+                    className="flex min-h-[3.5rem] items-center rounded-xl border border-ink-200 bg-white px-5 py-4 text-ink-800 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:border-teal-300 hover:bg-teal-50"
                   >
                     {item.label}
                   </Link>

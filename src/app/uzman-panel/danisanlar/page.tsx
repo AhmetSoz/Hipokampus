@@ -27,7 +27,7 @@ export default async function DanisanlarSayfasi() {
         </p>
       </div>
 
-      <article className="rounded-xl border border-ink-200 bg-white p-7">
+      <article className="rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-7">
         <h2 className="mb-1 text-2xl">{consultant.name}</h2>
         <p className="mb-5 text-ink-600">
           {consultant.city} · {new Date().getFullYear() - consultant.birthYear}{" "}
@@ -55,7 +55,7 @@ export default async function DanisanlarSayfasi() {
       </article>
 
       {/* Uzmanın bilmesi gereken: yazdığı şeyi kim görecek */}
-      <section className="rounded-xl border-2 border-teal-300 bg-teal-50 p-7">
+      <section className="rounded-2xl border-2 border-teal-300 bg-teal-50 p-7 shadow-[var(--shadow-soft)]">
         <h2 className="mb-3 text-2xl">Yazdıklarınızı kim görüyor?</h2>
         <p className="mb-5 text-ink-800">
           Bu danışanın panelinde sağlık ve görüşme kapsamına{" "}

@@ -53,7 +53,7 @@ export default async function ErisimSayfasi() {
       </Notice>
 
       {/* Kapsam ızgarası — tek bir "rol" seviyesi yerine iki eksen */}
-      <section className="overflow-x-auto rounded-xl border border-ink-200 bg-white">
+      <section className="overflow-x-auto rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)]">
         <table className="w-full min-w-[46rem] border-collapse">
           <caption className="border-b border-ink-200 p-6 text-left">
             <span className="block text-2xl text-ink-900">Kim neyi görüyor</span>
@@ -134,7 +134,7 @@ export default async function ErisimSayfasi() {
         {SCOPES.map((s) => (
           <div
             key={s}
-            className="rounded-lg border border-ink-200 bg-white p-6"
+            className="rounded-xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)]"
           >
             <p className="mb-2 font-semibold text-teal-800">{SCOPE_LABEL[s]}</p>
             <p className="text-base text-ink-700">{SCOPE_DESCRIPTION[s]}</p>
@@ -163,7 +163,7 @@ export default async function ErisimSayfasi() {
       )}
 
       {/* Erişim kaydı — sektörde neredeyse hiç yok, en ucuz güven aracı */}
-      <section className="rounded-xl border border-ink-200 bg-white p-7">
+      <section className="rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-7">
         <h2 className="mb-2 text-2xl">Erişim kaydı</h2>
         <p className="mb-6 text-ink-600">
           Kim, ne zaman, hangi bölümü açtı. Bu kayıt {consultant.name} ve

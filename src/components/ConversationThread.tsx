@@ -59,7 +59,7 @@ export function ConversationThread({
   return (
     <div className="space-y-6">
       {/* Dosya başlığı — "sohbet" değil, adı olan bir iş */}
-      <header className="rounded-xl border border-ink-200 bg-white p-6">
+      <header className="rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-6">
         <p className="mb-1 text-base text-ink-600">Danışma dosyası</p>
         <h1 className="mb-4 text-2xl sm:text-3xl">{conversation.subject}</h1>
 
@@ -101,7 +101,7 @@ export function ConversationThread({
       </header>
 
       {waiting && viewer === "danisan" && (
-        <p className="rounded-lg border-l-4 border-teal-300 bg-teal-50 p-5 text-ink-800">
+        <p className="rounded-xl border-l-4 border-teal-300 bg-teal-50 p-5 text-ink-800 shadow-[var(--shadow-soft)]">
           Mesajınız uzmana iletildi.{" "}
           <strong>{RESPONSE_COMMITMENT.toLocaleLowerCase("tr")} yanıt</strong>{" "}
           alacaksınız. Bu süre aşılırsa size seçenek sunulur; sessizce
@@ -117,7 +117,7 @@ export function ConversationThread({
           return (
             <li
               key={m.id}
-              className={`rounded-xl border p-6 ${
+              className={`rounded-2xl border p-6 shadow-[var(--shadow-soft)] ${
                 m.author === "uzman"
                   ? "border-teal-200 bg-teal-50"
                   : "border-ink-200 bg-white"
@@ -146,7 +146,7 @@ export function ConversationThread({
       </ol>
 
       {conversation.status === "tamamlandi" ? (
-        <div className="rounded-xl border-2 border-teal-700 bg-white p-7">
+        <div className="rounded-2xl border-2 border-teal-700 bg-white p-7 shadow-[var(--shadow-soft)]">
           <p className="mb-2 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
             Teslim edildi
           </p>
@@ -157,7 +157,7 @@ export function ConversationThread({
           </p>
           <a
             href="/panel/plan"
-            className="inline-flex min-h-[3.25rem] items-center rounded-lg bg-teal-700 px-7 text-lg font-semibold text-white transition-colors hover:bg-teal-800"
+            className="inline-flex min-h-[3.25rem] items-center rounded-xl bg-teal-700 px-7 text-lg font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.97]"
           >
             Bakım planını açın
           </a>
@@ -169,7 +169,7 @@ export function ConversationThread({
       ) : (
         <form
           action={sendMessage}
-          className="rounded-xl border border-ink-200 bg-white p-6"
+          className="rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-6"
         >
           <input type="hidden" name="dosya" value={conversation.id} />
           <input type="hidden" name="taraf" value={viewer} />
@@ -185,7 +185,7 @@ export function ConversationThread({
             name="mesaj"
             rows={4}
             required
-            className="min-h-[7rem] w-full rounded-lg border-2 border-ink-200 bg-white px-4 py-3 text-lg leading-relaxed text-ink-900 transition-colors focus:border-teal-600"
+            className="min-h-[7rem] w-full rounded-xl border-2 border-ink-200 bg-white px-4 py-3 text-lg leading-relaxed text-ink-900 focus:border-teal-600"
           />
 
           <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
@@ -196,7 +196,7 @@ export function ConversationThread({
             </p>
             <button
               type="submit"
-              className="min-h-[3.75rem] rounded-lg bg-teal-700 px-8 text-lg font-semibold text-white transition-colors hover:bg-teal-800"
+              className="min-h-[3.75rem] rounded-xl bg-teal-700 px-8 text-lg font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.97]"
             >
               Gönderin
             </button>

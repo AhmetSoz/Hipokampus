@@ -35,7 +35,7 @@ export default async function UzmanPanelGenelBakis() {
         ].map((s) => (
           <div
             key={s.t}
-            className="rounded-xl border border-ink-200 bg-white p-6"
+            className="rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-6"
           >
             <p className="text-base text-ink-600">{s.t}</p>
             <p className="font-[family-name:var(--font-display)] text-4xl text-ink-900">
@@ -45,7 +45,7 @@ export default async function UzmanPanelGenelBakis() {
         ))}
       </div>
 
-      <section className="rounded-xl border border-ink-200 bg-white p-7">
+      <section className="rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-7">
         <h2 className="mb-5 text-2xl">Dosyalarınız</h2>
         {conversations.length === 0 ? (
           <p className="text-ink-700">Henüz dosyanız yok.</p>
@@ -55,7 +55,7 @@ export default async function UzmanPanelGenelBakis() {
               <li key={c.id}>
                 <Link
                   href={`/uzman-panel/mesajlar/${c.id}`}
-                  className="block rounded-lg border border-ink-200 bg-paper-warm p-5 transition-colors hover:border-teal-400"
+                  className="block rounded-xl border border-ink-200 bg-paper-warm p-5 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:border-teal-300 hover:shadow-[var(--shadow-card)]"
                 >
                   <p className="text-lg font-semibold text-ink-900">
                     {c.subject}

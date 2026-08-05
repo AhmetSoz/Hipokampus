@@ -51,7 +51,7 @@ export default async function MesajlarSayfasi() {
             <li key={c.id}>
               <Link
                 href={`/panel/mesajlar/${c.id}`}
-                className="block rounded-xl border border-ink-200 bg-white p-6 transition-colors hover:border-teal-400"
+                className="block rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)] hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-[var(--shadow-lift)]"
               >
                 <div className="mb-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                   <h2 className="text-xl text-ink-900">{c.subject}</h2>
