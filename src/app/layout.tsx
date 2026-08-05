@@ -48,6 +48,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${newsreader.variable} ${sourceSans.variable} h-full`}
     >
       <body className="flex min-h-full flex-col bg-paper">
+        {/* Kayıtlı okuma tercihlerini ilk boyamadan önce uygula —
+            yoksa sayfa açılırken yazı boyutu bir an sıçrıyor. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var r=document.documentElement;var s=localStorage.getItem("hk-text-size");if(s)r.dataset.textSize=s;var m=localStorage.getItem("hk-motion");if(m)r.dataset.motion=m;}catch(e){}`,
+          }}
+        />
         <a
           href="#icerik"
           className="sr-only rounded-md bg-teal-700 px-5 py-3 text-white focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50"

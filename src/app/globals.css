@@ -94,6 +94,16 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Kullanıcının seçtiği yazı boyutu. Kök punto ölçeklendiği için rem ile
+   tanımlanmış her şey birlikte büyüyor — düzen bozulmuyor. */
+html[data-text-size="buyuk"] {
+  font-size: 112.5%;
+}
+
+html[data-text-size="cok-buyuk"] {
+  font-size: 125%;
+}
+
 body {
   background-color: var(--color-paper);
   color: var(--color-ink-800);
@@ -141,8 +151,8 @@ p {
   color: var(--color-teal-900);
 }
 
-/* Hareket duyarlılığı: tüm imza hareketleri kapanır.
-   WebGL sahnesi bu tercihi ayrıca okur ve hiç başlatılmaz. */
+/* Hareket duyarlılığı: sistem ayarı VEYA arayüzdeki "hareketi azalt"
+   anahtarı. İkisi de aynı sonucu verir. WebGL sahnesi ikisini de okur. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -155,6 +165,18 @@ p {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+html[data-motion="az"] {
+  scroll-behavior: auto;
+}
+
+html[data-motion="az"] *,
+html[data-motion="az"] *::before,
+html[data-motion="az"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
 }
 
 /* ------------------------------------------------------------------ */

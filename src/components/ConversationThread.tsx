@@ -1,3 +1,4 @@
+import { sendMessage } from "@/app/actions/messages";
 import { RESPONSE_COMMITMENT } from "@/data/experts";
 import type { Conversation, ConversationStatus, Expert } from "@/data/types";
 
@@ -166,7 +167,13 @@ export function ConversationThread({
           </p>
         </div>
       ) : (
-        <div className="rounded-xl border border-ink-200 bg-white p-6">
+        <form
+          action={sendMessage}
+          className="rounded-xl border border-ink-200 bg-white p-6"
+        >
+          <input type="hidden" name="dosya" value={conversation.id} />
+          <input type="hidden" name="taraf" value={viewer} />
+
           <label
             htmlFor="yeni-mesaj"
             className="mb-3 block text-lg font-semibold text-ink-900"
@@ -175,16 +182,26 @@ export function ConversationThread({
           </label>
           <textarea
             id="yeni-mesaj"
+            name="mesaj"
             rows={4}
-            disabled
-            placeholder="Mesaj gönderme bu prototipte kapalıdır."
-            className="min-h-[7rem] w-full rounded-lg border-2 border-ink-200 bg-ink-100 px-4 py-3 text-lg text-ink-900"
+            required
+            className="min-h-[7rem] w-full rounded-lg border-2 border-ink-200 bg-white px-4 py-3 text-lg leading-relaxed text-ink-900 transition-colors focus:border-teal-600"
           />
-          {/* Acil durum uyarısı: üçüncü katman. Her mesajda değil, yalnızca burada. */}
-          <p className="mt-3 text-base text-ink-600">
-            Acil bir durum için mesaj yazmayın — 112&apos;yi arayın.
-          </p>
-        </div>
+
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+            {/* Acil durum uyarısı: üçüncü katman.
+                Her mesajın üstünde değil, yalnızca yazma alanının altında. */}
+            <p className="text-base text-ink-600">
+              Acil bir durum için mesaj yazmayın — 112&apos;yi arayın.
+            </p>
+            <button
+              type="submit"
+              className="min-h-[3.75rem] rounded-lg bg-teal-700 px-8 text-lg font-semibold text-white transition-colors hover:bg-teal-800"
+            >
+              Gönderin
+            </button>
+          </div>
+        </form>
       )}
     </div>
   );

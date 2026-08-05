@@ -23,8 +23,11 @@ export function MemoryTrail() {
     const host = hostRef.current;
     if (!host) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reduced.matches) return;
+    /* Hem sistem ayarı hem arayüzdeki "hareketi azalt" anahtarı dinlenir.
+       İkisinden biri açıksa sahne hiç kurulmaz — durdurulmaz, kurulmaz. */
+    const systemReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const userCalm = () => document.documentElement.dataset.motion === "az";
+    if (systemReduced.matches || userCalm()) return;
 
     let renderer: THREE.WebGLRenderer;
     try {
@@ -170,21 +173,34 @@ export function MemoryTrail() {
     };
     tick();
 
-    const onVisibility = () => {
-      if (document.hidden && running) {
-        cancelAnimationFrame(frame);
-        running = false;
-      } else if (!document.hidden && !running) {
-        running = true;
-        tick();
-      }
+    const pause = () => {
+      if (!running) return;
+      cancelAnimationFrame(frame);
+      running = false;
     };
+    const resume = () => {
+      if (running || document.hidden || userCalm()) return;
+      running = true;
+      tick();
+    };
+
+    const onVisibility = () => (document.hidden ? pause() : resume());
     document.addEventListener("visibilitychange", onVisibility);
+
+    // Kullanıcı "hareketi azalt" anahtarını çevirdiğinde anında uygula.
+    const motionWatcher = new MutationObserver(() =>
+      userCalm() ? pause() : resume(),
+    );
+    motionWatcher.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-motion"],
+    });
 
     /* --- Temizlik ------------------------------------------------------- */
     return () => {
       cancelAnimationFrame(frame);
       document.removeEventListener("visibilitychange", onVisibility);
+      motionWatcher.disconnect();
       observer.disconnect();
       trails.forEach(({ mesh }) => {
         mesh.geometry.dispose();

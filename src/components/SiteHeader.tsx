@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "./Logo";
+import { ReadingControls } from "./ReadingControls";
 
 const nav = [
   { href: "/nasil-calisir", label: "Nasıl çalışır" },
@@ -18,6 +19,14 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-ink-100 bg-paper/90 backdrop-blur-sm">
+      {/* Okuma denetimleri her sayfada aynı yerde durur — hem erişilebilirlik
+          hem de "yardım tutarlılığı" (WCAG 3.2.6) gereği. */}
+      <div className="border-b border-ink-100 bg-paper-warm">
+        <div className="mx-auto flex w-full max-w-6xl justify-end px-6 py-2 sm:px-8">
+          <ReadingControls compact />
+        </div>
+      </div>
+
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-3 sm:px-8">
         <Link
           href="/"

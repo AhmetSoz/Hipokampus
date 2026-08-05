@@ -1,4 +1,4 @@
-import type { Conversation } from "./types";
+import type { Conversation, MessageAuthor } from "./types";
 
 /**
  * ÖRNEK DANIŞMA DOSYALARI — TEMSİLÎDİR.
@@ -90,6 +90,41 @@ const CONVERSATIONS: Conversation[] = [
     ],
   },
 ];
+
+/**
+ * Mesaj ekler.
+ *
+ * Prototipte veri bellekte tutuluyor; sunucu yeniden başlayınca sıfırlanır.
+ * Veritabanına geçildiğinde yalnızca bu fonksiyonun içi değişecek —
+ * çağıran ekranlar aynı kalacak.
+ *
+ * NOT: Riskli ifade tetikleyicisi (anahtar kelime taraması) BİLEREK
+ * uygulanmadı. Kilitli karar: "v1'de NLP/otomatik acil durum tespiti yok."
+ * Acil durum yalnızca ihtiyaç formunun başındaki tek açık soruyla ele alınır.
+ */
+export async function addMessage(
+  conversationId: string,
+  author: MessageAuthor,
+  authorName: string,
+  body: string,
+): Promise<void> {
+  const conversation = CONVERSATIONS.find((c) => c.id === conversationId);
+  if (!conversation || conversation.status === "tamamlandi") return;
+
+  const text = body.trim();
+  if (!text) return;
+
+  conversation.messages.push({
+    id: `m${Date.now()}`,
+    author,
+    authorName,
+    body: text,
+    sentAt: new Date().toISOString(),
+  });
+
+  // Danışan yazdıysa top uzmanda; uzman yazdıysa dosya yeniden açık.
+  conversation.status = author === "danisan" ? "yanit-bekliyor" : "acik";
+}
 
 export async function listConversations(): Promise<Conversation[]> {
   return [...CONVERSATIONS].sort((a, b) => {
