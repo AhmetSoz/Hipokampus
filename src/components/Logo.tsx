@@ -37,6 +37,7 @@ export function Logo({
   className = "h-12",
   priority = false,
   decorative = false,
+  animate = false,
 }: {
   variant?: LogoVariant;
   /**
@@ -48,10 +49,18 @@ export function Logo({
   priority?: boolean;
   /** Yanında zaten "Hipokampüs" yazıyorsa true verin. */
   decorative?: boolean;
+  /**
+   * Bir kerelik "elle çiziliyor" açılış efekti — maske ile üstten alta
+   * açığa çıkma + kenarı takip eden ince bir mürekkep-ucu çizgisi. Varlık
+   * hâlâ tasarımcı teslimi raster; yalnızca ilk görünüşü animasyonlu.
+   * Sayfa içinde tekrarlayan yerlerde (header gibi) kullanın, aynı öğeyi
+   * defalarca yeniden oynatmayın.
+   */
+  animate?: boolean;
 }) {
   const asset = ASSETS[variant];
 
-  return (
+  const img = (
     <Image
       src={asset.src}
       width={asset.width}
@@ -59,7 +68,11 @@ export function Logo({
       priority={priority}
       alt={decorative ? "" : "Hipokampüs"}
       aria-hidden={decorative || undefined}
-      className={`w-auto ${className}`}
+      className={`w-auto ${className} ${animate ? "hk-logo-reveal-img" : ""}`}
     />
   );
+
+  if (!animate) return img;
+
+  return <span className="hk-logo-reveal">{img}</span>;
 }

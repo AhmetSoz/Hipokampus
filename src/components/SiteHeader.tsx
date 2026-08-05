@@ -79,7 +79,7 @@ export function SiteHeader() {
           aria-label="Hipokampüs ana sayfa"
           onClick={() => setOpen(false)}
         >
-          <Logo className="h-14 sm:h-16" priority />
+          <Logo className="h-14 sm:h-16" priority animate />
         </Link>
 
         <nav aria-label="Ana menü" className="hidden items-center gap-1 md:flex">
