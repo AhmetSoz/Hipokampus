@@ -289,24 +289,6 @@ html[data-motion="az"] *::after {
   }
 }
 
-/* Hero zemini için çok yavaş, çok hafif bir nefes efekti. Arka plan
-   animasyonu DEĞİL — sabit bir gradyan kompozisyonunun üstünde, saatte
-   bir kez fark edilecek kadar yavaş bir odak kayması. hareketi azalt
-   açıkken (yukarıdaki kural) tamamen durur. */
-@keyframes hk-drift {
-  0%,
-  100% {
-    background-position:
-      18% 12%,
-      82% 78%;
-  }
-  50% {
-    background-position:
-      24% 18%,
-      76% 72%;
-  }
-}
-
 .hk-enter {
   animation: hk-fade-up 0.7s var(--ease-calm) both;
 }
@@ -319,25 +301,44 @@ html[data-motion="az"] *::after {
   animation: hk-scale-in var(--dur-slow) var(--ease-calm) both;
 }
 
-/* Zemin kompozisyonu — WebGL/video yerine geçen, saf CSS, GPU'da ucuz,
-   tek seferlik boyanan katman. Yalnızca kilitli iki renk (turkuaz + açık
-   mavi) kullanılır; turuncu/sıcak kum tamamen çıkarıldı. */
-.hk-atmosphere {
-  background-image:
-    radial-gradient(
-      42rem 34rem at 14% 8%,
-      color-mix(in oklab, var(--color-teal-300) 65%, transparent),
-      transparent 62%
-    ),
-    radial-gradient(
-      38rem 32rem at 86% 82%,
-      color-mix(in oklab, var(--color-sky-500) 45%, transparent),
-      transparent 68%
-    ),
-    radial-gradient(
-      30rem 26rem at 70% 6%,
-      color-mix(in oklab, var(--color-sky-300) 55%, transparent),
-      transparent 70%
-    );
-  animation: hk-drift 26s ease-in-out infinite;
+/*
+  MARKA ÇİZGİSİ — jenerik "yumuşak gradyan lekesi" yerine.
+
+  YÖN (2026-08-05, ikinci düzeltme): sahibi bulanık pastel gradyan blob'unu
+  "herkesin/Claude'nin yaptığı klasik bir standart" olarak nitelendirip
+  reddetti; kendini yansıtan, özgün bir şey istedi. Bu jenerik dekorasyon
+  yerine markanın KENDİ hikâyesi kullanılıyor: logo Konsept 3 "Hafıza
+  Yolu"nun iz çizgisi + uç nokta motifi, hero'da büyük ölçekte tek bir
+  akan çizgi olarak tekrar ediyor (bkz. src/components/BrandPath.tsx).
+  Bulanıklık yok, blur yok — net, ince, kendinden emin bir çizgi.
+*/
+@keyframes hk-draw {
+  from {
+    stroke-dashoffset: var(--hk-len, 2400);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hk-draw-path {
+  stroke-dasharray: var(--hk-len, 2400);
+  animation: hk-draw 2.4s var(--ease-calm) 0.1s both;
+}
+
+@keyframes hk-mark-in {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hk-draw-mark {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: hk-mark-in 0.5s var(--ease-snap) 2.3s both;
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ExpertApplicationForm } from "@/components/ExpertApplicationForm";
+import { BrandPath } from "@/components/BrandPath";
 import { Card, Container, Eyebrow } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -11,21 +12,26 @@ export const metadata: Metadata = {
 
 export default function UzmanBasvurusuSayfasi() {
   return (
-    <div className="hk-atmosphere bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
-      <Container>
-        <Eyebrow>Uzmanlar için</Eyebrow>
-        <h1 className="hk-enter mb-5 text-4xl sm:text-5xl">
-          Uzman ön başvurusu
-        </h1>
-        <p
-          className="hk-enter mb-10 max-w-2xl text-xl text-ink-700"
-          style={{ animationDelay: "70ms" }}
-        >
-          Hipokampüs&apos;ü uzman ve akademisyenlerin katkısıyla geliştiriyoruz.
-          Platformun nasıl kurulacağına dair kararlar hâlâ alınıyor; bu süreçte
-          yanımızda olmak isterseniz ön başvurunuzu bırakabilirsiniz.
-        </p>
+    <div className="bg-paper">
+      <div className="relative isolate overflow-hidden bg-sky-50 py-16 sm:pb-10 sm:pt-20">
+        <BrandPath className="absolute inset-0 h-full w-full opacity-70" />
+        <Container className="relative">
+          <Eyebrow>Uzmanlar için</Eyebrow>
+          <h1 className="hk-enter mb-5 text-4xl sm:text-5xl">
+            Uzman ön başvurusu
+          </h1>
+          <p
+            className="hk-enter max-w-2xl text-xl text-ink-700"
+            style={{ animationDelay: "70ms" }}
+          >
+            Hipokampüs&apos;ü uzman ve akademisyenlerin katkısıyla geliştiriyoruz.
+            Platformun nasıl kurulacağına dair kararlar hâlâ alınıyor; bu süreçte
+            yanımızda olmak isterseniz ön başvurunuzu bırakabilirsiniz.
+          </p>
+        </Container>
+      </div>
 
+      <Container className="py-10 sm:py-12">
         <div className="mb-12 grid gap-4 sm:grid-cols-3">
           {[
             {

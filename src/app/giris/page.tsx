@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BrandPath } from "@/components/BrandPath";
 import { Container, DemoNotice, Notice } from "@/components/ui";
 import { getConsultant } from "@/data/household";
 import { listDemoMembers } from "@/data/session";
@@ -43,22 +44,30 @@ export default async function GirisSayfasi() {
   ]);
 
   return (
-    <div className="hk-atmosphere bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
-      <Container>
-        <p className="hk-enter mb-4 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
-          Demo panel
-        </p>
-        <h1 className="hk-enter mb-4 text-4xl sm:text-5xl" style={{ animationDelay: "60ms" }}>
-          Anlatmak yerine gösterelim
-        </h1>
-        <p
-          className="hk-enter mb-8 max-w-2xl text-xl text-ink-700"
-          style={{ animationDelay: "120ms" }}
-        >
-          Kayıt kapalı. Paneli, {consultant.name} ailesinin örnek kaydı
-          üzerinden hemen inceleyebilirsiniz.
-        </p>
+    <div className="bg-paper">
+      <div className="relative isolate overflow-hidden bg-sky-50 py-16 sm:pb-12 sm:pt-20">
+        <BrandPath className="absolute inset-0 h-full w-full opacity-70" />
+        <Container className="relative">
+          <p className="hk-enter mb-4 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
+            Demo panel
+          </p>
+          <h1
+            className="hk-enter mb-4 text-4xl sm:text-5xl"
+            style={{ animationDelay: "60ms" }}
+          >
+            Anlatmak yerine gösterelim
+          </h1>
+          <p
+            className="hk-enter max-w-2xl text-xl text-ink-700"
+            style={{ animationDelay: "120ms" }}
+          >
+            Kayıt kapalı. Paneli, {consultant.name} ailesinin örnek kaydı
+            üzerinden hemen inceleyebilirsiniz.
+          </p>
+        </Container>
+      </div>
 
+      <Container className="py-10 sm:py-12">
         <div className="hk-enter mb-8" style={{ animationDelay: "160ms" }}>
           <DemoNotice>
             Parola sorulmuyor, hesap açılmıyor, hiçbir kişisel veri toplanmıyor.

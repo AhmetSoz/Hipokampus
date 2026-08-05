@@ -7,6 +7,7 @@ import {
   Notice,
   Section,
 } from "@/components/ui";
+import { BrandPath } from "@/components/BrandPath";
 import { Logo } from "@/components/Logo";
 
 export const metadata: Metadata = {
@@ -19,8 +20,9 @@ export const metadata: Metadata = {
 export default function DogrulamaSayfasi() {
   return (
     <>
-      <div className="hk-atmosphere bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
-        <Container>
+      <div className="relative isolate overflow-hidden bg-sky-50 py-16 sm:py-20">
+        <BrandPath className="absolute inset-0 h-full w-full opacity-70" />
+        <Container className="relative">
           <h1 className="hk-enter mb-5 text-4xl sm:text-5xl">Uzman doğrulama</h1>
           <p className="hk-enter max-w-2xl text-xl text-ink-700" style={{ animationDelay: "70ms" }}>
             Kimin karşınıza çıktığı, en az ne konuştuğunuz kadar önemli.
