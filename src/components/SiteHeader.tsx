@@ -17,14 +17,14 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-ink-100 bg-paper/90 backdrop-blur-sm">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-4 sm:px-8">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-3 sm:px-8">
         <Link
           href="/"
           className="transition-opacity hover:opacity-80"
           aria-label="Hipokampüs ana sayfa"
           onClick={() => setOpen(false)}
         >
-          <Logo height={40} priority />
+          <Logo className="h-14 sm:h-16" priority />
         </Link>
 
         <nav aria-label="Ana menü" className="hidden items-center gap-1 md:flex">

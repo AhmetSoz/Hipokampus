@@ -34,32 +34,32 @@ export type LogoVariant = keyof typeof ASSETS;
 
 export function Logo({
   variant = "lockup",
-  height = 40,
+  className = "h-12",
   priority = false,
-  className,
   decorative = false,
 }: {
   variant?: LogoVariant;
-  /** Piksel cinsinden yükseklik; genişlik orana göre hesaplanır. */
-  height?: number;
-  priority?: boolean;
+  /**
+   * Görüntülenme yüksekliği Tailwind sınıfıyla verilir (`h-12`, `h-14 sm:h-16`).
+   * Genişlik her zaman orana göre hesaplanır. Ekran boyutuna göre değişebilsin
+   * diye sabit piksel yerine sınıf kullanılıyor.
+   */
   className?: string;
+  priority?: boolean;
   /** Yanında zaten "Hipokampüs" yazıyorsa true verin. */
   decorative?: boolean;
 }) {
   const asset = ASSETS[variant];
-  const width = Math.round((asset.width / asset.height) * height);
 
   return (
     <Image
       src={asset.src}
-      width={width}
-      height={height}
+      width={asset.width}
+      height={asset.height}
       priority={priority}
       alt={decorative ? "" : "Hipokampüs"}
       aria-hidden={decorative || undefined}
-      className={className}
-      style={{ height, width: "auto" }}
+      className={`w-auto ${className}`}
     />
   );
 }

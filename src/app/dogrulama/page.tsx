@@ -110,8 +110,8 @@ export default function DogrulamaSayfasi() {
 
             <div className="rounded-xl border border-ink-200 bg-white p-7">
               <div className="mb-6 flex items-center gap-4 border-b border-ink-100 pb-6">
-                <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-teal-50">
-                  <Logo variant="symbol" height={30} decorative />
+                <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-teal-50">
+                  <Logo variant="symbol" decorative className="h-9" />
                 </span>
                 <span>
                   <span className="block text-lg font-semibold text-ink-900">

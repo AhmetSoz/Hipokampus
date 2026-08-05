@@ -15,7 +15,7 @@ export function SiteFooter() {
       <div className="mx-auto w-full max-w-6xl px-6 py-14 sm:px-8">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <Logo height={52} />
+            <Logo className="h-16 sm:h-20" />
             <p className="mt-6 max-w-sm text-ink-700">
               Bakım sürecini birlikte planlamak için kurulan dijital koordinasyon
               platformu. Uzman ve akademisyenlerin katkısıyla geliştiriliyor.
