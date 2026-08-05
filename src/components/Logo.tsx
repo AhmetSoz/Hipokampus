@@ -1,11 +1,13 @@
 import Image from "next/image";
+import { HK_LOCKUP_STROKES, HK_LOCKUP_TOTAL_DURATION } from "./hk-lockup-trace";
 
 /**
  * Marka kilidi (lockup) ve sembolü.
  *
  * Varlıklar tasarımcı teslimlerinden üretilir; elle çizilmiş yaklaşım
- * KULLANILMAZ. Kaynak dosyalar `logo/` klasöründe, üretim betiği
- * `scripts/prepare-logo.mjs`. Kaynaklar değişirse betiği yeniden çalıştırın.
+ * bunların YERİNE KULLANILMAZ. Kaynak dosyalar `logo/` klasöründe, üretim
+ * betiği `scripts/prepare-logo.mjs`. Kaynaklar değişirse betiği yeniden
+ * çalıştırın.
  *
  * Varyant seçimi zemine göre yapılır:
  *   açık zemin  → "lockup" / "symbol"          (petrol turkuaz #0E5C63)
@@ -13,6 +15,17 @@ import Image from "next/image";
  *
  * Ters varyant, tasarımcının kum rengi uç noktasını ("yön bulma") içerir;
  * açık zemin varyantı tek renktir. İkisi de teslim edilen dosyalara sadıktır.
+ *
+ * `hk-lockup-trace.ts`, `logo-lockup.png`'nin potrace ile çıkarılmış anahat
+ * parçalarıdır (her alt-yol/subpath ayrı) — YALNIZCA `animate` açılış
+ * efektindeki kalem-çizim maskesi için kullanılır, gerçek logonun yerine
+ * geçmez (bkz. üstteki not). SVG'de stroke-dasharray her subpath'in
+ * BAŞINDA sıfırlanır (spec gereği); bu yüzden tek bir birleşik path yerine
+ * her parça kendi <path>'i olarak, gerçek uzunluğuyla orantılı gecikme ve
+ * süreyle art arda çiziliyor — aksi halde tüm parçalar aynı anda "birden"
+ * çizilmiş gibi görünüyordu. Kaynak PNG değişirse bu iz de yeniden
+ * üretilmelidir (bkz. scratchpad'teki trace-lockup.mjs + measure-subpaths.mjs
+ * betikleri, potrace ile).
  */
 
 const ASSETS = {
@@ -50,15 +63,74 @@ export function Logo({
   /** Yanında zaten "Hipokampüs" yazıyorsa true verin. */
   decorative?: boolean;
   /**
-   * Bir kerelik "elle çiziliyor" açılış efekti — maske ile üstten alta
-   * açığa çıkma + kenarı takip eden ince bir mürekkep-ucu çizgisi. Varlık
-   * hâlâ tasarımcı teslimi raster; yalnızca ilk görünüşü animasyonlu.
-   * Sayfa içinde tekrarlayan yerlerde (header gibi) kullanın, aynı öğeyi
-   * defalarca yeniden oynatmayın.
+   * Bir kerelik "elle çiziliyor" açılış efekti: gerçek logonun anahat
+   * izi (`hk-lockup-trace.ts`) bir SVG maskesinde kalem gibi çizilir,
+   * arkadaki gerçek PNG yalnızca kalemin geçtiği yerlerde açığa çıkar.
+   * Şu an yalnızca `variant="lockup"` için gerçek iz var; sabit bir maske
+   * kimliği kullanır, bu yüzden sayfada tek sefer kullanın (header gibi).
+   * Diğer varyantlarda basit üstten-alta açılışa düşer.
    */
   animate?: boolean;
 }) {
   const asset = ASSETS[variant];
+
+  if (animate && variant === "lockup") {
+    return (
+      <span
+        className={`relative inline-block w-auto ${className}`}
+        style={{ aspectRatio: `${asset.width} / ${asset.height}` }}
+      >
+        <svg
+          viewBox={`0 0 ${asset.width} ${asset.height}`}
+          className="block h-full w-full"
+          role={decorative ? undefined : "img"}
+          aria-label={decorative ? undefined : "Hipokampüs"}
+          aria-hidden={decorative || undefined}
+        >
+          <defs>
+            <mask id="hk-lockup-reveal" maskUnits="userSpaceOnUse">
+              {HK_LOCKUP_STROKES.map((s, i) => (
+                <path
+                  key={i}
+                  d={s.d}
+                  fill="none"
+                  stroke="#fff"
+                  strokeWidth={11}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  pathLength={1}
+                  className="hk-lockup-stroke"
+                  style={{
+                    animationDelay: `${s.delay}s`,
+                    animationDuration: `${s.duration}s`,
+                  }}
+                />
+              ))}
+            </mask>
+          </defs>
+          <image
+            href={asset.src}
+            width={asset.width}
+            height={asset.height}
+            mask="url(#hk-lockup-reveal)"
+          />
+          <circle
+            r={3.4}
+            className="hk-lockup-pen"
+            style={{ animationDuration: `${HK_LOCKUP_TOTAL_DURATION}s` }}
+          >
+            <animateMotion
+              dur={`${HK_LOCKUP_TOTAL_DURATION}s`}
+              calcMode="linear"
+              fill="freeze"
+              begin="0.05s"
+              path={HK_LOCKUP_STROKES.map((s) => s.d).join(" ")}
+            />
+          </circle>
+        </svg>
+      </span>
+    );
+  }
 
   const img = (
     <Image

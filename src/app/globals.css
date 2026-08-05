@@ -344,12 +344,78 @@ html[data-motion="az"] *::after {
 }
 
 /*
-  LOGO ÇİZİM AÇILIŞI — marka varlıkları tasarımcı teslimi raster (PNG),
-  stroke-dasharray kullanamayız (bkz. Logo.tsx başındaki not: elle çizilmiş
-  SVG yaklaşımı reddedildi). Bunun yerine görüntüyü bir maskeyle üstten
-  alta doğru "açığa çıkarıyoruz" ve açılan kenarı takip eden ince, bulanık
-  bir "mürekkep ucu" çizgisiyle elle çizim hissini taklit ediyoruz. Gerçek
-  varlık değişmiyor, yalnızca ilk görünüşü.
+  LOGO ÇİZİM AÇILIŞI (lockup) — gerçek `logo-lockup.png`'den potrace ile
+  çıkarılmış anahat izi (`hk-lockup-trace.ts`), bir SVG maskesinde
+  `pathLength="1"` hilesiyle stroke-dashoffset ile "çiziliyor"; arkadaki
+  gerçek PNG yalnızca kalemin o ana kadar geçtiği yerlerde maskeden görünür
+  oluyor. Aynı izin üstünde küçük parlayan bir nokta `animateMotion` ile
+  gerçekten o yolu takip ediyor — sahte bir süpürme değil, logonun kendi
+  şeklini izleyen bir kalem. Marka varlığı hâlâ tasarımcı teslimi raster;
+  bu iz yalnızca animasyon için, logonun YERİNE geçmiyor (bkz. Logo.tsx).
+*/
+@keyframes hk-lockup-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hk-lockup-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  /* Süre ve gecikme her <path> için satır-içi style ile (Logo.tsx,
+     gerçek segment uzunluğuna orantılı) geliyor — burada yalnızca isim
+     ve zamanlama eğrisi sabit. Kalem sabit hızla ilerlemeli: bir "ease"
+     eğrisi ilk anda neredeyse tamamını çizip gerisini fark edilmez
+     bırakıyordu, elle çizim hissini bozuyordu. */
+  animation-name: hk-lockup-draw;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes hk-lockup-pen-fade {
+  0% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.hk-lockup-pen {
+  fill: var(--color-teal-400);
+  filter: drop-shadow(0 0 3px var(--color-teal-300));
+  opacity: 0;
+  /* Süre satır-içi style ile gelir (Logo.tsx, HK_LOCKUP_TOTAL_DURATION). */
+  animation-name: hk-lockup-pen-fade;
+  animation-timing-function: linear;
+  animation-delay: 0.05s;
+  animation-fill-mode: forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hk-lockup-stroke {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .hk-lockup-pen {
+    animation: none;
+    opacity: 0;
+    display: none;
+  }
+}
+
+/*
+  LOGO ÇİZİM AÇILIŞI (yedek) — gerçek anahat izi olmayan varyantlar için
+  (yalnızca "lockup" için gerçek iz var, bkz. yukarısı). Görüntüyü bir
+  maskeyle üstten alta doğru "açığa çıkarıyoruz" ve açılan kenarı takip
+  eden ince, bulanık bir "mürekkep ucu" çizgisiyle elle çizim hissini
+  taklit ediyoruz. Gerçek varlık değişmiyor, yalnızca ilk görünüşü.
 */
 @keyframes hk-logo-reveal-mask {
   from {
