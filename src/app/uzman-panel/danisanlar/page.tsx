@@ -3,14 +3,16 @@ import Link from "next/link";
 import { Notice } from "@/components/ui";
 import { listConversationsForExpert } from "@/data/conversations";
 import { getConsultant, listFamily } from "@/data/household";
+import { getCurrentExpert } from "@/data/session";
 import { SCOPE_LABEL } from "@/data/types";
 
 export const metadata: Metadata = { title: "Danışanlarım" };
 
 export default async function DanisanlarSayfasi() {
+  const expert = await getCurrentExpert();
   const [consultant, conversations, family] = await Promise.all([
     getConsultant(),
-    listConversationsForExpert("u1"),
+    listConversationsForExpert(expert.id),
     listFamily(),
   ]);
 

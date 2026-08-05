@@ -1,4 +1,4 @@
-import { sendMessage } from "@/app/actions/messages";
+import { sendMessage, updateMeetingUrl } from "@/app/actions/messages";
 import { RESPONSE_COMMITMENT } from "@/data/experts";
 import type { Conversation, ConversationStatus, Expert } from "@/data/types";
 
@@ -99,6 +99,65 @@ export function ConversationThread({
           })}
         </ol>
       </header>
+
+      {/*
+        Görüntülü görüşme — HARİCİ LİNK (Google Meet/Zoom vb.), uygulama
+        içi video altyapısı değil. Bu, "görüşme yalnızca mesajlaşma"
+        kararının 2026-08-05'te sahibi tarafından revize edilmesinin
+        karşılığı. Görüşme kaydı hâlâ alınmaz; kalıcı çıktı yazılı plandır.
+      */}
+      {conversation.meetingUrl && (
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-teal-300 bg-teal-50 p-5 shadow-[var(--shadow-soft)]">
+          <p className="text-ink-800">
+            <strong className="text-ink-900">Görüntülü görüşme</strong>{" "}
+            bağlantısı hazır. Sekmeyi kapatmadan mesajlaşmaya devam
+            edebilirsiniz; kayıt alınmaz.
+          </p>
+          <a
+            href={conversation.meetingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-[3rem] items-center rounded-xl bg-teal-700 px-6 font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 active:scale-[0.97]"
+          >
+            Görüşmeyi başlatın
+          </a>
+        </div>
+      )}
+
+      {viewer === "uzman" && conversation.status !== "tamamlandi" && (
+        <form
+          action={updateMeetingUrl}
+          className="rounded-2xl border border-ink-200 bg-white p-5 shadow-[var(--shadow-soft)]"
+        >
+          <input type="hidden" name="dosya" value={conversation.id} />
+          <label
+            htmlFor="mgs-link"
+            className="mb-2 block font-semibold text-ink-900"
+          >
+            Görüşme bağlantısı (Google Meet, Zoom vb.)
+          </label>
+          <div className="flex flex-wrap gap-3">
+            <input
+              id="mgs-link"
+              name="link"
+              type="url"
+              placeholder="https://meet.google.com/..."
+              defaultValue={conversation.meetingUrl ?? ""}
+              className="min-h-[3rem] min-w-0 flex-1 rounded-xl border-2 border-ink-200 bg-white px-4 text-lg text-ink-900 focus:border-teal-600"
+            />
+            <button
+              type="submit"
+              className="min-h-[3rem] rounded-xl border-2 border-teal-700 px-5 font-semibold text-teal-800 hover:bg-teal-50"
+            >
+              Kaydedin
+            </button>
+          </div>
+          <p className="mt-2 text-base text-ink-600">
+            Danışan bu bağlantıyı görecek. Boş bırakıp kaydederseniz link
+            kaldırılır.
+          </p>
+        </form>
+      )}
 
       {waiting && viewer === "danisan" && (
         <p className="rounded-xl border-l-4 border-teal-300 bg-teal-50 p-5 text-ink-800 shadow-[var(--shadow-soft)]">

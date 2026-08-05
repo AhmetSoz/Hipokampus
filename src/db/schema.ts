@@ -137,7 +137,15 @@ export const planItems = pgTable("plan_items", {
   createdAt: timestamp("created_at", { mode: "date" }).notNull(),
 });
 
-/** Danışma dosyaları. "Sohbet" değil, adı olan bir iş — bkz. context/07. */
+/**
+ * Danışma dosyaları. "Sohbet" değil, adı olan bir iş — bkz. context/07.
+ *
+ * meetingUrl: 2026-08-05'te "görüşme yalnızca mesajlaşma" kararı revize
+ * edildi — sahibi seans içi görüntülü görüşme istedi. Uygulama biçimi:
+ * harici bağlantı (Google Meet/Zoom), gömülü video altyapısı DEĞİL. Uzman
+ * bu alanı doldurursa her iki tarafa da "Görüşmeyi başlatın" butonu çıkar.
+ * NULL ise buton görünmez, mesajlaşma tek yol olarak kalır.
+ */
 export const conversations = pgTable("conversations", {
   id: text("id").primaryKey(),
   expertId: text("expert_id")
@@ -149,6 +157,7 @@ export const conversations = pgTable("conversations", {
   subject: text("subject").notNull(),
   status: conversationStatusEnum("status").notNull(),
   startedAt: timestamp("started_at", { mode: "date" }).notNull(),
+  meetingUrl: text("meeting_url"),
 });
 
 /**
@@ -164,4 +173,84 @@ export const messages = pgTable("messages", {
   authorName: text("author_name").notNull(),
   body: text("body").notNull(),
   sentAt: timestamp("sent_at", { mode: "date" }).notNull(),
+});
+
+/* ------------------------------------------------------------------ */
+/* DEĞERLENDİRME İSKELESİ (2026-08-05)                                  */
+/*
+ * Sahibi "test atamaları / sonuçlar / hedefler / egzersizler" istedi ve
+ * ölçek kaynağı sorusuna (kendi orijinal sistemimiz mi, yoksa MMSE/MoCA
+ * gibi lisanslı mevcut ölçekler mi) "henüz karar vermedik, ikisini de
+ * açık tutalım" dedi.
+ *
+ * Bu yüzden şema TAMAMEN İÇERİKSİZ: hiçbir gerçek/lisanslı ölçek adı,
+ * maddesi veya puanlama formülü YOK — yalnızca herhangi bir soru-cevap
+ * formunu taşıyabilecek genel bir kap. Kilitli karar gereği ("v1'de
+ * puan/skor YOK") hesaplanmış/saklanmış bir sayısal skor alanı da YOK;
+ * yalnızca ham yanıtlar tutuluyor. Puanlama ileride ayrı ve bilinçli bir
+ * kararla eklenir, bu şemanın parçası değildir.
+ */
+export const assessmentResponseTypeEnum = pgEnum("assessment_response_type", [
+  "metin",
+  "evet-hayir",
+  "olcek",
+  "cok-secmeli",
+]);
+
+export const assessmentStatusEnum = pgEnum("assessment_status", [
+  "atandi",
+  "tamamlandi",
+]);
+
+/** Bir form/anket tanımı. Başlığı ve maddeleri tamamen kullanıcı girer. */
+export const assessmentTemplates = pgTable("assessment_templates", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  createdByExpertId: text("created_by_expert_id")
+    .notNull()
+    .references(() => experts.id),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+});
+
+export const assessmentItems = pgTable("assessment_items", {
+  id: text("id").primaryKey(),
+  templateId: text("template_id")
+    .notNull()
+    .references(() => assessmentTemplates.id, { onDelete: "cascade" }),
+  position: integer("position").notNull(),
+  prompt: text("prompt").notNull(),
+  responseType: assessmentResponseTypeEnum("response_type").notNull(),
+  /** Yalnızca "cok-secmeli" için kullanılır. */
+  options: text("options").array(),
+});
+
+/** Bir şablonun belirli bir danışana ataması. */
+export const assessmentAssignments = pgTable("assessment_assignments", {
+  id: text("id").primaryKey(),
+  templateId: text("template_id")
+    .notNull()
+    .references(() => assessmentTemplates.id),
+  consultantId: text("consultant_id")
+    .notNull()
+    .references(() => consultants.id, { onDelete: "cascade" }),
+  assignedByExpertId: text("assigned_by_expert_id")
+    .notNull()
+    .references(() => experts.id),
+  assignedAt: timestamp("assigned_at", { mode: "date" }).notNull(),
+  dueAt: timestamp("due_at", { mode: "date" }),
+  status: assessmentStatusEnum("status").notNull(),
+});
+
+/** Ham yanıtlar. Hesaplanmış puan YOK — bkz. yukarıdaki not. */
+export const assessmentResponses = pgTable("assessment_responses", {
+  id: text("id").primaryKey(),
+  assignmentId: text("assignment_id")
+    .notNull()
+    .references(() => assessmentAssignments.id, { onDelete: "cascade" }),
+  itemId: text("item_id")
+    .notNull()
+    .references(() => assessmentItems.id, { onDelete: "cascade" }),
+  value: text("value").notNull(),
+  respondedAt: timestamp("responded_at", { mode: "date" }).notNull(),
 });

@@ -4,12 +4,14 @@ import { Notice } from "@/components/ui";
 import { listConversationsForExpert } from "@/data/conversations";
 import { RESPONSE_COMMITMENT } from "@/data/experts";
 import { getConsultant } from "@/data/household";
+import { getCurrentExpert } from "@/data/session";
 
 export const metadata: Metadata = { title: "Uzman paneli" };
 
 export default async function UzmanPanelGenelBakis() {
+  const expert = await getCurrentExpert();
   const [conversations, consultant] = await Promise.all([
-    listConversationsForExpert("u1"),
+    listConversationsForExpert(expert.id),
     getConsultant(),
   ]);
 

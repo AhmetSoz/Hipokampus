@@ -33,6 +33,7 @@ async function attachMessages(
       subject: row.subject,
       status: row.status,
       startedAt: row.startedAt.toISOString(),
+      meetingUrl: row.meetingUrl,
       messages: msgRows.map((m) => ({
         id: m.id,
         author: m.author,
@@ -113,4 +114,20 @@ export async function listConversationsForExpert(
 ): Promise<Conversation[]> {
   const all = await listConversations();
   return all.filter((c) => c.expertId === expertId);
+}
+
+/**
+ * Görüşme bağlantısını ayarlar/kaldırır. Yalnızca uzman tarafından
+ * çağrılmalı. Harici bir link (Google Meet/Zoom vb.) — uygulama bunu
+ * doğrulamaz, yalnızca saklar ve gösterir.
+ */
+export async function setMeetingUrl(
+  conversationId: string,
+  url: string,
+): Promise<void> {
+  const trimmed = url.trim();
+  await db
+    .update(conversations)
+    .set({ meetingUrl: trimmed || null })
+    .where(eq(conversations.id, conversationId));
 }

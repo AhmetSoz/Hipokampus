@@ -171,4 +171,10 @@ export type Conversation = {
   status: ConversationStatus;
   startedAt: string;
   messages: Message[];
+  /**
+   * Görüntülü görüşme bağlantısı (Google Meet/Zoom vb.), uzman tarafından
+   * girilir. Harici link — uygulama içi video altyapısı DEĞİL. Boşsa görüşme
+   * yalnızca mesajlaşmayla sürer.
+   */
+  meetingUrl: string | null;
 };

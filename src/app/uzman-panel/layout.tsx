@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { DemoNotice } from "@/components/ui";
-import { getExpertById } from "@/data/experts";
+import { getCurrentExpert } from "@/data/session";
 
 /**
  * Uzman paneli.
  *
- * Prototipte sabit bir demo uzman olarak açılıyor (Elif Tanyeri). Danışan
- * tarafındaki gibi kişi seçimi yok — uzman tarafı tek bir görünüm.
+ * Hangi uzman olarak bakıldığı `hk-demo-uzman` çerezinden gelir (varsayılan
+ * Elif Tanyeri). Admin panelinden "bu uzman gibi bak" ile değiştirilir.
  */
 export default async function UzmanPanelLayout({
   children,
 }: LayoutProps<"/uzman-panel">) {
-  const expert = await getExpertById("u1");
+  const expert = await getCurrentExpert();
 
   const nav = [
     { href: "/uzman-panel", label: "Genel bakış" },
