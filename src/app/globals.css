@@ -45,7 +45,10 @@
   --color-ink-800: #2c3133;
   --color-ink-700: #3f4547;
   --color-ink-600: #5c6467;
-  --color-ink-500: #7a8285;
+  /* Eski değer #7a8285 beyaz üzerinde 4.0:1 idi ve AA'yı (4.5:1)
+     karşılamıyordu. Bu değer 4.84:1. Metin için kullanılabilecek EN AÇIK
+     mürekkep tonudur; daha açığı yalnızca dekoratif olabilir. */
+  --color-ink-500: #6b7376;
   --color-ink-300: #b7bdbf;
   --color-ink-200: #dfe3e4;
   --color-ink-100: #eef1f1;
@@ -60,7 +63,14 @@
   --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
 
   /* İleri yaştaki kullanıcılar da doğrudan kullanabilmeli:
-     taban punto normalden büyük tutulmuştur. */
+     taban punto normalden büyük tutulmuştur.
+
+     text-sm ve text-xs bilerek 16px'e SABİTLENDİ. Bu projede 16px'in
+     altına inilmiyor; yanlışlıkla `text-sm` yazılsa bile metin okunabilir
+     kalıyor. Not: 18px, WCAG'a göre "büyük metin" DEĞİLDİR (eşik 24px),
+     dolayısıyla tüm gövde metni 4.5:1 kontrast kuralına tabidir. */
+  --text-xs: 1rem;
+  --text-sm: 1rem;
   --text-base: 1.125rem;
   --text-base--line-height: 1.75;
   --text-lg: 1.25rem;
@@ -109,12 +119,21 @@ p {
   text-wrap: pretty;
 }
 
-/* Odak halkası her yerde görünür ve kalın — klavye veya ekran büyüteci
-   kullananlar için tasarımın sessizce kaybolmaması gerekiyor. */
+/* ÇİFT TONLU ODAK HALKASI
+   Tek renk halka, aynı renkteki bir butonun üzerinde görünmez oluyordu
+   (turkuaz buton üstünde turkuaz halka = 1:1 kontrast). İç halka turkuaz,
+   dış halka beyaz: hangi zemin olursa olsun en az biri görünür kalıyor.
+   #0E5C63 ile #FFFFFF arasındaki kontrast her iki yönde de 7.69:1. */
 :focus-visible {
-  outline: 3px solid var(--color-teal-600);
-  outline-offset: 3px;
+  outline: 3px solid var(--color-teal-700);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px #ffffff;
   border-radius: var(--radius-xs);
+}
+
+/* Yapışkan başlık, odaklanan öğeyi örtmemeli (WCAG 2.4.11, AA). */
+:where(a, button, input, select, textarea, summary, [tabindex]) {
+  scroll-margin-top: 7.5rem;
 }
 
 ::selection {

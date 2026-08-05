@@ -61,24 +61,68 @@ export type Consultant = {
 };
 
 /**
- * Aile üyesinin yetki seviyesi.
+ * YETKİ MODELİ — İKİ EKSEN
+ *
+ * Tek bir "rol" seviyesi yerine iki bağımsız eksen kullanılıyor:
+ *   1. İlişki rolü  — kişi kim (birey, bakım veren, aile üyesi, uzman)
+ *   2. Veri kapsamı — neyi görebiliyor
+ *
+ * Bunun sebebi kilitli karar: "Ödeme yapmak, sağlık/görüşme verisini görme
+ * hakkı vermez." Tek eksenli bir rol listesinde bu kural ifade edilemiyor;
+ * ödeme kapsamı ayrı bir eksen olmak zorunda.
  *
  * ÖNEMLİ: Bu model bir ÖNERİDİR, hukuki model değildir (açık soru 2).
- * "Ödeme yapmak veri görme hakkı vermez" kilidi burada görünür kılınıyor:
- * ödemeyi yapan kişi otomatik olarak "tam" yetki almaz.
  */
-export type FamilyRole = "tam" | "plan" | "sinirli";
+export type RelationRole = "birey" | "bakim-veren" | "aile-uyesi";
+
+/** Veri kapsamları. Biri diğerini AÇMAZ. */
+export type DataScope = "saglik-gorusme" | "gunluk-lojistik" | "odeme-fatura";
+
+export const SCOPE_LABEL: Record<DataScope, string> = {
+  "saglik-gorusme": "Sağlık ve görüşme",
+  "gunluk-lojistik": "Günlük yaşam ve lojistik",
+  "odeme-fatura": "Ödeme ve fatura",
+};
+
+export const SCOPE_DESCRIPTION: Record<DataScope, string> = {
+  "saglik-gorusme":
+    "Bakım planı, uzman görüşmeleri ve uzmanın paylaştığı notlar.",
+  "gunluk-lojistik":
+    "Randevu takvimi, günlük durum notları ve yapılacaklar.",
+  "odeme-fatura":
+    "Fatura geçmişi, yenileme tarihi ve hizmet kalemleri. Görüşme içeriği bu kapsama dahil DEĞİLDİR.",
+};
+
+/**
+ * Erişim durumu.
+ *
+ * "askida" bilerek var: erişim kesilirken kişi listeden SİLİNMEZ. Aile
+ * ilişkileri geri döner, silme geri dönmez.
+ */
+export type AccessStatus = "aktif" | "askida" | "davet-bekliyor";
 
 export type FamilyMember = {
   id: string;
   name: string;
   /** "Kızı", "Oğlu", "Eşi" gibi. */
   relation: string;
-  role: FamilyRole;
-  /** Ödemeyi bu kişi mi yapıyor? Yetkiden bağımsızdır. */
+  relationRole: RelationRole;
+  scopes: DataScope[];
+  status: AccessStatus;
+  /** Ödemeyi bu kişi mi yapıyor? Kapsamdan tamamen bağımsızdır. */
   payer: boolean;
   invitedAt: string;
-  acceptedAt: string | null;
+  /** Erişimin biteceği tarih; null ise süresiz. */
+  expiresAt: string | null;
+};
+
+/** Erişim kaydı — kim, ne zaman, neyi açtı. Bireye görünür. */
+export type AccessLogEntry = {
+  id: string;
+  memberId: string;
+  scope: DataScope;
+  section: string;
+  at: string;
 };
 
 export type PlanItemStatus = "yapilacak" | "surüyor" | "tamamlandi";
