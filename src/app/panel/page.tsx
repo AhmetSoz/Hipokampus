@@ -4,29 +4,42 @@ import { DemoNotice, Notice } from "@/components/ui";
 import { getConsultant, listPlanItems } from "@/data/household";
 import { getExpertById } from "@/data/experts";
 import { needArea } from "@/data/needs";
-import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
+import {
+  getCurrentConsultantId,
+  getCurrentMember,
+  getCurrentUser,
+} from "@/data/session";
 
 export const metadata: Metadata = { title: "Genel bakış" };
 
 export default async function PanelGenelBakis() {
   const consultantId = await getCurrentConsultantId();
-  const [member, consultant, plan] = await Promise.all([
+  const [member, consultant, plan, user] = await Promise.all([
     getCurrentMember(),
     getConsultant(consultantId),
     listPlanItems(consultantId),
+    getCurrentUser(),
   ]);
 
+  const demoMode = user?.consultantId == null;
   const canSeeHealth = member.scopes.includes("saglik-gorusme");
-  const expert = await getExpertById("u1");
+  // Planı yazan uzman; yeni hesapta plan boş olabilir.
+  const expert = plan[0]
+    ? await getExpertById(plan[0].authorExpertId)
+    : null;
   const open = plan.filter((p) => p.status !== "tamamlandi");
   const done = plan.length - open.length;
 
   return (
     <div className="space-y-8">
-      <DemoNotice>
-        Bu panel {consultant.name} ailesinin temsilî kaydıdır. Gerçek bir kişiye
-        ait değildir.
-      </DemoNotice>
+      {/* "Temsilî kayıt" uyarısı yalnızca demo hanede anlamlı; gerçek
+          hesapla giren kişiye kendi kaydı için bunu söylemek yanlış. */}
+      {demoMode && (
+        <DemoNotice>
+          Bu panel {consultant.name} ailesinin temsilî kaydıdır. Gerçek bir
+          kişiye ait değildir.
+        </DemoNotice>
+      )}
 
       <div>
         <h1 className="mb-2 text-3xl sm:text-4xl">

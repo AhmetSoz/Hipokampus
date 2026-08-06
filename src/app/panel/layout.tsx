@@ -2,16 +2,22 @@ import Link from "next/link";
 import { clearDemoMember } from "@/app/giris/actions";
 import { PanelNav } from "@/components/PanelNav";
 import { getConsultant } from "@/data/household";
-import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
+import {
+  getCurrentConsultantId,
+  getCurrentMember,
+  getCurrentUser,
+} from "@/data/session";
 
 export default async function PanelLayout({
   children,
 }: LayoutProps<"/panel">) {
   const consultantId = await getCurrentConsultantId();
-  const [member, consultant] = await Promise.all([
+  const [member, consultant, user] = await Promise.all([
     getCurrentMember(),
     getConsultant(consultantId),
+    getCurrentUser(),
   ]);
+  const demoMode = user?.consultantId == null;
 
   /* Askıya alınmış üye hiçbir bölümü göremez. Silinmediği için hesabı
      duruyor; erişimi geri açma yetkisi yalnızca bireyde. */
@@ -56,14 +62,18 @@ export default async function PanelLayout({
             <p className="text-base text-ink-500">Şu anda bakan kişi</p>
             <p className="text-xl text-ink-900">{member.name}</p>
             <p className="text-base text-ink-600">{member.relation}</p>
-            <form action={clearDemoMember}>
-              <button
-                type="submit"
-                className="mt-2 min-h-[2.75rem] text-base text-teal-800 underline underline-offset-4"
-              >
-                Başka kişiyle bakın
-              </button>
-            </form>
+            {/* Kişi değiştirme yalnızca demo hanede anlamlı — gerçek
+                hesapta kullanıcı kendisidir. */}
+            {demoMode && (
+              <form action={clearDemoMember}>
+                <button
+                  type="submit"
+                  className="mt-2 min-h-[2.75rem] text-base text-teal-800 underline underline-offset-4"
+                >
+                  Başka kişiyle bakın
+                </button>
+              </form>
+            )}
           </div>
         </div>
 
