@@ -1,6 +1,5 @@
 import "server-only";
-import { randomBytes, scrypt as _scrypt, timingSafeEqual } from "node:crypto";
-import { promisify } from "node:util";
+import { randomBytes } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import {
@@ -10,6 +9,9 @@ import {
   familyMembers,
   users,
 } from "@/db/schema";
+import { hashPassword, verifyPassword } from "./password";
+
+export { hashPassword, verifyPassword };
 
 /**
  * Gerçek hesap sistemi.
@@ -26,32 +28,6 @@ import {
  * kişisel/sağlık verisi istemez; arayüz "geliştirme aşamasındadır"
  * uyarısını korur. Bkz. karar kaydı "Gerçek giriş sistemi".
  */
-
-const scrypt = promisify(_scrypt) as (
-  password: string,
-  salt: string,
-  keylen: number,
-) => Promise<Buffer>;
-
-const KEYLEN = 64;
-
-export async function hashPassword(password: string): Promise<string> {
-  const salt = randomBytes(16).toString("hex");
-  const derived = await scrypt(password, salt, KEYLEN);
-  return `${salt}:${derived.toString("hex")}`;
-}
-
-export async function verifyPassword(
-  password: string,
-  stored: string,
-): Promise<boolean> {
-  const [salt, hash] = stored.split(":");
-  if (!salt || !hash) return false;
-  const expected = Buffer.from(hash, "hex");
-  const derived = await scrypt(password, salt, KEYLEN);
-  if (expected.length !== derived.length) return false;
-  return timingSafeEqual(expected, derived);
-}
 
 export type AuthUser = {
   id: string;
