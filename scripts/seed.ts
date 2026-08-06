@@ -23,6 +23,8 @@ const db = drizzle(neon(connectionString), { schema });
 
 async function main() {
   console.log("Tablolar temizleniyor...");
+  await db.delete(schema.sessionMeasurements);
+  await db.delete(schema.sessionNotes);
   await db.delete(schema.messages);
   await db.delete(schema.conversations);
   await db.delete(schema.accessLog);
@@ -418,6 +420,67 @@ async function main() {
       authorName: "Hakan Devrim",
       body: "Merhaba Ayşe Hanım, ben Hakan Devrim, fizyoterapistim.\n\nKüvetli banyolarda en kritik nokta giriş-çıkış anı. Barın yeri, annenizin hangi tarafa ağırlık vererek girdiğine göre değişiyor. Küveti kullanırken hangi eliyle tutunuyor, biliyor musunuz?",
       sentAt: new Date("2026-08-04T09:20:00"),
+    },
+  ]);
+
+  console.log("Seans notları ekleniyor...");
+  await db.insert(schema.sessionNotes).values([
+    {
+      id: "sn1",
+      conversationId: "g2",
+      authorExpertId: "u4",
+      occurredAt: new Date("2026-07-20T10:00:00"),
+      title: "İlk değerlendirme",
+      note: "Denge ve yürüyüş değerlendirildi. Küvete giriş-çıkışta destek ihtiyacı gözlendi. Tutunma barı önerildi.",
+      status: "yayinda",
+      createdAt: new Date("2026-07-20T10:30:00"),
+    },
+    {
+      id: "sn2",
+      conversationId: "g2",
+      authorExpertId: "u4",
+      occurredAt: new Date("2026-07-27T10:00:00"),
+      title: "İkinci görüşme",
+      note: "Tek ayak üzerinde durma süresi ölçüldü. Geçen haftaya göre hafif iyileşme var; egzersizlere devam.",
+      status: "yayinda",
+      createdAt: new Date("2026-07-27T10:30:00"),
+    },
+    {
+      id: "sn3",
+      conversationId: "g2",
+      authorExpertId: "u4",
+      occurredAt: new Date("2026-08-03T10:00:00"),
+      title: "Üçüncü görüşme",
+      note: "Denge belirgin şekilde iyileşti. Banyo düzenlemesinin (bar + kaymaz paspas) tamamlanıp tamamlanmadığı bir sonraki görüşmede sorulacak.",
+      status: "taslak",
+      createdAt: new Date("2026-08-03T10:30:00"),
+    },
+  ]);
+
+  await db.insert(schema.sessionMeasurements).values([
+    {
+      id: "smn1-0",
+      sessionId: "sn1",
+      label: "Tek ayak durma süresi",
+      value: "8",
+      unit: "sn",
+      sortOrder: 0,
+    },
+    {
+      id: "smn2-0",
+      sessionId: "sn2",
+      label: "Tek ayak durma süresi",
+      value: "11",
+      unit: "sn",
+      sortOrder: 0,
+    },
+    {
+      id: "smn3-0",
+      sessionId: "sn3",
+      label: "Tek ayak durma süresi",
+      value: "15",
+      unit: "sn",
+      sortOrder: 0,
     },
   ]);
 

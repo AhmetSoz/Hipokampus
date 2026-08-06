@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ConversationThread } from "@/components/ConversationThread";
+import { SessionLog } from "@/components/SessionLog";
 import { Notice } from "@/components/ui";
 import { getConversation } from "@/data/conversations";
 import { getExpertById } from "@/data/experts";
 import { getCurrentMember } from "@/data/session";
+import { listSessionNotes } from "@/data/sessions";
 
 export default async function DanismaDosyasi({
   params,
@@ -34,6 +36,8 @@ export default async function DanismaDosyasi({
   const expert = await getExpertById(conversation.expertId);
   if (!expert) notFound();
 
+  const sessions = await listSessionNotes(id, { onlyPublished: true });
+
   return (
     <div className="space-y-6">
       <Link
@@ -47,6 +51,12 @@ export default async function DanismaDosyasi({
         expert={expert}
         viewer="danisan"
         bosMesajHatasi={sp.hata === "bos"}
+      />
+      <SessionLog
+        conversationId={id}
+        viewer="danisan"
+        sessions={sessions}
+        canAdd={false}
       />
     </div>
   );

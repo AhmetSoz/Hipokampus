@@ -254,3 +254,53 @@ export const assessmentResponses = pgTable("assessment_responses", {
   value: text("value").notNull(),
   respondedAt: timestamp("responded_at", { mode: "date" }).notNull(),
 });
+
+/* ------------------------------------------------------------------ */
+/* SEANS NOTLARI (2026-08-06)                                          */
+/*
+ * Sahibinin talebi: danışma dosyası tek baştan-sona yazışmaydı; bunun
+ * ALTINDA, zaman içinde tekrarlayan "seans" kayıtları olmalı — her
+ * görüşmeden sonra uzmanın bıraktığı bir not, isterse birkaç basit ölçüm.
+ * Tablo ve grafiklerle geçmiş izlenebilsin diye.
+ *
+ * BİLEREK YOK: hesaplanmış puan/skor, sabit bir ölçüm taksonomisi. `label`
+ * ve `value` tamamen serbest metin — "Klinik ölçekler" ve "Puan/skor"
+ * kilitli kararlarını ihlal etmez, değerlendirme iskelesiyle aynı ilke
+ * (bkz. yukarıdaki DEĞERLENDİRME İSKELESİ notu). Grafik, sayıya
+ * çevrilebilen değerler üzerinden UI katmanında hesaplanır; DB'de
+ * saklanan bir sayı/skor yoktur.
+ *
+ * Taslak/yayında ayrımı bilerek var: uzman bir notu kaydedip gözden
+ * geçirebilsin, danışan yalnızca yayınlanmış olanı görsün.
+ */
+export const sessionStatusEnum = pgEnum("session_status", [
+  "taslak",
+  "yayinda",
+]);
+
+export const sessionNotes = pgTable("session_notes", {
+  id: text("id").primaryKey(),
+  conversationId: text("conversation_id")
+    .notNull()
+    .references(() => conversations.id, { onDelete: "cascade" }),
+  authorExpertId: text("author_expert_id")
+    .notNull()
+    .references(() => experts.id),
+  occurredAt: timestamp("occurred_at", { mode: "date" }).notNull(),
+  title: text("title").notNull(),
+  note: text("note").notNull(),
+  status: sessionStatusEnum("status").notNull().default("taslak"),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+});
+
+/** Bir seansa bağlı, tamamen serbest etiket/değer/birim ölçümleri. */
+export const sessionMeasurements = pgTable("session_measurements", {
+  id: text("id").primaryKey(),
+  sessionId: text("session_id")
+    .notNull()
+    .references(() => sessionNotes.id, { onDelete: "cascade" }),
+  label: text("label").notNull(),
+  value: text("value").notNull(),
+  unit: text("unit"),
+  sortOrder: integer("sort_order").notNull().default(0),
+});

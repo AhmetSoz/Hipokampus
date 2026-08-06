@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ConversationThread } from "@/components/ConversationThread";
+import { SessionLog } from "@/components/SessionLog";
 import { getConversation } from "@/data/conversations";
 import { getExpertById } from "@/data/experts";
+import { listSessionNotes } from "@/data/sessions";
 
 export default async function UzmanDanismaDosyasi({
   params,
@@ -19,6 +21,8 @@ export default async function UzmanDanismaDosyasi({
   const expert = await getExpertById(conversation.expertId);
   if (!expert) notFound();
 
+  const sessions = await listSessionNotes(id);
+
   return (
     <div className="space-y-6">
       <Link
@@ -32,6 +36,13 @@ export default async function UzmanDanismaDosyasi({
         expert={expert}
         viewer="uzman"
         bosMesajHatasi={sp.hata === "bos"}
+      />
+      <SessionLog
+        conversationId={id}
+        viewer="uzman"
+        sessions={sessions}
+        canAdd={conversation.status !== "tamamlandi"}
+        seansHata={sp.seansHata === "eksik"}
       />
     </div>
   );

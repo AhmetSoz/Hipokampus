@@ -178,3 +178,32 @@ export type Conversation = {
    */
   meetingUrl: string | null;
 };
+
+/**
+ * Seans notu. Danışma dosyasının ALTINDA, zaman içinde tekrarlayan kayıt —
+ * "sohbet"ten ayrı, her görüşmeden sonra uzmanın bıraktığı bir not.
+ *
+ * BİLEREK YOK: hesaplanmış puan/skor. `SessionMeasurement.value` serbest
+ * metindir; sayıya çevrilebiliyorsa arayüz onu grafikte kullanır, DB'de
+ * saklanan bir skor değildir (bkz. schema.ts, aynı bölüm).
+ */
+export type SessionStatus = "taslak" | "yayinda";
+
+export type SessionMeasurement = {
+  id: string;
+  label: string;
+  value: string;
+  unit: string | null;
+};
+
+export type SessionNote = {
+  id: string;
+  conversationId: string;
+  authorExpertId: string;
+  occurredAt: string;
+  title: string;
+  note: string;
+  status: SessionStatus;
+  createdAt: string;
+  measurements: SessionMeasurement[];
+};
