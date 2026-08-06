@@ -6,10 +6,13 @@ import { getExpertById } from "@/data/experts";
 
 export default async function UzmanDanismaDosyasi({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
+  const sp = await searchParams;
   const conversation = await getConversation(id);
   if (!conversation) notFound();
 
@@ -28,6 +31,7 @@ export default async function UzmanDanismaDosyasi({
         conversation={conversation}
         expert={expert}
         viewer="uzman"
+        bosMesajHatasi={sp.hata === "bos"}
       />
     </div>
   );

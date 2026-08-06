@@ -48,10 +48,13 @@ export function ConversationThread({
   conversation,
   expert,
   viewer,
+  bosMesajHatasi = false,
 }: {
   conversation: Conversation;
   expert: Expert;
   viewer: "danisan" | "uzman";
+  /** Kullanıcı boş/yalnızca boşluk içeren bir mesaj göndermeye çalıştı. */
+  bosMesajHatasi?: boolean;
 }) {
   const status = STATUS[conversation.status];
   const waiting = conversation.status === "yanit-bekliyor";
@@ -239,6 +242,11 @@ export function ConversationThread({
           >
             {viewer === "uzman" ? "Yanıtınızı yazın" : "Mesajınızı yazın"}
           </label>
+          {bosMesajHatasi && (
+            <p className="mb-3 font-semibold text-danger-700">
+              Mesaj boş olamaz. Lütfen bir şeyler yazın.
+            </p>
+          )}
           <textarea
             id="yeni-mesaj"
             name="mesaj"

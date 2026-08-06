@@ -8,8 +8,10 @@ import { getCurrentMember } from "@/data/session";
 
 export default async function DanismaDosyasi({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const member = await getCurrentMember();
 
@@ -25,6 +27,7 @@ export default async function DanismaDosyasi({
   }
 
   const { id } = await params;
+  const sp = await searchParams;
   const conversation = await getConversation(id);
   if (!conversation) notFound();
 
@@ -43,6 +46,7 @@ export default async function DanismaDosyasi({
         conversation={conversation}
         expert={expert}
         viewer="danisan"
+        bosMesajHatasi={sp.hata === "bos"}
       />
     </div>
   );

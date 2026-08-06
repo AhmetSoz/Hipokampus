@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { addMessage, setMeetingUrl } from "@/data/conversations";
 import { getCurrentExpert, getCurrentMember } from "@/data/session";
 import type { MessageAuthor } from "@/data/types";
@@ -16,7 +17,18 @@ export async function sendMessage(formData: FormData) {
   const author = String(formData.get("taraf") ?? "") as MessageAuthor;
   const body = String(formData.get("mesaj") ?? "");
 
-  if (!conversationId || !body.trim()) return;
+  const base =
+    author === "uzman"
+      ? `/uzman-panel/mesajlar/${conversationId}`
+      : `/panel/mesajlar/${conversationId}`;
+
+  if (!conversationId) return;
+  if (!body.trim()) {
+    // Metin alanı `required` ama yalnızca boşluk karakteriyle tarayıcı
+    // doğrulamasını geçebiliyor — kullanıcıya sessizce hiçbir şey
+    // olmamış gibi görünmesin diye bir hata bayrağıyla geri dönüyoruz.
+    redirect(`${base}?hata=bos`);
+  }
 
   let authorName: string;
   if (author === "uzman") {
