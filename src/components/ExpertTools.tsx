@@ -39,6 +39,7 @@ export function ExpertTools({
   templates,
   assignments,
   tasks,
+  bolum = "hepsi",
   gorevHata,
 }: {
   conversationId: string;
@@ -46,6 +47,8 @@ export function ExpertTools({
   templates: AssessmentTemplate[];
   assignments: AssessmentAssignment[];
   tasks: PlanItem[];
+  /** Sayfa sekmelere bölündüğünde yalnızca ilgili bölüm gösterilir. */
+  bolum?: "formlar" | "gorevler" | "hepsi";
   gorevHata?: boolean;
 }) {
   const completed = assignments.filter((a) => a.status === "tamamlandi");
@@ -54,6 +57,7 @@ export function ExpertTools({
   return (
     <div className="space-y-6">
       {/* --- Değerlendirme formları --- */}
+      {bolum !== "gorevler" && (
       <section className="rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)]">
         <h2 className="mb-1 text-2xl">Değerlendirme formları</h2>
         <p className="mb-5 text-ink-600">
@@ -162,8 +166,10 @@ export function ExpertTools({
           </div>
         )}
       </section>
+      )}
 
       {/* --- Görev / hedef ataması --- */}
+      {bolum !== "formlar" && (
       <section className="rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)]">
         <h2 className="mb-1 text-2xl">Görevler ve hedefler</h2>
         <p className="mb-5 text-ink-600">
@@ -263,6 +269,7 @@ export function ExpertTools({
           </button>
         </form>
       </section>
+      )}
     </div>
   );
 }

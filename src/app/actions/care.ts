@@ -84,11 +84,12 @@ export async function proposeAppointmentAction(formData: FormData) {
 
   if (!conversationId) return;
   const base = `/uzman-panel/mesajlar/${conversationId}`;
-  if (!dateRaw || !timeRaw) redirect(`${base}?randevuHata=eksik`);
+  // Sekme korunur; aksi hâlde hata mesajı görünmeyen bir sekmede kalıyor.
+  if (!dateRaw || !timeRaw) redirect(`${base}?sekme=yazisma&randevuHata=eksik`);
 
   const startsAt = new Date(`${dateRaw}T${timeRaw}`);
   if (Number.isNaN(startsAt.getTime())) {
-    redirect(`${base}?randevuHata=tarih`);
+    redirect(`${base}?sekme=yazisma&randevuHata=tarih`);
   }
 
   const expert = await getCurrentExpert();
@@ -189,7 +190,9 @@ export async function createTask(formData: FormData) {
 
   if (!consultantId || !conversationId) return;
   if (!title || !detail) {
-    redirect(`/uzman-panel/mesajlar/${conversationId}?gorevHata=eksik`);
+    redirect(
+      `/uzman-panel/mesajlar/${conversationId}?sekme=gorevler&gorevHata=eksik`,
+    );
   }
 
   const expert = await getCurrentExpert();

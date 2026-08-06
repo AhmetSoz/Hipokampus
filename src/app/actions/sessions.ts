@@ -19,7 +19,8 @@ export async function addSessionNote(formData: FormData) {
   const base = `/uzman-panel/mesajlar/${conversationId}`;
 
   if (!title || !note) {
-    redirect(`${base}?seansHata=eksik`);
+    // Sekme korunur; aksi hâlde hata görünmeyen bir sekmede kalıyor.
+    redirect(`${base}?sekme=seanslar&seansHata=eksik`);
   }
 
   const labels = formData.getAll("olcum-etiket").map(String);

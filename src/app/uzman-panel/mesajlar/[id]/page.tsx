@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppointmentPanel } from "@/components/AppointmentPanel";
-import { ConversationThread } from "@/components/ConversationThread";
+import {
+  ConversationHeader,
+  ConversationThread,
+} from "@/components/ConversationThread";
+import {
+  DosyaSekmeleri,
+  normalizeSekme,
+} from "@/components/DosyaSekmeleri";
 import { ExpertTools } from "@/components/ExpertTools";
 import { SessionLog } from "@/components/SessionLog";
 import { listAppointments } from "@/data/appointments";
@@ -10,8 +17,7 @@ import {
   listTemplates,
 } from "@/data/assessments";
 import { getConversation } from "@/data/conversations";
-import { getExpertById } from "@/data/experts";
-import { listPlanItems } from "@/data/household";
+import { getConsultant, listPlanItems } from "@/data/household";
 import { getCurrentExpert } from "@/data/session";
 import { listSessionNotes } from "@/data/sessions";
 
@@ -32,11 +38,9 @@ export default async function UzmanDanismaDosyasi({
   const current = await getCurrentExpert();
   if (conversation.expertId !== current.id) notFound();
 
-  const expert = await getExpertById(conversation.expertId);
-  if (!expert) notFound();
-
-  const [sessions, appointments, templates, assignments, tasks] =
+  const [consultant, sessions, appointments, templates, assignments, tasks] =
     await Promise.all([
+      getConsultant(conversation.consultantId),
       listSessionNotes(id),
       listAppointments(id),
       listTemplates(),
@@ -45,6 +49,8 @@ export default async function UzmanDanismaDosyasi({
     ]);
 
   const open = conversation.status !== "tamamlandi";
+  const sekme = normalizeSekme(sp.sekme);
+  const basePath = `/uzman-panel/mesajlar/${id}`;
 
   return (
     <div className="space-y-6">
@@ -55,39 +61,62 @@ export default async function UzmanDanismaDosyasi({
         ← Genel bakış
       </Link>
 
-      <ConversationThread
+      <ConversationHeader
         conversation={conversation}
-        expert={expert}
+        counterpartName={consultant.name}
         viewer="uzman"
-        bosMesajHatasi={sp.hata === "bos"}
       />
 
-      <AppointmentPanel
-        conversationId={id}
-        viewer="uzman"
-        appointments={appointments}
-        canPropose={open}
-        hata={
-          typeof sp.randevuHata === "string" ? sp.randevuHata : undefined
-        }
+      <DosyaSekmeleri
+        basePath={basePath}
+        aktif={sekme}
+        rozetler={{
+          seanslar: sessions.length,
+          formlar: assignments.filter((a) => a.status === "tamamlandi").length,
+          gorevler: tasks.filter((t) => t.status !== "tamamlandi").length,
+        }}
       />
 
-      <SessionLog
-        conversationId={id}
-        viewer="uzman"
-        sessions={sessions}
-        canAdd={open}
-        seansHata={sp.seansHata === "eksik"}
-      />
+      {sekme === "yazisma" && (
+        <>
+          <ConversationThread
+            conversation={conversation}
+            viewer="uzman"
+            bosMesajHatasi={sp.hata === "bos"}
+          />
+          <AppointmentPanel
+            conversationId={id}
+            viewer="uzman"
+            appointments={appointments}
+            canPropose={open}
+            hata={
+              typeof sp.randevuHata === "string" ? sp.randevuHata : undefined
+            }
+          />
+        </>
+      )}
 
-      <ExpertTools
-        conversationId={id}
-        consultantId={conversation.consultantId}
-        templates={templates}
-        assignments={assignments}
-        tasks={tasks}
-        gorevHata={sp.gorevHata === "eksik"}
-      />
+      {sekme === "seanslar" && (
+        <SessionLog
+          conversationId={id}
+          viewer="uzman"
+          sessions={sessions}
+          canAdd={open}
+          seansHata={sp.seansHata === "eksik"}
+        />
+      )}
+
+      {(sekme === "formlar" || sekme === "gorevler") && (
+        <ExpertTools
+          conversationId={id}
+          consultantId={conversation.consultantId}
+          templates={templates}
+          assignments={assignments}
+          tasks={tasks}
+          bolum={sekme === "formlar" ? "formlar" : "gorevler"}
+          gorevHata={sp.gorevHata === "eksik"}
+        />
+      )}
     </div>
   );
 }

@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppointmentPanel } from "@/components/AppointmentPanel";
-import { ConversationThread } from "@/components/ConversationThread";
+import {
+  ConversationHeader,
+  ConversationThread,
+} from "@/components/ConversationThread";
 import { SessionLog } from "@/components/SessionLog";
 import { listAppointments } from "@/data/appointments";
 import { Notice } from "@/components/ui";
@@ -59,9 +62,13 @@ export default async function DanismaDosyasi({
       >
         ← Tüm dosyalar
       </Link>
+      <ConversationHeader
+        conversation={conversation}
+        counterpartName={expert.name}
+        viewer="danisan"
+      />
       <ConversationThread
         conversation={conversation}
-        expert={expert}
         viewer="danisan"
         bosMesajHatasi={sp.hata === "bos"}
       />
