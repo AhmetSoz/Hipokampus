@@ -1,5 +1,9 @@
 import Image from "next/image";
-import { HK_LOCKUP_STROKES, HK_LOCKUP_TOTAL_DURATION } from "./hk-lockup-trace";
+import {
+  HK_LOCKUP_STROKES,
+  HK_LOCKUP_TIP,
+  HK_LOCKUP_TOTAL_DURATION,
+} from "./hk-lockup-trace";
 
 /**
  * Marka kilidi (lockup) ve sembolü.
@@ -75,13 +79,37 @@ export function Logo({
   const asset = ASSETS[variant];
 
   if (animate && variant === "lockup") {
+    /* Kalem, çizimi bitirdiği yerden son harfin ("s") görsel ucuna
+       kayar; dağılma oradan başlar. İzin son parçası kapalı bir kontur
+       olduğu için kendi bitişi ucu değil — bu yüzden uca giden kısa bir
+       çizgi ekliyoruz. */
+    const penPath =
+      HK_LOCKUP_STROKES.map((s) => s.d).join(" ") +
+      ` L ${HK_LOCKUP_TIP.x} ${HK_LOCKUP_TIP.y}`;
+
+    /* Sinir ucu filamentleri: uçtan dışarı açılan dallar. Sade kalsın
+       diye altı tane, koordinatlar uca göreli. Bir kısmı ikinci bir dal
+       veriyor (çatallanma) — dendrit hissini tek başına uzunluk değil,
+       bu dallanma veriyor. */
+    const filaments = [
+      { c: [14, -15], e: [33, -26], fork: [12, -3] },
+      { c: [17, -4], e: [38, -7] },
+      { c: [14, 10], e: [32, 20], fork: [11, 6] },
+      { c: [3, -17], e: [10, -33] },
+      { c: [4, 14], e: [11, 28] },
+      { c: [16, 2], e: [36, 6] },
+    ];
+    // Filamentler sağa taşıyor; görünüm alanını biraz genişletiyoruz.
+    const PAD = 46;
+    const vbW = asset.width + PAD;
+
     return (
       <span
         className={`relative inline-block w-auto ${className}`}
-        style={{ aspectRatio: `${asset.width} / ${asset.height}` }}
+        style={{ aspectRatio: `${vbW} / ${asset.height}` }}
       >
         <svg
-          viewBox={`0 0 ${asset.width} ${asset.height}`}
+          viewBox={`0 0 ${vbW} ${asset.height}`}
           className="block h-full w-full"
           role={decorative ? undefined : "img"}
           aria-label={decorative ? undefined : "Hipokampüs"}
@@ -114,6 +142,47 @@ export function Logo({
             height={asset.height}
             mask="url(#hk-lockup-reveal)"
           />
+          {/* Dağılma: uçtan açılan sinir ucu dalları. Çizim bitince
+              başlar, dallar dışa doğru çizilir ve söner. */}
+          <g className="hk-lockup-burst">
+            {filaments.map((f, i) => (
+              <g key={i}>
+                <path
+                  d={`M ${HK_LOCKUP_TIP.x} ${HK_LOCKUP_TIP.y} q ${f.c[0]} ${f.c[1]} ${f.e[0]} ${f.e[1]}`}
+                  fill="none"
+                  stroke="var(--color-teal-500)"
+                  strokeWidth={1.9}
+                  strokeLinecap="round"
+                  pathLength={1}
+                  className="hk-lockup-filament"
+                  style={{ animationDelay: `${HK_LOCKUP_TOTAL_DURATION + i * 0.06}s` }}
+                />
+                {f.fork && (
+                  <path
+                    d={`M ${HK_LOCKUP_TIP.x + f.e[0]} ${HK_LOCKUP_TIP.y + f.e[1]} q ${f.fork[0] * 0.5} ${f.fork[1] * 0.5} ${f.fork[0]} ${f.fork[1]}`}
+                    fill="none"
+                    stroke="var(--color-teal-400)"
+                    strokeWidth={1.3}
+                    strokeLinecap="round"
+                    pathLength={1}
+                    className="hk-lockup-filament"
+                    style={{
+                      animationDelay: `${HK_LOCKUP_TOTAL_DURATION + 0.22 + i * 0.06}s`,
+                    }}
+                  />
+                )}
+                <circle
+                  cx={HK_LOCKUP_TIP.x + f.e[0] + (f.fork?.[0] ?? 0)}
+                  cy={HK_LOCKUP_TIP.y + f.e[1] + (f.fork?.[1] ?? 0)}
+                  r={2.4}
+                  fill="var(--color-sky-500)"
+                  className="hk-lockup-synapse"
+                  style={{ animationDelay: `${HK_LOCKUP_TOTAL_DURATION + 0.42 + i * 0.06}s` }}
+                />
+              </g>
+            ))}
+          </g>
+
           <circle
             r={3.4}
             className="hk-lockup-pen"
@@ -124,7 +193,7 @@ export function Logo({
               calcMode="linear"
               fill="freeze"
               begin="0.05s"
-              path={HK_LOCKUP_STROKES.map((s) => s.d).join(" ")}
+              path={penPath}
             />
           </circle>
         </svg>
