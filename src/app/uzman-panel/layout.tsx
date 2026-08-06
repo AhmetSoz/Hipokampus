@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandPath } from "@/components/BrandPath";
 import { DemoNotice } from "@/components/ui";
 import { getCurrentExpert, getCurrentUser } from "@/data/session";
 
@@ -29,8 +30,13 @@ export default async function UzmanPanelLayout({
   ];
 
   return (
-    <div className="bg-paper-warm">
-      <div className="mx-auto w-full max-w-6xl px-6 py-10 sm:px-8">
+    <div className="relative isolate overflow-hidden bg-paper-warm">
+      {/* Danışan panelindeki gibi çok soluk — çalışma alanı, vitrin değil. */}
+      <BrandPath
+        soften={false}
+        className="absolute inset-x-0 top-0 h-[28rem] w-full opacity-25"
+      />
+      <div className="relative mx-auto w-full max-w-6xl px-6 py-10 sm:px-8">
         {demoMode && (
           <div className="mb-6">
             <DemoNotice>

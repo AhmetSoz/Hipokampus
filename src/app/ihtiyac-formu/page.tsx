@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BrandPath } from "@/components/BrandPath";
 import { NeedsForm } from "@/components/NeedsForm";
 import { Container, Notice } from "@/components/ui";
 
@@ -11,8 +12,9 @@ export const metadata: Metadata = {
 
 export default function IhtiyacFormuSayfasi() {
   return (
-    <div className="bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
-      <Container>
+    <div className="relative isolate overflow-hidden bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
+      <BrandPath className="absolute inset-0 h-full w-full opacity-60" />
+      <Container className="relative">
         <div className="mb-12">
           <h1 className="mb-4 text-4xl sm:text-5xl">İhtiyaç formu</h1>
           <p className="max-w-2xl text-xl text-ink-700">

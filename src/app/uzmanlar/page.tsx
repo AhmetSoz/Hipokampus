@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ExpertCard } from "@/components/ExpertCard";
 import { ExpertFilters } from "@/components/ExpertFilters";
+import { BrandPath } from "@/components/BrandPath";
 import { Container, DemoNotice, Notice } from "@/components/ui";
 import {
   listCities,
@@ -48,8 +49,9 @@ export default async function UzmanlarSayfasi({
   ]);
 
   return (
-    <div className="bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
-      <Container width="wide">
+    <div className="relative isolate overflow-hidden bg-linear-to-b from-sky-50 to-paper py-16 sm:py-20">
+      <BrandPath className="absolute inset-0 h-full w-full opacity-60" />
+      <Container width="wide" className="relative">
         <h1 className="mb-4 text-4xl sm:text-5xl">Uzmanlar</h1>
         <p className="mb-8 max-w-2xl text-xl text-ink-700">
           Buradaki herkes doğrulama sürecini tamamladı. Sorunuz &ldquo;kim daha

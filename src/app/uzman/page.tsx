@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BrandPath } from "@/components/BrandPath";
 import { Logo } from "@/components/Logo";
 import {
   ButtonLink,
@@ -20,8 +21,9 @@ export const metadata: Metadata = {
 export default function UzmanTanitimSayfasi() {
   return (
     <>
-      <div className="bg-linear-to-br from-teal-800 to-teal-900 py-16 text-teal-50 sm:py-24">
-        <Container width="wide">
+      <div className="relative isolate overflow-hidden bg-linear-to-br from-teal-800 to-teal-900 py-16 text-teal-50 sm:py-24">
+        <BrandPath className="absolute inset-0 h-full w-full opacity-30" />
+        <Container width="wide" className="relative">
           <Logo
             variant="lockupReverse"
             decorative

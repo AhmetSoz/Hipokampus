@@ -108,10 +108,20 @@ const SPAN = 2.9;
 export function BrandPath({
   className = "",
   animate = false,
+  soften = true,
 }: {
   className?: string;
   animate?: boolean;
+  /**
+   * Metin bölgesinde ağı soluklaştırır. Sayfalarda metin sola hizalı
+   * olduğu için soldan sağa açılan bir maske kullanılıyor: yoğunluk
+   * düşmüyor, yalnızca yazının arkasında geri çekiliyor.
+   */
+  soften?: boolean;
 }) {
+  const mask = soften
+    ? "linear-gradient(to right, rgba(0,0,0,0.28), rgba(0,0,0,0.45) 34%, rgba(0,0,0,0.85) 62%, #000 82%)"
+    : undefined;
   const drawn = (delay: number) =>
     animate
       ? { className: "hk-net-draw", style: { animationDelay: `${delay.toFixed(2)}s` } }
@@ -127,6 +137,7 @@ export function BrandPath({
       viewBox={`0 0 ${VB_W} ${VB_H}`}
       preserveAspectRatio="xMidYMid slice"
       className={`pointer-events-none ${className}`}
+      style={mask ? { maskImage: mask, WebkitMaskImage: mask } : undefined}
     >
       {/* Bağlar — ağın omurgası */}
       <g stroke="var(--color-teal-700)" fill="none" strokeLinecap="round">
