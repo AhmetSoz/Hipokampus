@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Card, Eyebrow, Notice } from "@/components/ui";
-import { listConversations } from "@/data/conversations";
+import { listConversationsForConsultant } from "@/data/conversations";
 import { getExpertById } from "@/data/experts";
-import { getCurrentMember } from "@/data/session";
+import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 import type { ConversationStatus } from "@/data/types";
 
 export const metadata: Metadata = { title: "Ödeme ve abonelik" };
@@ -37,7 +37,9 @@ export default async function OdemeSayfasi() {
     );
   }
 
-  const conversations = await listConversations();
+  const conversations = await listConversationsForConsultant(
+    await getCurrentConsultantId(),
+  );
   const experts = await Promise.all(
     conversations.map((c) => getExpertById(c.expertId)),
   );

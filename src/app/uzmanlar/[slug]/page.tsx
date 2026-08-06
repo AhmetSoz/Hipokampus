@@ -143,16 +143,16 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
             </strong>
           </p>
           <div className="flex flex-wrap gap-4">
-            <ButtonLink href="/ihtiyac-formu" withArrow>
-              Önce ihtiyacınızı netleştirin
+            <ButtonLink href={`/basvuru/${expert.slug}`} withArrow>
+              {expert.name} ile başlayın
             </ButtonLink>
-            <ButtonLink href="/nasil-calisir" variant="secondary">
-              Süreci okuyun
+            <ButtonLink href="/ihtiyac-formu" variant="secondary">
+              Önce ihtiyacınızı netleştirin
             </ButtonLink>
           </div>
           <p className="mt-6 text-base text-ink-600">
-            Görüşme başlatma henüz açık değildir — Hipokampüs geliştirme
-            aşamasındadır.
+            Başvuru için bir hesabınız olması gerekir. Hipokampüs geliştirme
+            aşamasındadır; buraya gerçek sağlık bilgisi girmeyin.
           </p>
         </div>
 

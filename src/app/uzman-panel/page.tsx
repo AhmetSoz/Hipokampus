@@ -10,10 +10,14 @@ export const metadata: Metadata = { title: "Uzman paneli" };
 
 export default async function UzmanPanelGenelBakis() {
   const expert = await getCurrentExpert();
-  const [conversations, consultant] = await Promise.all([
-    listConversationsForExpert(expert.id),
-    getConsultant(),
-  ]);
+  const conversations = await listConversationsForExpert(expert.id);
+
+  // Bir uzman birden fazla haneyle çalışabilir; dosya başına danışan adı
+  // ayrı ayrı çözülür (eskiden tek sabit hane varsayılıyordu).
+  const consultantNames = new Map<string, string>();
+  for (const id of new Set(conversations.map((c) => c.consultantId))) {
+    consultantNames.set(id, (await getConsultant(id)).name);
+  }
 
   const waiting = conversations.filter((c) => c.status === "yanit-bekliyor");
   const open = conversations.filter((c) => c.status !== "tamamlandi");
@@ -63,7 +67,8 @@ export default async function UzmanPanelGenelBakis() {
                     {c.subject}
                   </p>
                   <p className="text-base text-ink-600">
-                    {consultant.name} · {c.messages.length} mesaj
+                    {consultantNames.get(c.consultantId) ?? "Danışan"} ·{" "}
+                    {c.messages.length} mesaj
                   </p>
                 </Link>
               </li>

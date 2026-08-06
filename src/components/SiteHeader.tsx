@@ -3,8 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { logout } from "@/app/actions/auth";
 import { Logo } from "./Logo";
 import { ReadingControls } from "./ReadingControls";
+
+/** Sunucudan gelen oturum özeti — bkz. app/layout.tsx. */
+export type HeaderSession = { role: "danisan" | "uzman" } | null;
 
 const nav = [
   { href: "/nasil-calisir", label: "Nasıl çalışır" },
@@ -66,7 +70,7 @@ function ReadingControlsPopover() {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ session }: { session: HeaderSession }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -110,12 +114,39 @@ export function SiteHeader() {
 
         <div className="hidden items-center gap-3 md:flex">
           <ReadingControlsPopover />
-          <Link
-            href="/ihtiyac-formu"
-            className="inline-flex min-h-[3rem] items-center rounded-xl bg-teal-700 px-6 font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.97]"
-          >
-            İhtiyacınızı netleştirin
-          </Link>
+          {session ? (
+            <>
+              <Link
+                href={session.role === "uzman" ? "/uzman-panel" : "/panel"}
+                className="rounded-md px-3 py-2.5 font-semibold text-teal-800 hover:bg-teal-50"
+              >
+                Panelim
+              </Link>
+              <form action={logout}>
+                <button
+                  type="submit"
+                  className="min-h-[3rem] rounded-xl border-2 border-ink-300 px-5 font-semibold text-ink-800 hover:-translate-y-px hover:bg-ink-100"
+                >
+                  Çıkış
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/giris"
+                className="rounded-md px-3 py-2.5 font-semibold text-teal-800 hover:bg-teal-50"
+              >
+                Giriş
+              </Link>
+              <Link
+                href="/ihtiyac-formu"
+                className="inline-flex min-h-[3rem] items-center rounded-xl bg-teal-700 px-6 font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.97]"
+              >
+                İhtiyacınızı netleştirin
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -163,24 +194,35 @@ export function SiteHeader() {
             </Link>
           ))}
           <Link
-            href="/giris"
+            href={session ? (session.role === "uzman" ? "/uzman-panel" : "/panel") : "/giris"}
             onClick={() => setOpen(false)}
             className="block border-b border-ink-100 py-4 text-ink-800"
           >
-            Demo paneli
+            {session ? "Panelim" : "Giriş"}
           </Link>
 
           <div className="mt-5 mb-2">
             <ReadingControls />
           </div>
 
-          <Link
-            href="/ihtiyac-formu"
-            onClick={() => setOpen(false)}
-            className="mt-3 inline-flex min-h-[3.25rem] w-full items-center justify-center rounded-xl bg-teal-700 px-6 font-semibold text-white active:scale-[0.97]"
-          >
-            İhtiyacınızı netleştirin
-          </Link>
+          {session ? (
+            <form action={logout} className="mt-3">
+              <button
+                type="submit"
+                className="inline-flex min-h-[3.25rem] w-full items-center justify-center rounded-xl border-2 border-ink-300 px-6 font-semibold text-ink-800 active:scale-[0.97]"
+              >
+                Çıkış yapın
+              </button>
+            </form>
+          ) : (
+            <Link
+              href="/ihtiyac-formu"
+              onClick={() => setOpen(false)}
+              className="mt-3 inline-flex min-h-[3.25rem] w-full items-center justify-center rounded-xl bg-teal-700 px-6 font-semibold text-white active:scale-[0.97]"
+            >
+              İhtiyacınızı netleştirin
+            </Link>
+          )}
         </nav>
       )}
     </header>

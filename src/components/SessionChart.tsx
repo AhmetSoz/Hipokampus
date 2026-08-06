@@ -13,7 +13,12 @@ export function SessionChart({
   unit: string | null;
   points: { date: string; value: number }[];
 }) {
-  const sorted = [...points].sort((a, b) => a.date.localeCompare(b.date));
+  /* Kararlı sıralama: eşit tarihlerde girdi sırası korunur. Seri zaten
+     eskiden yeniye kurulmuş olarak gelir (bkz. SessionLog). */
+  const sorted = points
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => a.p.date.localeCompare(b.p.date) || a.i - b.i)
+    .map(({ p }) => p);
   const values = sorted.map((p) => p.value);
   const min = Math.min(...values);
   const max = Math.max(...values);

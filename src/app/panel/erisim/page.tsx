@@ -5,7 +5,7 @@ import {
   listAccessLog,
   listFamily,
 } from "@/data/household";
-import { getCurrentMember } from "@/data/session";
+import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 import { SCOPE_DESCRIPTION, SCOPE_LABEL } from "@/data/types";
 import type { DataScope } from "@/data/types";
 
@@ -24,11 +24,12 @@ const ROLE_LABEL = {
 } as const;
 
 export default async function ErisimSayfasi() {
+  const consultantId = await getCurrentConsultantId();
   const [member, consultant, family, log] = await Promise.all([
     getCurrentMember(),
-    getConsultant(),
-    listFamily(),
-    listAccessLog(),
+    getConsultant(consultantId),
+    listFamily(consultantId),
+    listAccessLog(consultantId),
   ]);
 
   const isOwner = member.relationRole === "birey";

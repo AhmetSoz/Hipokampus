@@ -43,11 +43,14 @@ export async function listSessionNotes(
   conversationId: string,
   options?: { onlyPublished?: boolean },
 ): Promise<SessionNote[]> {
+  /* İkinci sıra ölçütü şart: aynı gün girilen iki seansın `occurredAt`'i
+     birebir aynı olur (tarih alanı saat taşımıyor) ve sıra render'lar
+     arasında değişebilir. */
   const rows = await db
     .select()
     .from(sessionNotes)
     .where(eq(sessionNotes.conversationId, conversationId))
-    .orderBy(desc(sessionNotes.occurredAt));
+    .orderBy(desc(sessionNotes.occurredAt), desc(sessionNotes.createdAt));
 
   const filtered = options?.onlyPublished
     ? rows.filter((r) => r.status === "yayinda")

@@ -304,3 +304,86 @@ export const sessionMeasurements = pgTable("session_measurements", {
   unit: text("unit"),
   sortOrder: integer("sort_order").notNull().default(0),
 });
+
+/* ------------------------------------------------------------------ */
+/* GERÇEK HESAPLAR (2026-08-06)                                        */
+/*
+ * Sahibi admin panelinden "o kişi gibi bak" ile test etmeyi yetersiz
+ * buldu ve gerçek hesap istedi: iki ayrı sekmede, biri hasta biri uzman
+ * olarak giriş yapıp uçtan uca akışı denemek için.
+ *
+ * Bu, "kayıt kapalıdır" kararının (A2 Prototip kapsamı) bilinçli
+ * revizyonudur — bkz. karar kaydı "Gerçek giriş sistemi".
+ *
+ * GÜVENLİK NOTU: parola asla düz metin saklanmaz. Node'un yerleşik
+ * `crypto.scrypt`'i kullanılır (bkz. src/data/auth.ts) — ek bağımlılık
+ * yok. Oturum, DB'de tutulan rastgele bir jetondur; çıkış yapıldığında
+ * gerçekten geçersiz olur (imzalı çerezde bu mümkün olmazdı).
+ *
+ * Bu hâlâ bir PROTOTİPTİR: yasal metinler hazır değil, bu yüzden kayıt
+ * ekranı gerçek kişisel veri istemez ve arayüz "geliştirme aşamasında"
+ * uyarısını korur.
+ */
+export const userRoleEnum = pgEnum("user_role", ["danisan", "uzman"]);
+
+export const users = pgTable("users", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  role: userRoleEnum("role").notNull(),
+  /** Danışan hesabıysa: kendi hane kaydı. */
+  consultantId: text("consultant_id").references(() => consultants.id, {
+    onDelete: "cascade",
+  }),
+  /** Danışan hesabıysa: panelde kendisini temsil eden aile üyesi satırı. */
+  memberId: text("member_id").references(() => familyMembers.id, {
+    onDelete: "set null",
+  }),
+  /** Uzman hesabıysa: uzman profili. */
+  expertId: text("expert_id").references(() => experts.id, {
+    onDelete: "cascade",
+  }),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+});
+
+export const authSessions = pgTable("auth_sessions", {
+  token: text("token").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+});
+
+/* ------------------------------------------------------------------ */
+/* RANDEVULAR (2026-08-06)                                             */
+/*
+ * Uzman bir saat teklif eder, danışan kabul veya reddeder. Görüşme
+ * bağlantısı randevuya bağlıdır (conversations.meetingUrl dosya
+ * genelindeydi; randevu bazlı olması takvim akışını mümkün kılıyor).
+ *
+ * Görüşme kaydı YOK — kilitli karar. Bağlantı harici bir araca çıkar.
+ */
+export const appointmentStatusEnum = pgEnum("appointment_status", [
+  "teklif",
+  "kabul",
+  "reddedildi",
+  "iptal",
+  "tamamlandi",
+]);
+
+export const appointments = pgTable("appointments", {
+  id: text("id").primaryKey(),
+  conversationId: text("conversation_id")
+    .notNull()
+    .references(() => conversations.id, { onDelete: "cascade" }),
+  proposedByExpertId: text("proposed_by_expert_id")
+    .notNull()
+    .references(() => experts.id),
+  startsAt: timestamp("starts_at", { mode: "date" }).notNull(),
+  durationMinutes: integer("duration_minutes").notNull().default(45),
+  status: appointmentStatusEnum("status").notNull().default("teklif"),
+  note: text("note"),
+  meetingUrl: text("meeting_url"),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+});

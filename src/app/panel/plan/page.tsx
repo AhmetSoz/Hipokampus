@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { updateTaskStatus } from "@/app/actions/care";
 import { Eyebrow, Notice } from "@/components/ui";
 import { getExpertById } from "@/data/experts";
 import { getConsultant, listPlanItems } from "@/data/household";
 import { needArea } from "@/data/needs";
-import { getCurrentMember } from "@/data/session";
+import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 import type { PlanItemStatus } from "@/data/types";
 
 export const metadata: Metadata = { title: "Bakım planı" };
@@ -28,11 +29,14 @@ export default async function BakimPlaniSayfasi() {
     );
   }
 
+  const consultantId = await getCurrentConsultantId();
   const [consultant, plan] = await Promise.all([
-    getConsultant(),
-    listPlanItems(),
+    getConsultant(consultantId),
+    listPlanItems(consultantId),
   ]);
-  const author = await getExpertById(plan[0]?.authorExpertId ?? "u1");
+  const author = plan[0]
+    ? await getExpertById(plan[0].authorExpertId)
+    : null;
 
   return (
     <div className="space-y-8">
@@ -73,14 +77,42 @@ export default async function BakimPlaniSayfasi() {
                   </span>
                 </div>
                 <p className="mb-4 pl-13 text-ink-700">{item.detail}</p>
-                <p className="pl-13 text-base text-ink-600">
+                <p className="mb-4 pl-13 text-base text-ink-600">
                   {needArea(item.needArea).label} ·{" "}
                   {new Date(item.createdAt).toLocaleDateString("tr-TR", {
                     day: "numeric",
                     month: "long",
                   })}{" "}
-                  tarihinde {author?.name} ekledi
+                  tarihinde {author?.name ?? "uzmanınız"} ekledi
                 </p>
+
+                {/* Durumu danışan kendisi günceller — plan uzmanın yazdığı
+                    bir belge ama ilerlemeyi yaşayan kişi danışandır. */}
+                <div className="flex flex-wrap gap-2 pl-13">
+                  {(
+                    [
+                      ["yapilacak", "Yapılacak"],
+                      ["surüyor", "Sürüyor"],
+                      ["tamamlandi", "Tamamlandı"],
+                    ] as const
+                  ).map(([value, label]) => (
+                    <form key={value} action={updateTaskStatus}>
+                      <input type="hidden" name="madde" value={item.id} />
+                      <input type="hidden" name="durum" value={value} />
+                      <button
+                        type="submit"
+                        disabled={item.status === value}
+                        className={`min-h-[2.75rem] rounded-lg border-2 px-4 text-base font-semibold ${
+                          item.status === value
+                            ? "cursor-default border-teal-700 bg-teal-700 text-white"
+                            : "border-ink-300 bg-white text-ink-800 hover:border-teal-300 hover:bg-teal-50"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    </form>
+                  ))}
+                </div>
               </li>
             );
           })}

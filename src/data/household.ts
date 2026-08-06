@@ -12,13 +12,16 @@ import type {
 /**
  * Panel verisi veritabanından okunur (bkz. scripts/seed.ts).
  *
- * Kurgu bilinçli olarak "ödeme ≠ veri görme" kuralını görünür kılacak
- * şekilde seçildi: Mehmet ödemeyi yapıyor ama sağlık ve görüşme verisini
- * göremiyor. Sunumda bu farkı göstermek için en net örnek.
+ * Tohum verisindeki kurgu bilinçli olarak "ödeme ≠ veri görme" kuralını
+ * görünür kılacak şekilde seçildi: Mehmet ödemeyi yapıyor ama sağlık ve
+ * görüşme verisini göremiyor. Sunumda bu farkı göstermek için en net örnek.
+ *
+ * ÇOK-HANELİ (2026-08-06): gerçek hesaplar eklendiğinde tek sabit hane
+ * varsayımı kalktı. Bu modüldeki sorgular artık AÇIKÇA bir `consultantId`
+ * alır; çağıran taraf bunu oturumdan çözer (`getCurrentConsultantId`).
+ * Parametre burada varsayılan almaz — yanlış hanenin verisini sessizce
+ * göstermek, eksik veri göstermekten çok daha kötü olurdu.
  */
-
-// Prototipte tek bir danışan var; panel bu kayıt üzerine kurulu.
-const CONSULTANT_ID = "d1";
 
 function toFamilyMember(row: typeof familyMembers.$inferSelect): FamilyMember {
   return {
@@ -34,11 +37,13 @@ function toFamilyMember(row: typeof familyMembers.$inferSelect): FamilyMember {
   };
 }
 
-export async function getConsultant(): Promise<Consultant> {
+export async function getConsultant(
+  consultantId: string,
+): Promise<Consultant> {
   const [row] = await db
     .select()
     .from(consultants)
-    .where(eq(consultants.id, CONSULTANT_ID));
+    .where(eq(consultants.id, consultantId));
   if (!row) throw new Error("Danışan kaydı bulunamadı");
   return {
     id: row.id,
@@ -49,11 +54,13 @@ export async function getConsultant(): Promise<Consultant> {
   };
 }
 
-export async function listFamily(): Promise<FamilyMember[]> {
+export async function listFamily(
+  consultantId: string,
+): Promise<FamilyMember[]> {
   const rows = await db
     .select()
     .from(familyMembers)
-    .where(eq(familyMembers.consultantId, CONSULTANT_ID));
+    .where(eq(familyMembers.consultantId, consultantId));
   return rows.map(toFamilyMember);
 }
 
@@ -65,11 +72,13 @@ export async function getFamilyMember(id: string): Promise<FamilyMember | null> 
   return row ? toFamilyMember(row) : null;
 }
 
-export async function listPlanItems(): Promise<PlanItem[]> {
+export async function listPlanItems(
+  consultantId: string,
+): Promise<PlanItem[]> {
   const rows = await db
     .select()
     .from(planItems)
-    .where(eq(planItems.consultantId, CONSULTANT_ID))
+    .where(eq(planItems.consultantId, consultantId))
     .orderBy(planItems.createdAt);
 
   return rows.map((row) => ({
@@ -83,7 +92,9 @@ export async function listPlanItems(): Promise<PlanItem[]> {
   }));
 }
 
-export async function listAccessLog(): Promise<AccessLogEntry[]> {
+export async function listAccessLog(
+  consultantId: string,
+): Promise<AccessLogEntry[]> {
   const rows = await db
     .select({
       id: accessLog.id,
@@ -94,7 +105,7 @@ export async function listAccessLog(): Promise<AccessLogEntry[]> {
     })
     .from(accessLog)
     .innerJoin(familyMembers, eq(accessLog.memberId, familyMembers.id))
-    .where(eq(familyMembers.consultantId, CONSULTANT_ID))
+    .where(eq(familyMembers.consultantId, consultantId))
     .orderBy(desc(accessLog.at));
 
   return rows.map((row) => ({
@@ -104,6 +115,41 @@ export async function listAccessLog(): Promise<AccessLogEntry[]> {
     section: row.section,
     at: row.at.toISOString(),
   }));
+}
+
+/**
+ * Görev/hedef ataması. Uzman bakım planına madde ekler; danışan durumunu
+ * günceller. Ayrı bir "görevler" tablosu açılmadı — bakım planı maddesi
+ * zaten tam olarak bu: başlığı, açıklaması, ihtiyaç alanı ve durumu olan
+ * atanmış bir iş.
+ */
+export async function createPlanItem(input: {
+  consultantId: string;
+  title: string;
+  detail: string;
+  needAreaId: string;
+  authorExpertId: string;
+}): Promise<void> {
+  await db.insert(planItems).values({
+    id: `p${Date.now()}`,
+    consultantId: input.consultantId,
+    title: input.title,
+    detail: input.detail,
+    needAreaId: input.needAreaId,
+    status: "yapilacak",
+    authorExpertId: input.authorExpertId,
+    createdAt: new Date(),
+  });
+}
+
+export async function setPlanItemStatus(
+  planItemId: string,
+  status: PlanItem["status"],
+): Promise<void> {
+  await db
+    .update(planItems)
+    .set({ status })
+    .where(eq(planItems.id, planItemId));
 }
 
 /** Bir kişinin verilen kapsama erişimi var mı? */

@@ -4,15 +4,16 @@ import { DemoNotice, Notice } from "@/components/ui";
 import { getConsultant, listPlanItems } from "@/data/household";
 import { getExpertById } from "@/data/experts";
 import { needArea } from "@/data/needs";
-import { getCurrentMember } from "@/data/session";
+import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 
 export const metadata: Metadata = { title: "Genel bakış" };
 
 export default async function PanelGenelBakis() {
+  const consultantId = await getCurrentConsultantId();
   const [member, consultant, plan] = await Promise.all([
     getCurrentMember(),
-    getConsultant(),
-    listPlanItems(),
+    getConsultant(consultantId),
+    listPlanItems(consultantId),
   ]);
 
   const canSeeHealth = member.scopes.includes("saglik-gorusme");

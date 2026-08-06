@@ -2,7 +2,19 @@ import type { Metadata, Viewport } from "next";
 import { Newsreader, Source_Sans_3 } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { getCurrentUser } from "@/data/session";
 import "./globals.css";
+
+/**
+ * Başlıktaki giriş durumu. Sunucuda çözülüp istemci bileşenine veri
+ * olarak geçilir — SiteHeader etkileşimli olduğu için istemci bileşeni,
+ * oturum bilgisiyse yalnızca sunucuda okunabilir.
+ */
+async function getHeaderSession() {
+  const user = await getCurrentUser();
+  if (!user) return null;
+  return { role: user.role };
+}
 
 /* Tipografi ÖNERİ statüsündedir (bkz. karar kaydı C bölümü).
    Değiştirmek için bu iki tanım ve globals.css'teki iki satır yeterli. */
@@ -41,7 +53,7 @@ export const viewport: Viewport = {
   themeColor: "#0e5c63",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="tr"
@@ -61,7 +73,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Doğrudan içeriğe geç
         </a>
-        <SiteHeader />
+        <SiteHeader session={await getHeaderSession()} />
         <main id="icerik" className="flex-1">
           {children}
         </main>

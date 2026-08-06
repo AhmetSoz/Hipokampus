@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Notice } from "@/components/ui";
-import { listConversations } from "@/data/conversations";
+import { listConversationsForConsultant } from "@/data/conversations";
 import { getExpertById, RESPONSE_COMMITMENT } from "@/data/experts";
-import { getCurrentMember } from "@/data/session";
+import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 import type { ConversationStatus } from "@/data/types";
 
 export const metadata: Metadata = { title: "Danışma dosyaları" };
@@ -28,7 +28,9 @@ export default async function MesajlarSayfasi() {
     );
   }
 
-  const conversations = await listConversations();
+  const conversations = await listConversationsForConsultant(
+    await getCurrentConsultantId(),
+  );
   const experts = await Promise.all(
     conversations.map((c) => getExpertById(c.expertId)),
   );

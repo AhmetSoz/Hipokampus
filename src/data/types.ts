@@ -207,3 +207,80 @@ export type SessionNote = {
   createdAt: string;
   measurements: SessionMeasurement[];
 };
+
+/**
+ * Randevu. Uzman bir saat teklif eder, danışan kabul veya reddeder.
+ * Görüşme bağlantısı randevuya bağlıdır; kayıt alınmaz (kilitli karar).
+ */
+export type AppointmentStatus =
+  | "teklif"
+  | "kabul"
+  | "reddedildi"
+  | "iptal"
+  | "tamamlandi";
+
+export const APPOINTMENT_STATUS_LABEL: Record<AppointmentStatus, string> = {
+  teklif: "Onayınız bekleniyor",
+  kabul: "Onaylandı",
+  reddedildi: "Reddedildi",
+  iptal: "İptal edildi",
+  tamamlandi: "Tamamlandı",
+};
+
+export type Appointment = {
+  id: string;
+  conversationId: string;
+  proposedByExpertId: string;
+  startsAt: string;
+  durationMinutes: number;
+  status: AppointmentStatus;
+  note: string | null;
+  meetingUrl: string | null;
+  createdAt: string;
+};
+
+/**
+ * Değerlendirme formu. İÇERİK SERBESTTİR — lisanslı hiçbir ölçek
+ * (MMSE/MoCA vb.) maddesi taşımaz ve hesaplanmış puan/skor tutmaz.
+ * Bkz. db/schema.ts "DEĞERLENDİRME İSKELESİ" ve kilitli kararlar.
+ */
+export type AssessmentResponseType =
+  | "metin"
+  | "evet-hayir"
+  | "olcek"
+  | "cok-secmeli";
+
+export type AssessmentItem = {
+  id: string;
+  position: number;
+  prompt: string;
+  responseType: AssessmentResponseType;
+  options: string[] | null;
+};
+
+export type AssessmentTemplate = {
+  id: string;
+  title: string;
+  description: string | null;
+  items: AssessmentItem[];
+};
+
+export type AssessmentAssignmentStatus = "atandi" | "tamamlandi";
+
+export type AssessmentAssignment = {
+  id: string;
+  templateId: string;
+  templateTitle: string;
+  templateDescription: string | null;
+  consultantId: string;
+  assignedByExpertId: string;
+  assignedAt: string;
+  dueAt: string | null;
+  status: AssessmentAssignmentStatus;
+  items: AssessmentItem[];
+  /** itemId → verilen yanıt. Henüz yanıtlanmamışsa anahtar yoktur. */
+  answers: Record<string, string>;
+};
+
+/** Görev/hedef ataması. Bakım planı maddeleriyle aynı tabloda tutulur. */
+export type TaskAssignment = PlanItem;

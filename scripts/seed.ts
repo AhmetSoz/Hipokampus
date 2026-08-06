@@ -23,6 +23,16 @@ const db = drizzle(neon(connectionString), { schema });
 
 async function main() {
   console.log("Tablolar temizleniyor...");
+  /* DİKKAT: bu betik gerçek hesapları da siler. users satırları
+     consultants/experts'e cascade ile bağlı; sıfırlama istemiyorsanız
+     db:seed çalıştırmayın. */
+  await db.delete(schema.authSessions);
+  await db.delete(schema.users);
+  await db.delete(schema.assessmentResponses);
+  await db.delete(schema.assessmentAssignments);
+  await db.delete(schema.assessmentItems);
+  await db.delete(schema.assessmentTemplates);
+  await db.delete(schema.appointments);
   await db.delete(schema.sessionMeasurements);
   await db.delete(schema.sessionNotes);
   await db.delete(schema.messages);
@@ -481,6 +491,144 @@ async function main() {
       value: "15",
       unit: "sn",
       sortOrder: 0,
+    },
+  ]);
+
+  /* Değerlendirme formu şablonları.
+   *
+   * TAMAMEN ÖZGÜN ve GENEL sorulardır. Hiçbiri lisanslı bir ölçekten
+   * (MMSE, MoCA, GDS vb.) alınmamıştır — kilitli karar gereği. Puanlama
+   * yoktur; yanıtlar uzmana olduğu gibi gösterilir. */
+  console.log("Değerlendirme şablonları ekleniyor...");
+  await db.insert(schema.assessmentTemplates).values([
+    {
+      id: "t-onform",
+      title: "Ön değerlendirme",
+      description:
+        "Uzmanınızın sizi tanıması için birkaç soru. Doğru ya da yanlış yanıt yoktur.",
+      createdByExpertId: "u1",
+      createdAt: new Date("2026-07-01"),
+    },
+    {
+      id: "t-gunluk",
+      title: "Günlük yaşam gözlemi",
+      description: "Son bir haftadaki günlük düzeni anlamak için.",
+      createdByExpertId: "u1",
+      createdAt: new Date("2026-07-01"),
+    },
+    {
+      id: "t-takip",
+      title: "İki haftalık takip",
+      description: "Önerilen düzenlemelerin nasıl gittiğini görmek için.",
+      createdByExpertId: "u4",
+      createdAt: new Date("2026-07-15"),
+    },
+  ]);
+
+  await db.insert(schema.assessmentItems).values([
+    // Ön değerlendirme
+    {
+      id: "i-on-1",
+      templateId: "t-onform",
+      position: 1,
+      prompt: "Sizi bugün buraya getiren şeyi kendi cümlelerinizle anlatır mısınız?",
+      responseType: "metin",
+      options: null,
+    },
+    {
+      id: "i-on-2",
+      templateId: "t-onform",
+      position: 2,
+      prompt: "Şu anda evde birlikte yaşadığınız biri var mı?",
+      responseType: "evet-hayir",
+      options: null,
+    },
+    {
+      id: "i-on-3",
+      templateId: "t-onform",
+      position: 3,
+      prompt: "Günlük işlerde ne kadar desteğe ihtiyaç duyuyorsunuz?",
+      responseType: "cok-secmeli",
+      options: [
+        "Hiç ihtiyaç duymuyorum",
+        "Ara sıra",
+        "Çoğu gün",
+        "Sürekli destek gerekiyor",
+      ],
+    },
+    {
+      id: "i-on-4",
+      templateId: "t-onform",
+      position: 4,
+      prompt: "Son bir ayda kendinizi genel olarak nasıl hissettiniz? (1 çok kötü — 5 çok iyi)",
+      responseType: "olcek",
+      options: null,
+    },
+    {
+      id: "i-on-5",
+      templateId: "t-onform",
+      position: 5,
+      prompt: "Bu süreçten en çok ne beklediğinizi yazar mısınız?",
+      responseType: "metin",
+      options: null,
+    },
+    // Günlük yaşam gözlemi
+    {
+      id: "i-gun-1",
+      templateId: "t-gunluk",
+      position: 1,
+      prompt: "Geçen hafta evden kaç gün dışarı çıktınız?",
+      responseType: "cok-secmeli",
+      options: ["Hiç", "1-2 gün", "3-4 gün", "5 gün ve üzeri"],
+    },
+    {
+      id: "i-gun-2",
+      templateId: "t-gunluk",
+      position: 2,
+      prompt: "Öğünlerinizi düzenli saatlerde alabiliyor musunuz?",
+      responseType: "evet-hayir",
+      options: null,
+    },
+    {
+      id: "i-gun-3",
+      templateId: "t-gunluk",
+      position: 3,
+      prompt: "Uyku düzeninizden ne kadar memnunsunuz? (1 hiç — 5 çok)",
+      responseType: "olcek",
+      options: null,
+    },
+    {
+      id: "i-gun-4",
+      templateId: "t-gunluk",
+      position: 4,
+      prompt: "Gün içinde en çok zorlandığınız an hangisi?",
+      responseType: "metin",
+      options: null,
+    },
+    // İki haftalık takip
+    {
+      id: "i-tak-1",
+      templateId: "t-takip",
+      position: 1,
+      prompt: "Önerilen düzenlemeleri uygulayabildiniz mi?",
+      responseType: "cok-secmeli",
+      options: ["Tamamını", "Bir kısmını", "Henüz başlayamadım"],
+    },
+    {
+      id: "i-tak-2",
+      templateId: "t-takip",
+      position: 2,
+      prompt: "İki hafta öncesine göre kendinizi nasıl değerlendirirsiniz? (1 daha kötü — 5 daha iyi)",
+      responseType: "olcek",
+      options: null,
+    },
+    {
+      id: "i-tak-3",
+      templateId: "t-takip",
+      position: 3,
+      prompt: "Uygulamakta zorlandığınız bir madde varsa yazın.",
+      responseType: "metin",
+      options: null,
     },
   ]);
 

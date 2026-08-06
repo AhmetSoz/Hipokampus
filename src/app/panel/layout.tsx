@@ -2,14 +2,15 @@ import Link from "next/link";
 import { clearDemoMember } from "@/app/giris/actions";
 import { PanelNav } from "@/components/PanelNav";
 import { getConsultant } from "@/data/household";
-import { getCurrentMember } from "@/data/session";
+import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 
 export default async function PanelLayout({
   children,
 }: LayoutProps<"/panel">) {
+  const consultantId = await getCurrentConsultantId();
   const [member, consultant] = await Promise.all([
     getCurrentMember(),
-    getConsultant(),
+    getConsultant(consultantId),
   ]);
 
   /* Askıya alınmış üye hiçbir bölümü göremez. Silinmediği için hesabı

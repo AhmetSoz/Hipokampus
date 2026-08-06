@@ -86,6 +86,10 @@ export async function addMessage(
     .where(eq(conversations.id, conversationId));
 }
 
+/**
+ * Tüm danışma dosyaları. Yalnızca admin/test panelinde kullanılır —
+ * panel ekranları hane veya uzman bazlı olanları çağırmalı.
+ */
 export async function listConversations(): Promise<Conversation[]> {
   // Son mesaj zamanına göre sırala; hiç mesajı yoksa açılış tarihine göre.
   const rows = await db
@@ -97,6 +101,54 @@ export async function listConversations(): Promise<Conversation[]> {
       ),
     );
   return attachMessages(rows);
+}
+
+/** Bir hanenin dosyaları. Danışan paneli bunu kullanır. */
+export async function listConversationsForConsultant(
+  consultantId: string,
+): Promise<Conversation[]> {
+  const all = await listConversations();
+  return all.filter((c) => c.consultantId === consultantId);
+}
+
+/**
+ * Yeni başvuru. Danışan bir uzman seçip konusunu yazdığında açılır ve
+ * ilk mesaj olarak açıklaması eklenir — uzman dosyayı açtığında boş bir
+ * kayıt değil, bağlamıyla birlikte görür.
+ */
+export async function createConversation(input: {
+  expertId: string;
+  consultantId: string;
+  subject: string;
+  firstMessage: string;
+  authorName: string;
+}): Promise<string> {
+  const id = `g${Date.now()}`;
+  const now = new Date();
+
+  await db.insert(conversations).values({
+    id,
+    expertId: input.expertId,
+    consultantId: input.consultantId,
+    subject: input.subject,
+    status: "yanit-bekliyor",
+    startedAt: now,
+    meetingUrl: null,
+  });
+
+  const body = input.firstMessage.trim();
+  if (body) {
+    await db.insert(messages).values({
+      id: `m${Date.now()}`,
+      conversationId: id,
+      author: "danisan",
+      authorName: input.authorName,
+      body,
+      sentAt: now,
+    });
+  }
+
+  return id;
 }
 
 export async function getConversation(id: string): Promise<Conversation | null> {

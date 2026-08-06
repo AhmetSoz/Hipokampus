@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AppointmentPanel } from "@/components/AppointmentPanel";
 import { ConversationThread } from "@/components/ConversationThread";
 import { SessionLog } from "@/components/SessionLog";
+import { listAppointments } from "@/data/appointments";
 import { Notice } from "@/components/ui";
 import { getConversation } from "@/data/conversations";
 import { getExpertById } from "@/data/experts";
-import { getCurrentMember } from "@/data/session";
+import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 import { listSessionNotes } from "@/data/sessions";
 
 export default async function DanismaDosyasi({
@@ -33,10 +35,21 @@ export default async function DanismaDosyasi({
   const conversation = await getConversation(id);
   if (!conversation) notFound();
 
+  /* Yetki: dosya bu haneye ait değilse yokmuş gibi davran. Gerçek
+     hesaplar geldiğinde adres çubuğuna başka bir dosya kimliği yazmak
+     mümkün hâle geldi; "bulunamadı" demek, "var ama göremezsin"
+     demekten daha az bilgi sızdırır. */
+  if (conversation.consultantId !== (await getCurrentConsultantId())) {
+    notFound();
+  }
+
   const expert = await getExpertById(conversation.expertId);
   if (!expert) notFound();
 
-  const sessions = await listSessionNotes(id, { onlyPublished: true });
+  const [sessions, appointments] = await Promise.all([
+    listSessionNotes(id, { onlyPublished: true }),
+    listAppointments(id),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -51,6 +64,12 @@ export default async function DanismaDosyasi({
         expert={expert}
         viewer="danisan"
         bosMesajHatasi={sp.hata === "bos"}
+      />
+      <AppointmentPanel
+        conversationId={id}
+        viewer="danisan"
+        appointments={appointments}
+        canPropose={false}
       />
       <SessionLog
         conversationId={id}

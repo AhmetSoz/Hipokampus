@@ -30,12 +30,19 @@ export function SessionLog({
   canAdd: boolean;
   seansHata?: boolean;
 }) {
-  // Sayıya çevrilebilen ölçümleri etikete göre grupla; ≥2 noktası olanlar grafik olur.
+  /* Sayıya çevrilebilen ölçümleri etikete göre grupla; ≥2 noktası olanlar
+     grafik olur.
+
+     `sessions` yeniden eskiye sıralı; grafik ise soldan sağa zamanda
+     ILERLEMELİ. Aynı gün girilen iki seansın tarihi birebir aynı olduğu
+     için grafik içindeki tarih sıralaması onları yeniden düzenleyemiyor
+     ve seri ters çiziliyordu — artışı düşüş gibi gösteriyordu. Bu yüzden
+     seriyi burada eskiden yeniye kuruyoruz. */
   const seriesByLabel = new Map<
     string,
     { date: string; value: number; unit: string | null }[]
   >();
-  for (const s of sessions) {
+  for (const s of [...sessions].reverse()) {
     for (const m of s.measurements) {
       const num = Number(m.value.replace(",", "."));
       if (Number.isNaN(num)) continue;

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { listConversations } from "@/data/conversations";
 import { listExperts } from "@/data/experts";
 import { getConsultant, listFamily } from "@/data/household";
-import { isAdmin } from "@/data/session";
+import { DEMO_CONSULTANT, isAdmin } from "@/data/session";
 import { Card, Container, DemoNotice, Notice } from "@/components/ui";
 import { adminLogin, adminLogout, viewAsExpert, viewAsMember } from "./actions";
 
@@ -69,11 +69,13 @@ export default async function AdminSayfasi({
     );
   }
 
+  // Admin/test paneli tohum verisindeki örnek haneyi gösterir; gerçek
+  // hesaplar kendi panellerinden girer (bkz. data/session.ts).
   const [family, experts, conversations, consultant] = await Promise.all([
-    listFamily(),
+    listFamily(DEMO_CONSULTANT),
     listExperts(),
     listConversations(),
-    getConsultant(),
+    getConsultant(DEMO_CONSULTANT),
   ]);
 
   const open = conversations.filter((c) => c.status !== "tamamlandi").length;

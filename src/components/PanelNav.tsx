@@ -20,6 +20,7 @@ const ITEMS: {
   { href: "/panel", label: "Genel bakış", scope: null },
   { href: "/panel/plan", label: "Bakım planı", scope: "saglik-gorusme" },
   { href: "/panel/mesajlar", label: "Danışma dosyaları", scope: "saglik-gorusme" },
+  { href: "/panel/formlar", label: "Formlar", scope: "saglik-gorusme" },
   { href: "/panel/odeme", label: "Ödeme ve abonelik", scope: "odeme-fatura" },
   { href: "/panel/erisim", label: "Erişim ve izinler", scope: null },
 ];
