@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { NEED_AREAS } from "@/data/needs";
+import { areasFromObservations, OBSERVATIONS } from "@/data/observations";
 import { ButtonLink, Card, Notice } from "./ui";
 
 /**
@@ -12,12 +13,16 @@ import { ButtonLink, Card, Notice } from "./ui";
  *    localStorage dahil hiçbir kalıcı depolama kullanılmaz. Sayfa
  *    yenilendiğinde her şey kaybolur; bu bir eksiklik değil, karardır.
  *  - Puan, skor, yüzde veya risk değeri ÜRETİLMEZ. Sonuç yalnızca
- *    kullanıcının kendi seçtiği ihtiyaç başlıklarını geri gösterir.
+ *    ihtiyaç başlıklarını, alaka sırasına göre gösterir.
  *  - Hiçbir klinik ölçek (MMSE, MoCA, Mini-Cog, GDS vb.) kullanılmaz.
- *    Sorular kişinin durumunu ölçmez; ailenin ne konuşmak istediğini sorar.
- *  - Formun başında tek bir açık güvenlik sorusu vardır. "Evet" yanıtında
- *    acil yönlendirme gösterilir ve form DURUR — devam yolu yoktur.
- *  - Otomatik acil durum tespiti (NLP) yoktur; yalnızca bu açık soru vardır.
+ *    Sorular kişinin durumunu ölçmez; ailenin ne gördüğünü sorar.
+ *
+ * AKIŞ DEĞİŞİKLİĞİ (2026-08-06): formun başındaki açık güvenlik sorusu
+ * SAHİBİNİN KARARIYLA KALDIRILDI — gerekçesi: "acil hastanın bizde ne
+ * işi var, misyonumuz bu değil, nasıl müdahale edebiliriz." Yerine
+ * gözlem tabanlı yönlendirme geldi: aile "hangi başlıkta destek
+ * arıyorum" sorusunu zor yanıtlıyor ama "ne fark ettim" sorusunu kolay
+ * yanıtlıyor; başlıkları biz çıkarıyoruz (bkz. data/observations.ts).
  */
 
 type Recipient = { id: string; label: string };
@@ -29,7 +34,7 @@ const RECIPIENTS: Recipient[] = [
   { id: "kendim", label: "Kendim için" },
 ];
 
-type Stage = "guvenlik" | "acil" | "kim" | "konular" | "sonuc";
+type Stage = "kim" | "gozlem" | "konular" | "sonuc";
 
 const OPTION_CARD =
   "flex cursor-pointer items-center gap-4 rounded-xl border-2 px-5 shadow-[var(--shadow-soft)]";
@@ -44,113 +49,34 @@ const GHOST_BTN =
   "min-h-[3.25rem] rounded-xl px-4 text-lg text-teal-800 underline underline-offset-4 hover:text-teal-600";
 
 export function NeedsForm() {
-  const [stage, setStage] = useState<Stage>("guvenlik");
+  const [stage, setStage] = useState<Stage>("kim");
   const [recipient, setRecipient] = useState<string | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
+  const [observed, setObserved] = useState<string[]>([]);
 
   const toggle = (id: string) =>
     setSelected((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
 
+  const toggleObserved = (id: string) =>
+    setObserved((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+
   const reset = () => {
     setSelected([]);
+    setObserved([]);
     setRecipient(null);
-    setStage("guvenlik");
+    setStage("kim");
   };
 
   /* ------------------------------------------------------------------ */
-  /* Adım 1 — tek açık güvenlik sorusu                                   */
-
-  if (stage === "guvenlik") {
-    return (
-      <Shell key="guvenlik" step={1} total={3} title="Önce tek bir soru">
-        <fieldset>
-          <legend className="mb-6 text-2xl text-ink-900">
-            Şu anda kişinin veya bir başkasının güvenliğiyle ilgili acil bir
-            tehlike var mı?
-          </legend>
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <button
-              type="button"
-              onClick={() => setStage("acil")}
-              className="min-h-[3.5rem] flex-1 rounded-xl border-2 border-danger-600 bg-danger-50 px-6 text-lg font-semibold text-ink-900 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-danger-100 active:scale-[0.98]"
-            >
-              Evet, var
-            </button>
-            <button
-              type="button"
-              onClick={() => setStage("kim")}
-              className="min-h-[3.5rem] flex-1 rounded-xl border-2 border-teal-700 bg-white px-6 text-lg font-semibold text-teal-800 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-50 active:scale-[0.98]"
-            >
-              Hayır, yok
-            </button>
-          </div>
-        </fieldset>
-      </Shell>
-    );
-  }
-
-  /* ------------------------------------------------------------------ */
-  /* Acil yönlendirme — form burada DURUR                                */
-
-  if (stage === "acil") {
-    return (
-      <div className="hk-pop rounded-2xl border-2 border-danger-600 bg-danger-50 p-8 sm:p-10">
-        <span
-          aria-hidden
-          className="mb-5 flex size-14 items-center justify-center rounded-full bg-danger-600 text-white"
-        >
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path
-              d="M14 3 2 24h24L14 3Z"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M14 11v6"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-            />
-            <circle cx="14" cy="20.2" r="1.4" fill="currentColor" />
-          </svg>
-        </span>
-        <h2 className="mb-4 text-3xl text-ink-900">Lütfen 112&apos;yi arayın.</h2>
-        <p className="mb-4 text-lg text-ink-800">
-          Acil bir tehlike varsa doğru adres Hipokampüs değildir. Hipokampüs
-          acil müdahale sunmaz ve 7/24 izleme yapmaz.
-        </p>
-        <ul className="mb-8 space-y-2 text-lg text-ink-800">
-          <li>
-            <strong>112</strong> — Acil Çağrı Merkezi
-          </li>
-          <li>
-            <strong>183</strong> — Sosyal Destek Hattı
-          </li>
-        </ul>
-        <p className="mb-8 text-ink-700">
-          Tehlike geçtiğinde bu formu yeniden doldurabilirsiniz. Şimdilik burada
-          duruyoruz.
-        </p>
-        <button
-          type="button"
-          onClick={reset}
-          className="min-h-[3.25rem] rounded-xl border-2 border-ink-300 bg-white px-7 text-lg font-semibold text-ink-800 hover:-translate-y-px hover:bg-white/70 active:scale-[0.97]"
-        >
-          Başa dön
-        </button>
-      </div>
-    );
-  }
-
-  /* ------------------------------------------------------------------ */
-  /* Adım 2 — kimin için                                                 */
+  /* Adım 1 — kimin için                                                 */
 
   if (stage === "kim") {
     return (
-      <Shell key="kim" step={2} total={3} title="Kimin için buradasınız?">
+      <Shell key="kim" step={1} total={2} title="Kimin için buradasınız?">
         <fieldset>
           <legend className="sr-only">Kimin için destek arıyorsunuz?</legend>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -177,19 +103,86 @@ export function NeedsForm() {
           <button
             type="button"
             disabled={!recipient}
-            onClick={() => setStage("konular")}
+            onClick={() => setStage("gozlem")}
             className={PRIMARY_BTN}
           >
             Devam edin
           </button>
+        </div>
+      </Shell>
+    );
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Adım 2 — ne fark ettiniz? (yönlendirmenin asıl kaynağı)              */
+
+  if (stage === "gozlem") {
+    return (
+      <Shell
+        key="gozlem"
+        step={2}
+        total={2}
+        title="Ne fark ettiniz?"
+        description="Size tanıdık geleni işaretleyin. Doğru ya da yanlış cevap yok; bunlar bir değerlendirme değil, hangi konuda kimin yardımcı olabileceğini bulmamıza yarıyor."
+      >
+        <fieldset>
+          <legend className="sr-only">Fark ettikleriniz</legend>
+          <div className="grid gap-3">
+            {OBSERVATIONS.map((o) => {
+              const active = observed.includes(o.id);
+              return (
+                <label
+                  key={o.id}
+                  className={`items-start py-4 ${OPTION_CARD} ${OPTION_CARD_STATE(active)}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={() => toggleObserved(o.id)}
+                    className="mt-1 size-5 shrink-0 accent-teal-700"
+                  />
+                  <span className="text-lg text-ink-900">{o.label}</span>
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <div className="mt-10 flex flex-wrap items-center gap-4">
           <button
             type="button"
-            onClick={() => setStage("guvenlik")}
+            disabled={observed.length === 0}
+            onClick={() => {
+              setSelected(
+                areasFromObservations(
+                  observed,
+                  NEED_AREAS.map((a) => a.id),
+                ),
+              );
+              setStage("sonuc");
+            }}
+            className={PRIMARY_BTN}
+          >
+            Sonucu görün
+          </button>
+          <button
+            type="button"
+            onClick={() => setStage("kim")}
             className={GHOST_BTN}
           >
             Geri
           </button>
         </div>
+
+        {/* Ne göreceğini zaten bilen kullanıcıyı gözlem listesine mahkûm
+            etmiyoruz — başlıkları doğrudan seçebilir. */}
+        <button
+          type="button"
+          onClick={() => setStage("konular")}
+          className="mt-4 block text-base text-teal-800 underline underline-offset-4"
+        >
+          Başlıkları kendim seçmek istiyorum
+        </button>
       </Shell>
     );
   }
@@ -201,8 +194,8 @@ export function NeedsForm() {
     return (
       <Shell
         key="konular"
-        step={3}
-        total={3}
+        step={2}
+        total={2}
         title="Hangi konularda destek arıyorsunuz?"
         description="Birden fazla seçebilirsiniz. Doğru ya da yanlış cevap yok; bu yalnızca konuşmak istediğiniz konuları görünür kılmak için."
       >
@@ -247,7 +240,7 @@ export function NeedsForm() {
           </button>
           <button
             type="button"
-            onClick={() => setStage("kim")}
+            onClick={() => setStage("gozlem")}
             className={GHOST_BTN}
           >
             Geri
@@ -260,7 +253,11 @@ export function NeedsForm() {
   /* ------------------------------------------------------------------ */
   /* Sonuç — puan yok, yalnızca başlıklar                                */
 
-  const chosen = NEED_AREAS.filter((a) => selected.includes(a.id));
+  /* Gözlemden gelen sıra ANLAMLIDIR (en ilgili başlık başta) — bu yüzden
+     NEED_AREAS sırasına göre değil, `selected` sırasına göre diziyoruz. */
+  const chosen = selected
+    .map((id) => NEED_AREAS.find((a) => a.id === id))
+    .filter((a): a is (typeof NEED_AREAS)[number] => Boolean(a));
 
   return (
     <div className="hk-pop">
@@ -271,8 +268,9 @@ export function NeedsForm() {
         Bir uzmanla konuşurken bu başlıklardan başlayabilirsiniz
       </h2>
       <p className="mb-10 max-w-2xl text-ink-700">
-        Aşağıdakiler sizin seçtiğiniz başlıklardır. Hipokampüs bunlara bir puan,
-        yüzde veya risk değeri vermez; bir değerlendirme sonucu üretmez.
+        {observed.length > 0
+          ? "Bunlar, işaretlediklerinizin en çok işaret ettiği başlıklar — en ilgiliden başlayarak sıralandı. Bir değerlendirme veya tanı değildir; puan, yüzde ya da risk değeri üretilmez."
+          : "Aşağıdakiler sizin seçtiğiniz başlıklardır. Hipokampüs bunlara bir puan, yüzde veya risk değeri vermez; bir değerlendirme sonucu üretmez."}
       </p>
 
       <ol className="mb-10 space-y-4">
@@ -306,18 +304,19 @@ export function NeedsForm() {
         </p>
       </Notice>
 
-      <div className="mt-10 rounded-2xl border border-ink-200 bg-paper-warm p-7">
+      <div className="mt-10 rounded-2xl border-2 border-teal-300 bg-teal-50 p-7">
         <h3 className="mb-3 text-xl">Sırada ne var?</h3>
-        <p className="mb-6 text-ink-700">
-          İlk başlığınızda çalışan uzmanlara bakabilirsiniz. Görüşme başlatma
-          henüz açık değildir; Hipokampüs geliştirme aşamasındadır.
+        <p className="mb-6 text-ink-800">
+          <strong>{chosen[0].label}</strong> başlığında çalışan uzmanları
+          görebilir, birini seçip doğrudan başvurabilirsiniz. Başvuru için bir
+          hesap açmanız gerekir; birkaç bilgi yeterli.
         </p>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <ButtonLink href={`/uzmanlar?konu=${chosen[0].id}`} withArrow>
-            Bu konuda çalışan uzmanlar
+            Bu konudaki uzmanlar
           </ButtonLink>
           <button type="button" onClick={reset} className={GHOST_BTN}>
-            Formu baştan doldurun
+            Baştan doldurun
           </button>
         </div>
       </div>
