@@ -343,25 +343,49 @@ html[data-motion="az"] *::after {
   animation: hk-mark-in 0.5s var(--ease-snap) 2.3s both;
 }
 
-/* Arka plandaki sinir uçları — yol çizildikten sonra sessizce beliriyor.
-   Gecikme her demet için satır içi veriliyor (bkz. BrandPath). */
-@keyframes hk-dendrite-in {
+/*
+  HAFIZA AĞI — arka plandaki sinir ağı, logo elle çizilirken EŞ ZAMANLI
+  örülür. Soluk belirme değil, gerçek çizim: her bağ ve dendrit kendi
+  gecikmesiyle stroke-dashoffset üzerinden çizilir (bkz. BrandPath).
+  Bitince yerinde kalır — dekorasyon, gösteri değil.
+*/
+@keyframes hk-net-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hk-net-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: hk-net-draw 1.1s var(--ease-calm) both;
+}
+
+@keyframes hk-net-node-in {
   from {
     opacity: 0;
+    transform: scale(0.2);
   }
   to {
     opacity: 1;
+    transform: scale(1);
   }
 }
 
-.hk-brand-dendrite {
-  opacity: 0;
-  animation: hk-dendrite-in 1.2s var(--ease-calm) both;
+.hk-net-node {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: hk-net-node-in 0.5s var(--ease-snap) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hk-brand-dendrite {
+  .hk-net-draw,
+  .hk-net-node {
     animation: none;
+    stroke-dashoffset: 0;
     opacity: 1;
   }
 }
@@ -421,60 +445,6 @@ html[data-motion="az"] *::after {
   animation-fill-mode: forwards;
 }
 
-/*
-  DAĞILMA — çizim son harf "s"in ucunda bittiğinde oradan sinir ucu gibi
-  dallar açılır. Marka hikâyesinin karşılığı: iz bir noktada bitmiyor,
-  bağlantıya dönüşüyor. Dallar çizilip sönüyor, uçlarında birer sinaps
-  noktası beliriyor. Kalıcı bir hareket bırakmıyor — sayfa sakin kalıyor.
-*/
-@keyframes hk-filament-draw {
-  0% {
-    stroke-dashoffset: 1;
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  70% {
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-  100% {
-    stroke-dashoffset: 0;
-    opacity: 0;
-  }
-}
-
-.hk-lockup-filament {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  opacity: 0;
-  filter: drop-shadow(0 0 2px var(--color-teal-200));
-  animation: hk-filament-draw 1.9s var(--ease-calm) both;
-}
-
-@keyframes hk-synapse-pop {
-  0% {
-    opacity: 0;
-    transform: scale(0);
-  }
-  40% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-}
-
-.hk-lockup-synapse {
-  transform-origin: center;
-  transform-box: fill-box;
-  opacity: 0;
-  animation: hk-synapse-pop 1.1s var(--ease-snap) both;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .hk-lockup-stroke {
     animation: none;
@@ -483,9 +453,6 @@ html[data-motion="az"] *::after {
   .hk-lockup-pen {
     animation: none;
     opacity: 0;
-    display: none;
-  }
-  .hk-lockup-burst {
     display: none;
   }
 }
