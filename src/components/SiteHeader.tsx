@@ -10,12 +10,37 @@ import { ReadingControls } from "./ReadingControls";
 /** Sunucudan gelen oturum özeti — bkz. app/layout.tsx. */
 export type HeaderSession = { role: "danisan" | "uzman" } | null;
 
-const nav = [
+/**
+ * Menü role göre değişir.
+ *
+ * Önceden herkese aynı tanıtım menüsü gösteriliyordu; giriş yapmış bir
+ * danışan "Uzman mısınız?" bağlantısını görüyordu — kendisi için anlamsız
+ * ve kafa karıştırıcı. Giriş yapan kişi tanıtım sayfalarına değil, kendi
+ * işine yönlendirilmeli.
+ */
+const NAV_ZIYARETCI = [
   { href: "/nasil-calisir", label: "Nasıl çalışır" },
   { href: "/uzmanlar", label: "Uzmanlar" },
   { href: "/dogrulama", label: "Doğrulama" },
   { href: "/uzman", label: "Uzman mısınız?" },
 ];
+
+const NAV_DANISAN = [
+  { href: "/panel", label: "Panelim" },
+  { href: "/panel/mesajlar", label: "Mesajlarım" },
+  { href: "/panel/plan", label: "Bakım planım" },
+  { href: "/uzmanlar", label: "Uzman bulun" },
+];
+
+const NAV_UZMAN = [
+  { href: "/uzman-panel", label: "Panelim" },
+  { href: "/uzman-panel/danisanlar", label: "Danışanlarım" },
+];
+
+function navFor(session: HeaderSession) {
+  if (!session) return NAV_ZIYARETCI;
+  return session.role === "uzman" ? NAV_UZMAN : NAV_DANISAN;
+}
 
 /** "Aa" simgesiyle açılan küçük panel. Okuma denetimleri her sayfada aynı
     yerden erişilebilir kalır (WCAG 3.2.6 — yardım tutarlılığı) ama artık
@@ -73,6 +98,7 @@ function ReadingControlsPopover() {
 export function SiteHeader({ session }: { session: HeaderSession }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const nav = navFor(session);
 
   return (
     <header className="sticky top-0 z-40 border-b border-ink-100 bg-paper/90 backdrop-blur-sm">
@@ -116,12 +142,16 @@ export function SiteHeader({ session }: { session: HeaderSession }) {
           <ReadingControlsPopover />
           {session ? (
             <>
-              <Link
-                href={session.role === "uzman" ? "/uzman-panel" : "/panel"}
-                className="rounded-md px-3 py-2.5 font-semibold text-teal-800 hover:bg-teal-50"
-              >
-                Panelim
-              </Link>
+              {/* Danışanın en sık ihtiyacı: yeni bir uzmana başvurmak.
+                  Panelde hiçbir yerde görünmüyordu. */}
+              {session.role === "danisan" && (
+                <Link
+                  href="/uzmanlar"
+                  className="inline-flex min-h-[3rem] items-center rounded-xl bg-teal-700 px-6 font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.97]"
+                >
+                  Uzman bulun
+                </Link>
+              )}
               <form action={logout}>
                 <button
                   type="submit"
@@ -193,13 +223,15 @@ export function SiteHeader({ session }: { session: HeaderSession }) {
               {item.label}
             </Link>
           ))}
-          <Link
-            href={session ? (session.role === "uzman" ? "/uzman-panel" : "/panel") : "/giris"}
-            onClick={() => setOpen(false)}
-            className="block border-b border-ink-100 py-4 text-ink-800"
-          >
-            {session ? "Panelim" : "Giriş"}
-          </Link>
+          {!session && (
+            <Link
+              href="/giris"
+              onClick={() => setOpen(false)}
+              className="block border-b border-ink-100 py-4 text-ink-800"
+            >
+              Giriş
+            </Link>
+          )}
 
           <div className="mt-5 mb-2">
             <ReadingControls />

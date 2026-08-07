@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BrandPath } from "@/components/BrandPath";
 import { DemoNotice } from "@/components/ui";
+import { YardimPaneli } from "@/components/YardimPaneli";
 import { getCurrentExpert, getCurrentUser } from "@/data/session";
 
 /**
@@ -25,11 +26,22 @@ export default async function UzmanPanelLayout({
   const demoMode = user?.expertId == null;
 
   const nav = [
-    { href: "/uzman-panel", label: "Genel bakış" },
-    { href: "/uzman-panel/danisanlar", label: "Danışanlarım" },
+    {
+      href: "/uzman-panel",
+      label: "Genel bakış",
+      hint: "Yanıt bekleyenler ve özet",
+    },
+    {
+      href: "/uzman-panel/danisanlar",
+      label: "Danışanlarım",
+      hint: "Kişiler ve açık dosyalar",
+    },
   ];
 
   return (
+    /* Yardım paneli kapsayıcının DIŞINDA — bkz. danışan layout'undaki
+       aynı not: `isolate` yığın bağlamı yaratıyor. */
+    <>
     <div className="relative isolate overflow-hidden bg-paper-warm">
       {/* Danışan panelindeki gibi çok soluk — çalışma alanı, vitrin değil. */}
       <BrandPath
@@ -70,9 +82,14 @@ export default async function UzmanPanelLayout({
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="flex min-h-[3.5rem] items-center rounded-xl border border-ink-200 bg-white px-5 py-4 text-ink-800 shadow-[var(--shadow-soft)] hover:-translate-y-px hover:border-teal-300 hover:bg-teal-50"
+                    className="flex min-h-[3.5rem] items-center justify-between gap-3 rounded-xl border border-ink-200 bg-white px-5 py-4 text-ink-800 shadow-[var(--shadow-soft)] transition-[transform,box-shadow,background-color,border-color] duration-[var(--dur-base)] ease-[var(--ease-calm)] hover:-translate-y-px hover:border-teal-300 hover:bg-teal-50"
                   >
-                    {item.label}
+                    <span>
+                      <span className="block font-semibold">{item.label}</span>
+                      <span className="block text-base text-ink-600">
+                        {item.hint}
+                      </span>
+                    </span>
                   </Link>
                 </li>
               ))}
@@ -82,5 +99,8 @@ export default async function UzmanPanelLayout({
         </div>
       </div>
     </div>
+
+    <YardimPaneli rol="uzman" />
+    </>
   );
 }

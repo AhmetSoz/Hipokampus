@@ -2,6 +2,9 @@ import Link from "next/link";
 import { clearDemoMember } from "@/app/giris/actions";
 import { BrandPath } from "@/components/BrandPath";
 import { PanelNav } from "@/components/PanelNav";
+import { YardimPaneli } from "@/components/YardimPaneli";
+import { listAssignmentsForConsultant } from "@/data/assessments";
+import { listConversationsForConsultant } from "@/data/conversations";
 import { getConsultant } from "@/data/household";
 import {
   getCurrentConsultantId,
@@ -19,6 +22,18 @@ export default async function PanelLayout({
     getCurrentUser(),
   ]);
   const demoMode = user?.consultantId == null;
+
+  /* Menü rozetleri: bekleyen iş sayısı menüden görünsün ki kullanıcı
+     hangi bölüme gitmesi gerektiğini aramasın. */
+  const gorebilir = member.scopes.includes("saglik-gorusme");
+  const [dosyalar, formlar] = gorebilir
+    ? await Promise.all([
+        listConversationsForConsultant(consultantId),
+        listAssignmentsForConsultant(consultantId),
+      ])
+    : [[], []];
+  const bekleyenMesaj = dosyalar.filter((c) => c.status !== "tamamlandi").length;
+  const bekleyenForm = formlar.filter((f) => f.status === "atandi").length;
 
   /* Askıya alınmış üye hiçbir bölümü göremez. Silinmediği için hesabı
      duruyor; erişimi geri açma yetkisi yalnızca bireyde. */
@@ -49,6 +64,10 @@ export default async function PanelLayout({
   }
 
   return (
+    /* Yardım paneli BU KAPSAYICININ DIŞINDA duruyor: `isolate` yeni bir
+       yığın bağlamı yaratıyor ve içerideki sabit konumlu panel, kök
+       seviyedeki yapışkan site başlığının altında kalıyordu. */
+    <>
     <div className="relative isolate overflow-hidden bg-paper-warm">
       {/* Marka dili panelde de sürüyor — burada çok daha soluk, çünkü
           panel bir çalışma alanı; ağ dikkat çekmemeli. */}
@@ -85,10 +104,17 @@ export default async function PanelLayout({
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[16rem_1fr]">
-          <PanelNav member={member} />
+          <PanelNav
+            member={member}
+            bekleyenMesaj={bekleyenMesaj}
+            bekleyenForm={bekleyenForm}
+          />
           <div className="min-w-0">{children}</div>
         </div>
       </div>
     </div>
+
+    <YardimPaneli rol="danisan" />
+    </>
   );
 }

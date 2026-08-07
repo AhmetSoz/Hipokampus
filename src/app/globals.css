@@ -364,6 +364,28 @@ html[data-motion="az"] *::after {
   animation: hk-net-draw 1.1s var(--ease-calm) both;
 }
 
+/* Yardım paneli sağdan girer — modal değil, yandan açılan bir bölme. */
+@keyframes hk-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.hk-slide-in {
+  animation: hk-slide-in var(--dur-slow) var(--ease-calm) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hk-slide-in {
+    animation: none;
+  }
+}
+
 @keyframes hk-net-node-in {
   from {
     opacity: 0;

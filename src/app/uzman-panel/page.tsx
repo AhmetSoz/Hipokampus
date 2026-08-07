@@ -54,7 +54,25 @@ export default async function UzmanPanelGenelBakis() {
       <section className="rounded-2xl border border-ink-200 bg-white shadow-[var(--shadow-soft)] p-7">
         <h2 className="mb-5 text-2xl">Dosyalarınız</h2>
         {conversations.length === 0 ? (
-          <p className="text-ink-700">Henüz dosyanız yok.</p>
+          /* Boş durum bir çıkmaz olmamalı: yeni uzman ne olacağını ve
+             kendi profilinin nasıl göründüğünü buradan görebilmeli. */
+          <div className="rounded-xl border-2 border-teal-300 bg-teal-50 p-6">
+            <p className="mb-3 text-lg text-ink-900">
+              Henüz danışanınız yok.
+            </p>
+            <p className="mb-5 text-ink-800">
+              Profiliniz uzman listesinde yayında. Bir danışan size başvuru
+              yaptığında dosya burada açılır ve size bildirilir. Başvuru
+              geldiğinde yapmanız gerekenler için sağ alttaki{" "}
+              <strong>&quot;Ne nerede?&quot;</strong> düğmesine bakabilirsiniz.
+            </p>
+            <Link
+              href={`/uzmanlar/${expert.slug}`}
+              className="inline-flex min-h-[3rem] items-center rounded-xl border-2 border-teal-700 bg-white px-5 font-semibold text-teal-800 hover:-translate-y-px hover:bg-teal-50"
+            >
+              Profilim danışana nasıl görünüyor?
+            </Link>
+          </div>
         ) : (
           <ul className="space-y-4">
             {conversations.map((c) => (
