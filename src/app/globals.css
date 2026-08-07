@@ -372,21 +372,24 @@ html[data-motion="az"] *::after {
   Artık yalnızca opaklık ve çok küçük bir ölçek var — hiçbir şey yer
   değiştirmiyor, geçiş erimiş gibi oluyor.
 */
+/*
+  YALNIZCA OPAKLIK — `transform` ve `will-change` bilerek yok.
+  İkisi de kalıcı bir yığın bağlamı yaratıyor; bu da içerideki sabit
+  konumlu öğeleri (mesaj kutusu, yardım paneli) hapsedip yapışkan site
+  başlığının altında bırakıyordu. Opaklık animasyonu bittiğinde
+  (`both` ile son değer 1) geriye bağlam kalmıyor.
+*/
 @keyframes hk-page-enter {
   from {
     opacity: 0;
-    transform: scale(0.994);
   }
   to {
     opacity: 1;
-    transform: scale(1);
   }
 }
 
 .hk-page-enter {
-  animation: hk-page-enter 460ms var(--ease-calm) both;
-  /* Alt piksel titremesini önler; geçiş sırasında metin kaymaz. */
-  will-change: opacity;
+  animation: hk-page-enter 420ms var(--ease-calm) both;
 }
 
 /*
@@ -413,6 +416,29 @@ html[data-motion="az"] *::after {
 @media (prefers-reduced-motion: reduce) {
   .hk-page-enter,
   .hk-net-arrive {
+    animation: none;
+  }
+}
+
+/* Mesaj kutusu: mobilde alttan, masaüstünde sağ alttan belirir. */
+@keyframes hk-kutu-ac {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hk-kutu-ac {
+  transform-origin: bottom right;
+  animation: hk-kutu-ac var(--dur-slow) var(--ease-calm) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hk-kutu-ac {
     animation: none;
   }
 }

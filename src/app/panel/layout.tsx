@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { clearDemoMember } from "@/app/giris/actions";
 import { BrandPath } from "@/components/BrandPath";
+import { MesajKutusu } from "@/components/MesajKutusu";
 import { PanelNav } from "@/components/PanelNav";
 import { YardimPaneli } from "@/components/YardimPaneli";
 import { listAssignmentsForConsultant } from "@/data/assessments";
 import { listConversationsForConsultant } from "@/data/conversations";
+import { getExpertById } from "@/data/experts";
 import { getConsultant } from "@/data/household";
 import {
   getCurrentConsultantId,
@@ -34,6 +36,23 @@ export default async function PanelLayout({
     : [[], []];
   const bekleyenMesaj = dosyalar.filter((c) => c.status !== "tamamlandi").length;
   const bekleyenForm = formlar.filter((f) => f.status === "atandi").length;
+
+  /* Yüzen mesaj kutusu için: karşı taraf uzman olduğundan adını çözüyoruz. */
+  const kutuDosyalari = await Promise.all(
+    dosyalar.map(async (c) => ({
+      id: c.id,
+      subject: c.subject,
+      karsiTaraf: (await getExpertById(c.expertId))?.name ?? "Uzman",
+      durum: c.status,
+      messages: c.messages.map((m) => ({
+        id: m.id,
+        author: m.author,
+        authorName: m.authorName,
+        body: m.body,
+        sentAt: m.sentAt,
+      })),
+    })),
+  );
 
   /* Askıya alınmış üye hiçbir bölümü göremez. Silinmediği için hesabı
      duruyor; erişimi geri açma yetkisi yalnızca bireyde. */
@@ -87,6 +106,9 @@ export default async function PanelLayout({
             </p>
           </div>
           <div className="text-right">
+            <div className="mb-2 flex justify-end">
+              <YardimPaneli rol="danisan" />
+            </div>
             <p className="text-base text-ink-500">Şu anda bakan kişi</p>
             <p className="text-xl text-ink-900">{member.name}</p>
             <p className="text-base text-ink-600">{member.relation}</p>
@@ -116,7 +138,13 @@ export default async function PanelLayout({
       </div>
     </div>
 
-    <YardimPaneli rol="danisan" />
+    {gorebilir && (
+      <MesajKutusu
+        viewer="danisan"
+        dosyalar={kutuDosyalari}
+        tumMesajlarHref="/panel/mesajlar"
+      />
+    )}
     </>
   );
 }

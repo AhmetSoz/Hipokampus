@@ -110,14 +110,17 @@ export function YardimPaneli({ rol }: { rol: "danisan" | "uzman" }) {
 
   return (
     <>
+      {/* Sağ alt köşe mesaj kutusuna ayrıldı; yardım artık sayfanın
+          üstünde, gezinmenin yanında duruyor. İki yüzen düğmeyi aynı
+          köşeye yığmak tam da sahibinin şikâyet ettiği sıkışıklıktı. */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls="hk-yardim"
-        className="fixed right-5 bottom-5 z-40 flex min-h-[3.25rem] items-center gap-2 rounded-full bg-teal-700 px-5 font-semibold text-white shadow-[var(--shadow-pop)] transition-[transform,background-color] duration-[var(--dur-base)] ease-[var(--ease-calm)] hover:-translate-y-px hover:bg-teal-800 active:scale-[0.97]"
+        className="flex min-h-[2.75rem] items-center gap-2 rounded-full border-2 border-teal-700 bg-white px-4 font-semibold text-teal-800 transition-[transform,background-color] duration-[var(--dur-base)] ease-[var(--ease-calm)] hover:-translate-y-px hover:bg-teal-50 active:scale-[0.97]"
       >
-        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden fill="none">
+        <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden fill="none">
           <circle cx="10" cy="10" r="8.2" stroke="currentColor" strokeWidth="1.8" />
           <path
             d="M7.6 7.6a2.4 2.4 0 1 1 3.2 2.26c-.5.18-.8.66-.8 1.19v.35"
@@ -127,7 +130,7 @@ export function YardimPaneli({ rol }: { rol: "danisan" | "uzman" }) {
           />
           <circle cx="10" cy="14.4" r="1" fill="currentColor" />
         </svg>
-        {open ? "Kapatın" : "Ne nerede?"}
+        Ne nerede?
       </button>
 
       {open && (

@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { BrandPath } from "@/components/BrandPath";
+import { MesajKutusu } from "@/components/MesajKutusu";
 import { DemoNotice } from "@/components/ui";
 import { YardimPaneli } from "@/components/YardimPaneli";
+import { listConversationsForExpert } from "@/data/conversations";
+import { getConsultant } from "@/data/household";
 import { getCurrentExpert, getCurrentUser } from "@/data/session";
 
 /**
@@ -24,6 +27,25 @@ export default async function UzmanPanelLayout({
     getCurrentUser(),
   ]);
   const demoMode = user?.expertId == null;
+
+  /* Yüzen mesaj kutusu için: karşı taraf danışan olduğundan hane adını
+     çözüyoruz. */
+  const dosyalar = await listConversationsForExpert(expert.id);
+  const kutuDosyalari = await Promise.all(
+    dosyalar.map(async (c) => ({
+      id: c.id,
+      subject: c.subject,
+      karsiTaraf: (await getConsultant(c.consultantId)).name,
+      durum: c.status,
+      messages: c.messages.map((m) => ({
+        id: m.id,
+        author: m.author,
+        authorName: m.authorName,
+        body: m.body,
+        sentAt: m.sentAt,
+      })),
+    })),
+  );
 
   const nav = [
     {
@@ -66,14 +88,17 @@ export default async function UzmanPanelLayout({
               {expert?.field} · {expert?.city}
             </p>
           </div>
-          {demoMode && (
-            <Link
-              href="/panel"
-              className="min-h-[2.75rem] text-base text-teal-800 underline underline-offset-4"
-            >
-              Danışan tarafına geçin
-            </Link>
-          )}
+          <div className="flex flex-wrap items-center gap-3">
+            {demoMode && (
+              <Link
+                href="/panel"
+                className="min-h-[2.75rem] text-base text-teal-800 underline underline-offset-4"
+              >
+                Danışan tarafına geçin
+              </Link>
+            )}
+            <YardimPaneli rol="uzman" />
+          </div>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[16rem_1fr]">
@@ -101,7 +126,11 @@ export default async function UzmanPanelLayout({
       </div>
     </div>
 
-    <YardimPaneli rol="uzman" />
+    <MesajKutusu
+      viewer="uzman"
+      dosyalar={kutuDosyalari}
+      tumMesajlarHref="/uzman-panel/danisanlar"
+    />
     </>
   );
 }
