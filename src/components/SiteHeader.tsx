@@ -120,19 +120,21 @@ export function SiteHeader({ session }: { session: HeaderSession }) {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`relative rounded-md px-4 py-2.5 ${
+                className={`group relative rounded-md px-4 py-2.5 transition-[color,background-color] duration-[var(--dur-base)] ease-[var(--ease-calm)] ${
                   active
                     ? "text-teal-800"
                     : "text-ink-700 hover:bg-teal-50 hover:text-teal-800"
                 }`}
               >
                 {item.label}
-                {active && (
-                  <span
-                    aria-hidden
-                    className="absolute right-4 -bottom-0.5 left-4 h-0.5 rounded-full bg-teal-600"
-                  />
-                )}
+                {/* Alt çizgi her zaman var, yalnızca ölçekleniyor: aktif
+                    sekme değişince beliriverme yerine kayarak büyüyor. */}
+                <span
+                  aria-hidden
+                  className={`absolute right-4 -bottom-0.5 left-4 h-0.5 origin-left rounded-full bg-teal-600 transition-transform duration-[var(--dur-base)] ease-[var(--ease-calm)] ${
+                    active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                  }`}
+                />
               </Link>
             );
           })}

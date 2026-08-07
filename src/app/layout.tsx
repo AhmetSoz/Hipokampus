@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Newsreader, Source_Sans_3 } from "next/font/google";
+import { PageTransition } from "@/components/PageTransition";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { getCurrentUser } from "@/data/session";
@@ -75,7 +76,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <SiteHeader session={await getHeaderSession()} />
         <main id="icerik" className="flex-1">
-          {children}
+          <PageTransition>{children}</PageTransition>
         </main>
         <SiteFooter />
       </body>

@@ -181,14 +181,61 @@ export function BrandPath({
         ))}
       </g>
 
-      {/* Düğümler — hafıza noktaları */}
+      {/* Düğümler — hafıza noktaları. Çok yavaş nefes alıyorlar. */}
       <g>
         {NET.nodes.map((n, i) => (
           <g key={`n${i}`} {...popped(0.4 + (i / NET.nodes.length) * SPAN * 0.8)}>
-            <circle cx={n.x} cy={n.y} r="11" fill="var(--color-teal-500)" opacity="0.12" />
+            <circle
+              cx={n.x}
+              cy={n.y}
+              r="11"
+              fill="var(--color-teal-500)"
+              opacity="0.12"
+              className="hk-net-breathe"
+              style={{ animationDelay: `${(i % 6) * 1.7}s` }}
+            />
             <circle cx={n.x} cy={n.y} r="4.5" fill="var(--color-teal-700)" opacity="0.5" />
           </g>
         ))}
+      </g>
+
+      {/*
+        SİNAPS AKIŞI — ağ çizildikten sonra susmuyor, sakin bir şekilde
+        yaşamaya devam ediyor. Sahibinin isteği: "sürekli çalışmalı ama
+        smooth olmalı, göz yoracak karman çorman değil."
+
+        Denge: AZ ama OKUNUR. On tane soluk nokta gürültü gibi duruyordu;
+        altı tane belirgin nokta kasıtlı bir doku gibi duruyor. Bağların
+        her beşincisinde tek nokta, 16-26 saniyelik turlarla ve geniş
+        aralıklı gecikmelerle.
+      */}
+      <g className="hk-net-pulse">
+        {NET.edges
+          .filter((_, i) => i % 5 === 0)
+          .map((e, i) => {
+            const sure = 16 + (i % 4) * 3.5;
+            const basla = SPAN + i * 2.4;
+            return (
+              <circle key={`p${i}`} r="3.4" fill="var(--color-teal-600)" opacity="0">
+                <animateMotion
+                  dur={`${sure}s`}
+                  begin={`${basla}s`}
+                  repeatCount="indefinite"
+                  path={e.d}
+                  calcMode="linear"
+                />
+                {/* Uçlarda beliriyor ve sönüyor — sert giriş/çıkış olmasın. */}
+                <animate
+                  attributeName="opacity"
+                  values="0;0.75;0.75;0"
+                  keyTimes="0;0.12;0.88;1"
+                  dur={`${sure}s`}
+                  begin={`${basla}s`}
+                  repeatCount="indefinite"
+                />
+              </circle>
+            );
+          })}
       </g>
     </svg>
   );
