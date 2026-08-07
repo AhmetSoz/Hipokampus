@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AvailabilityTag, VerifiedBadge } from "@/components/ExpertCard";
+import { NeedIcon } from "@/components/NeedIcon";
 import { ButtonLink, Container, DemoNotice, Notice } from "@/components/ui";
 import {
   getExpert,
@@ -119,10 +120,22 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
               return (
                 <li
                   key={id}
-                  className="rounded-xl border border-ink-200 bg-paper-warm p-5 shadow-[var(--shadow-soft)]"
+                  className="flex gap-4 rounded-xl border border-ink-200 bg-paper-warm p-5 shadow-[var(--shadow-soft)]"
                 >
-                  <p className="font-semibold text-teal-800">{area.label}</p>
-                  <p className="text-base text-ink-600">{area.hint}</p>
+                  <span
+                    aria-hidden
+                    className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-teal-700"
+                  >
+                    <NeedIcon area={id} className="size-6" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-semibold text-teal-800">
+                      {area.label}
+                    </span>
+                    <span className="block text-base text-ink-600">
+                      {area.hint}
+                    </span>
+                  </span>
                 </li>
               );
             })}

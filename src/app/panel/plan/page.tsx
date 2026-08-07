@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { updateTaskStatus } from "@/app/actions/care";
+import { NeedIcon } from "@/components/NeedIcon";
 import { Eyebrow, Notice } from "@/components/ui";
 import { getExpertById } from "@/data/experts";
 import { getConsultant, listPlanItems } from "@/data/household";
@@ -61,14 +62,21 @@ export default async function BakimPlaniSayfasi() {
                 className="rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)]"
               >
                 <div className="mb-3 flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+                  {/* Sıra numarası yerine konunun simgesi: madde neyle
+                      ilgili, okumadan önce görünüyor. */}
                   <h2 className="flex gap-4 text-xl text-ink-900">
                     <span
                       aria-hidden
-                      className="flex size-9 shrink-0 items-center justify-center rounded-full bg-teal-100 font-[family-name:var(--font-display)] text-teal-800"
+                      className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700"
                     >
-                      {i + 1}
+                      <NeedIcon area={item.needArea} className="size-6" />
                     </span>
-                    <span>{item.title}</span>
+                    <span>
+                      <span className="block text-base text-ink-500">
+                        {i + 1}. madde
+                      </span>
+                      {item.title}
+                    </span>
                   </h2>
                   <span
                     className={`rounded-full px-3 py-1 text-base font-semibold ${s.tone}`}

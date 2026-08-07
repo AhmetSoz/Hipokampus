@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BarChart, ProgressRing } from "@/components/Charts";
+import { NeedIcon } from "@/components/NeedIcon";
 import { DemoNotice, Notice } from "@/components/ui";
 import { listAppointmentsForConsultant } from "@/data/appointments";
 import { listAssignmentsForConsultant } from "@/data/assessments";
@@ -162,15 +163,23 @@ export default async function PanelGenelBakis() {
               {open.slice(0, 3).map((item) => (
                 <li
                   key={item.id}
-                  className="rounded-xl border border-ink-200 bg-paper-warm p-5 shadow-[var(--shadow-soft)]"
+                  className="flex gap-4 rounded-xl border border-ink-200 bg-paper-warm p-5 shadow-[var(--shadow-soft)]"
                 >
-                  <p className="mb-1 text-lg font-semibold text-ink-900">
-                    {item.title}
-                  </p>
-                  <p className="text-base text-ink-600">
-                    {needArea(item.needArea).label}
-                    {item.status === "surüyor" && " · sürüyor"}
-                  </p>
+                  <span
+                    aria-hidden
+                    className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-teal-700"
+                  >
+                    <NeedIcon area={item.needArea} className="size-6" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="mb-1 block text-lg font-semibold text-ink-900">
+                      {item.title}
+                    </span>
+                    <span className="block text-base text-ink-600">
+                      {needArea(item.needArea).label}
+                      {item.status === "surüyor" && " · sürüyor"}
+                    </span>
+                  </span>
                 </li>
               ))}
             </ul>

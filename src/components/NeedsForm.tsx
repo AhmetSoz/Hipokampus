@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { NEED_AREAS } from "@/data/needs";
 import { areasFromObservations, OBSERVATIONS } from "@/data/observations";
+import { NeedIcon } from "./NeedIcon";
 import { ButtonLink, Card, Notice } from "./ui";
 
 /**
@@ -279,9 +280,12 @@ export function NeedsForm() {
             <Card className="flex gap-5 p-6">
               <span
                 aria-hidden
-                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-teal-600 to-teal-800 font-[family-name:var(--font-display)] text-white shadow-[var(--shadow-soft)]"
+                className="relative flex size-11 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-700"
               >
-                {i + 1}
+                <NeedIcon area={area.id} className="size-6" />
+                <span className="absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full bg-teal-700 text-base font-semibold text-white">
+                  {i + 1}
+                </span>
               </span>
               <span>
                 <span className="block text-xl text-ink-900">
