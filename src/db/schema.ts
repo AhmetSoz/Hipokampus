@@ -121,7 +121,7 @@ export const accessLog = pgTable("access_log", {
   at: timestamp("at", { mode: "date" }).notNull(),
 });
 
-/** Bakım planı maddeleri. */
+/** Danışmanlık planı maddeleri. */
 export const planItems = pgTable("plan_items", {
   id: text("id").primaryKey(),
   consultantId: text("consultant_id")

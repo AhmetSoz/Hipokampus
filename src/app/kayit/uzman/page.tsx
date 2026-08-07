@@ -104,7 +104,7 @@ export default async function UzmanKayitSayfasi({
               id="uzmanliklar"
               name="uzmanliklar"
               type="text"
-              placeholder="Evde bakım düzeni, ilaç takibi, düşme riski"
+              placeholder="Günlük yaşam düzeni, ilaç takibi, düşme riski"
               className={INPUT}
             />
             <p className="mt-2 mb-5 text-base text-ink-600">

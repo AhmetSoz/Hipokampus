@@ -134,7 +134,7 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
           <p className="mb-4 text-ink-700">
             Görüşmeler site üzerinden <strong>yazışarak</strong> yapılır;
             görüntülü görüşme yoktur. Görüşmenin sonunda size maddeler hâlinde
-            yazılı bir bakım planı iletilir. Görüşme kaydı alınmaz.
+            yazılı bir danışmanlık planı iletilir. Görüşme kaydı alınmaz.
           </p>
           <p className="mb-6 text-ink-700">
             Yanıt taahhüdü uzmana göre değişmez:{" "}

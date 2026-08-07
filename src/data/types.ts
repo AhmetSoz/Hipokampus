@@ -76,7 +76,7 @@ export type Consultant = {
  * YETKİ MODELİ — İKİ EKSEN
  *
  * Tek bir "rol" seviyesi yerine iki bağımsız eksen kullanılıyor:
- *   1. İlişki rolü  — kişi kim (birey, bakım veren, aile üyesi, uzman)
+ *   1. İlişki rolü  — kişi kim (birey, süreci yürüten, aile üyesi, uzman)
  *   2. Veri kapsamı — neyi görebiliyor
  *
  * Bunun sebebi kilitli karar: "Ödeme yapmak, sağlık/görüşme verisini görme
@@ -98,7 +98,7 @@ export const SCOPE_LABEL: Record<DataScope, string> = {
 
 export const SCOPE_DESCRIPTION: Record<DataScope, string> = {
   "saglik-gorusme":
-    "Bakım planı, uzman görüşmeleri ve uzmanın paylaştığı notlar.",
+    "Danışmanlık planı, uzman görüşmeleri ve uzmanın paylaştığı notlar.",
   "gunluk-lojistik":
     "Randevu takvimi, günlük durum notları ve yapılacaklar.",
   "odeme-fatura":
@@ -282,5 +282,5 @@ export type AssessmentAssignment = {
   answers: Record<string, string>;
 };
 
-/** Görev/hedef ataması. Bakım planı maddeleriyle aynı tabloda tutulur. */
+/** Görev/hedef ataması. Danışmanlık planı maddeleriyle aynı tabloda tutulur. */
 export type TaskAssignment = PlanItem;

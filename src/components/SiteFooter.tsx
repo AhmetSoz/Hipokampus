@@ -17,7 +17,7 @@ export function SiteFooter() {
           <div>
             <Logo className="h-16 sm:h-20" />
             <p className="mt-6 max-w-sm text-ink-700">
-              Bakım sürecini birlikte planlamak için kurulan dijital koordinasyon
+              Gerontoloji ve ilgili alanlardaki uzmanlarla görüşmenizi sağlayan dijital
               platformu. Uzman ve akademisyenlerin katkısıyla geliştiriliyor.
             </p>
           </div>

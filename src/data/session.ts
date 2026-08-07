@@ -22,7 +22,7 @@ import type { Expert, FamilyMember } from "./types";
 
 const AUTH_COOKIE = "hk-oturum";
 const COOKIE = "hk-demo-uye";
-const DEFAULT_MEMBER = "a1"; // Ayşe Demir — kızı, birincil bakım veren
+const DEFAULT_MEMBER = "a1"; // Ayşe Demir — kızı, süreci yürüten
 const DEMO_CONSULTANT = "d1"; // Tohum verisindeki örnek hane
 
 export async function getCurrentUser(): Promise<AuthUser | null> {

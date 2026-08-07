@@ -8,7 +8,7 @@
  *
  * Tasarım kararları:
  *  - Eksen değerleri yazılır. Değersiz bir çizgi "yükseliyor" der ama
- *    neyden neye yükseldiğini söylemez; bakım bağlamında bu yetersiz.
+ *    neyden neye yükseldiğini söylemez; danışmanlık bağlamında bu yetersiz.
  *  - Son değer büyük gösterilir ve ilk ölçüme göre değişim belirtilir —
  *    uzmanın asıl sorusu "şu an ne durumda ve ne kadar değişti".
  *  - Değişimin İYİ mi KÖTÜ mü olduğu YORUMLANMAZ; yön belirtilir, renk

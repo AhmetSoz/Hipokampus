@@ -17,7 +17,7 @@ import {
 import type { PlanItem } from "@/data/types";
 
 /**
- * Bakım akışının eylemleri: başvuru, randevu, değerlendirme ataması,
+ * Danışmanlık akışının eylemleri: başvuru, randevu, değerlendirme ataması,
  * görev ataması.
  *
  * Hata gösterimi projedeki desenle aynı: `redirect(?hata=...)`, sayfa

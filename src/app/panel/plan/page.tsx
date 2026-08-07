@@ -7,7 +7,7 @@ import { needArea } from "@/data/needs";
 import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 import type { PlanItemStatus } from "@/data/types";
 
-export const metadata: Metadata = { title: "Bakım planı" };
+export const metadata: Metadata = { title: "Danışmanlık planı" };
 
 const STATUS: Record<PlanItemStatus, { label: string; tone: string }> = {
   yapilacak: { label: "Yapılacak", tone: "bg-sky-200 text-ink-900" },
@@ -22,7 +22,7 @@ export default async function BakimPlaniSayfasi() {
     return (
       <Notice tone="teal" title="Bu bölümü göremiyorsunuz">
         <p>
-          Bakım planı sağlık ve görüşme kapsamındadır. Bu yetkiyi yalnızca panel
+          Danışmanlık planı sağlık ve görüşme kapsamındadır. Bu yetkiyi yalnızca panel
           sahibi verebilir.
         </p>
       </Notice>
@@ -41,7 +41,7 @@ export default async function BakimPlaniSayfasi() {
   return (
     <div className="space-y-8">
       <div>
-        <Eyebrow>Bakım planı</Eyebrow>
+        <Eyebrow>Danışmanlık planı</Eyebrow>
         <h1 className="mb-3 text-3xl sm:text-4xl">{consultant.name}</h1>
         <p className="max-w-2xl text-lg text-ink-700">
           Bu plan, {author?.name} ile yapılan görüşmenin çıktısıdır. Yazışmanın

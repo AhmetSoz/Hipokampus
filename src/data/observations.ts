@@ -78,7 +78,7 @@ export const OBSERVATIONS: Observation[] = [
   },
   {
     id: "secenek-bilgisi",
-    label: "Bakım seçeneklerini ve maliyetlerini bilmiyoruz",
+    label: "Destek seçeneklerini ve maliyetlerini bilmiyoruz",
     areas: ["secenekler"],
   },
   {

@@ -52,14 +52,14 @@ async function main() {
       field: "Gerontoloji",
       city: "İstanbul",
       specialties: [
-        "Evde bakım düzeni kurma",
-        "Bakım seçeneklerinin karşılaştırılması",
+        "Evde günlük düzenin kurulması",
+        "Destek seçeneklerinin karşılaştırılması",
         "Aile içi rol paylaşımı",
       ],
       availability: "bu-hafta",
       verifiedAt: new Date("2026-06-14"),
       about:
-        "Bakım sürecinin en zor kısmının nereden başlanacağını bilmemek olduğunu düşünüyorum. Görüşmelerimizde önce evdeki günlük akışı konuşuyoruz, sonra neyin gerçekten değişmesi gerektiğine birlikte karar veriyoruz.",
+        "Sürecin en zor kısmının nereden başlanacağını bilmemek olduğunu düşünüyorum. Görüşmelerimizde önce evdeki günlük akışı konuşuyoruz, sonra neyin gerçekten değişmesi gerektiğine birlikte karar veriyoruz.",
       needAreaIds: ["gunluk", "secenekler", "aile-karar", "bakim-veren"],
       languages: ["Türkçe"],
     },
@@ -89,13 +89,13 @@ async function main() {
       city: "İzmir",
       specialties: [
         "Ulaşılabilecek destek ve hakların çıkarılması",
-        "Kurum bakımına geçiş süreci",
+        "Kuruma geçiş süreci",
         "Sosyal izolasyonun kırılması",
       ],
       availability: "gelecek-hafta",
       verifiedAt: new Date("2026-05-30"),
       about:
-        "Uzun yıllar evde bakım süreçlerinde çalıştım. Ailelerin haklarını ve ulaşabilecekleri destekleri bilmemesi en sık karşılaştığım durum. Konuşmalarımızda seçenekleri tek tek çıkarıyoruz.",
+        "Uzun yıllar ileri yaş destek süreçlerinde çalıştım. Ailelerin haklarını ve ulaşabilecekleri destekleri bilmemesi en sık karşılaştığım durum. Konuşmalarımızda seçenekleri tek tek çıkarıyoruz.",
       needAreaIds: ["secenekler", "sosyal", "aile-karar", "bakim-veren"],
       languages: ["Türkçe"],
     },
@@ -141,14 +141,14 @@ async function main() {
       field: "Psikoloji",
       city: "Ankara",
       specialties: [
-        "Bakım verenin tükenmişliği",
+        "Yakının tükenmişliği",
         "Sorumluluğun tek kişide toplanması",
         "Aile içi çatışmanın yumuşatılması",
       ],
       availability: "gelecek-hafta",
       verifiedAt: new Date("2026-04-19"),
       about:
-        "Bakım veren kişinin yorgunluğu genellikle en son konuşulan konu oluyor. Oysa süreç uzadıkça belirleyici hale geliyor. Bu yükü nasıl paylaşabileceğinizi konuşuyoruz.",
+        "Süreci yürüten kişinin yorgunluğu genellikle en son konuşulan konu oluyor. Oysa süreç uzadıkça belirleyici hale geliyor. Bu yükü nasıl paylaşabileceğinizi konuşuyoruz.",
       needAreaIds: ["bakim-veren", "sosyal", "aile-karar"],
       languages: ["Türkçe"],
     },
@@ -179,7 +179,7 @@ async function main() {
       specialties: [
         "Kardeşler arası karar ayrılıkları",
         "Herkesin aynı bilgiyle konuşabilmesi",
-        "Uzaktan bakım koordinasyonu",
+        "Uzaktan süreç koordinasyonu",
       ],
       availability: "bu-hafta",
       verifiedAt: new Date("2026-07-21"),
@@ -272,7 +272,7 @@ async function main() {
       id: "l1",
       memberId: "a1",
       scope: "saglik-gorusme",
-      section: "Bakım planı",
+      section: "Danışmanlık planı",
       at: new Date("2026-08-04T19:42:00"),
     },
     {
@@ -298,7 +298,7 @@ async function main() {
     },
   ]);
 
-  console.log("Bakım planı ekleniyor...");
+  console.log("Danışmanlık planı ekleniyor...");
   await db.insert(schema.planItems).values([
     {
       id: "p1",
@@ -352,7 +352,7 @@ async function main() {
       id: "g1",
       expertId: "u1",
       consultantId: "d1",
-      subject: "Annem için evde bakım düzeni",
+      subject: "Annem için evde günlük düzen",
       status: "tamamlandi",
       startedAt: new Date("2026-07-02"),
     },
@@ -412,7 +412,7 @@ async function main() {
       conversationId: "g1",
       author: "uzman",
       authorName: "Elif Tanyeri",
-      body: "Anlıyorum. Sizin her akşam telefonla kontrol etmeniz uzun vadede ikinizi de yoruyor olabilir.\n\nKonuştuklarımızdan bir bakım planı hazırladım. Dört madde var; ikisi hemen uygulanabilir, ikisi biraz hazırlık istiyor. Planı aşağıdan açabilirsiniz.",
+      body: "Anlıyorum. Sizin her akşam telefonla kontrol etmeniz uzun vadede ikinizi de yoruyor olabilir.\n\nKonuştuklarımızdan bir danışmanlık planı hazırladım. Dört madde var; ikisi hemen uygulanabilir, ikisi biraz hazırlık istiyor. Planı aşağıdan açabilirsiniz.",
       sentAt: new Date("2026-07-08T11:30:00"),
     },
     {
@@ -420,7 +420,7 @@ async function main() {
       conversationId: "g2",
       author: "danisan",
       authorName: "Ayşe Demir",
-      body: "Merhaba, bakım planında banyo için tutunma barı önerilmişti. Nereye ve nasıl monte edileceği konusunda kararsızız. Küvet var, duş kabini yok.",
+      body: "Merhaba, planda banyo için tutunma barı önerilmişti. Nereye ve nasıl monte edileceği konusunda kararsızız. Küvet var, duş kabini yok.",
       sentAt: new Date("2026-08-03T16:45:00"),
     },
     {

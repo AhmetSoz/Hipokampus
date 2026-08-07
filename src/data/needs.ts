@@ -30,7 +30,7 @@ export const NEED_AREAS: NeedArea[] = [
   },
   {
     id: "bakim-veren",
-    label: "Bakım verenin yükü",
+    label: "Yakının yükü ve tükenmişlik",
     hint: "Yorgunluk, tükenmişlik, sorumluluğun tek kişide toplanması.",
   },
   {
@@ -40,8 +40,8 @@ export const NEED_AREAS: NeedArea[] = [
   },
   {
     id: "secenekler",
-    label: "Bakım seçenekleri ve bütçe planlaması",
-    hint: "Evde bakım, gündüz merkezi, kurum bakımı gibi seçeneklerin karşılaştırılması.",
+    label: "Destek seçenekleri ve bütçe",
+    hint: "Evde destek, gündüz merkezi, kurum gibi seçeneklerin karşılaştırılması.",
   },
   {
     id: "aile-karar",

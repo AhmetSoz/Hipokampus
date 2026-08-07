@@ -45,7 +45,7 @@ const KISA_GUVEN = [
   },
   {
     baslik: "Elinizde plan kalır",
-    metin: "Görüşmenin çıktısı maddeler hâlinde yazılı bir bakım planı.",
+    metin: "Görüşmenin çıktısı maddeler hâlinde yazılı bir danışmanlık planı.",
     href: "/nasil-calisir",
     link: "Nasıl çalışır?",
   },
@@ -140,11 +140,11 @@ export default async function AnaSayfa() {
                   </>
                 ) : (
                   <>
-                    Bakım sürecinde{" "}
+                    Sürecin{" "}
                     <span className="text-teal-700">
-                      nereden başlayacağınızı
+                      nereden başlayacağını
                     </span>{" "}
-                    birlikte bulalım.
+                    bir uzmanla birlikte netleştirin.
                   </>
                 )}
               </h1>

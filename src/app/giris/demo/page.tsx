@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const ROLE_LABEL = {
   birey: "Panelin sahibi",
-  "bakim-veren": "Birincil bakım veren",
+  "bakim-veren": "Süreci yürüten",
   "aile-uyesi": "Aile üyesi",
 } as const;
 
@@ -177,7 +177,7 @@ export default async function DemoGirisSayfasi() {
               <strong>
                 ödeme yapmak, sağlık ve görüşme verisini görme hakkı vermez.
               </strong>{" "}
-              Bu iki şey ayrı tutulur. Mehmet Bey ödemeyi yapıyor ama bakım
+              Bu iki şey ayrı tutulur. Mehmet Bey ödemeyi yapıyor ama danışmanlık
               planını ve uzman görüşmelerini göremiyor — çünkü bu yetkiyi
               yalnızca Fatma Hanım verebilir.
             </p>

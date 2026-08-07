@@ -172,7 +172,7 @@ export function ConversationThread({
           <p className="mb-2 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
             Teslim edildi
           </p>
-          <h2 className="mb-3 text-2xl">Bakım planınız hazır</h2>
+          <h2 className="mb-3 text-2xl">Danışmanlık planınız hazır</h2>
           <p className="mb-6 text-ink-700">
             Plan, yazışmanın içinde bir mesaj değil; ayrı ve kalıcı bir
             belgedir. Yazdırabilir, aile üyelerinizle paylaşabilirsiniz.
@@ -181,7 +181,7 @@ export function ConversationThread({
             href="/panel/plan"
             className="inline-flex min-h-[3.25rem] items-center rounded-xl bg-teal-700 px-7 text-lg font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.97]"
           >
-            Bakım planını açın
+            Planı açın
           </a>
           <p className="mt-6 border-t border-ink-100 pt-5 text-base text-ink-600">
             Bu danışma tamamlandı. Plan hakkında soru sormaya devam

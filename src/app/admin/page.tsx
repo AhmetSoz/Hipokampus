@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const ROLE_LABEL = {
   birey: "Panelin sahibi",
-  "bakim-veren": "Birincil bakım veren",
+  "bakim-veren": "Süreci yürüten",
   "aile-uyesi": "Aile üyesi",
 } as const;
 

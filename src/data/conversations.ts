@@ -12,7 +12,7 @@ import type { Conversation, ConversationStatus, MessageAuthor } from "./types";
  *  - Okundu bilgisi ve "yazıyor" göstergesi YOK. Asenkron bir üründe senkron
  *    beklentisi üretip güveni kırıyorlar. Yerine dosya durumu var.
  *  - Yanıt taahhüdü kişi bazlı değil, platform taahhüdü (bkz. experts.ts).
- *  - Görüşme kaydı alınmaz — kalıcı çıktı yazılı bakım planıdır.
+ *  - Görüşme kaydı alınmaz — kalıcı çıktı yazılı danışmanlık planıdır.
  */
 
 async function attachMessages(

@@ -18,7 +18,7 @@ const STATUS_LABEL: Record<ConversationStatus, string> = {
  *
  * Kilitli karar: "Ödeme yapmak, sağlık/görüşme verisini görme hakkı vermez."
  * Bu sayfa hizmet kalemlerini (hangi uzmanla, ne zaman, ne durumda) gösterir;
- * görüşme içeriğini, notları veya bakım planını GÖSTERMEZ.
+ * görüşme içeriğini, notları veya danışmanlık planını GÖSTERMEZ.
  *
  * Fiyat rakamı da bilerek yok — arayüzde hiçbir yerde fiyat gösterilmez
  * (sahibinin kararı) ve fiyat düzeyi zaten kararlaştırılmadı (açık soru 5).
@@ -54,7 +54,7 @@ export default async function OdemeSayfasi() {
       <Notice title="Ödemeyi siz yapıyorsunuz; sağlık içeriğini görme yetkisini yalnızca panel sahibi verebilir">
         <p>
           Bu ekranda hangi uzmanla, ne zaman görüşüldüğünü ve hizmetin
-          durumunu görürsünüz. <strong>Görüşme içeriği, notlar ve bakım planı
+          durumunu görürsünüz. <strong>Görüşme içeriği, notlar ve danışmanlık planı
           bu kapsama dahil değildir.</strong>
         </p>
       </Notice>

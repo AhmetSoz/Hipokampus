@@ -118,8 +118,8 @@ export async function listAccessLog(
 }
 
 /**
- * Görev/hedef ataması. Uzman bakım planına madde ekler; danışan durumunu
- * günceller. Ayrı bir "görevler" tablosu açılmadı — bakım planı maddesi
+ * Görev/hedef ataması. Uzman danışmanlık planına madde ekler; danışan durumunu
+ * günceller. Ayrı bir "görevler" tablosu açılmadı — danışmanlık planı maddesi
  * zaten tam olarak bu: başlığı, açıklaması, ihtiyaç alanı ve durumu olan
  * atanmış bir iş.
  */

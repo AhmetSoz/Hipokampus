@@ -19,7 +19,7 @@ const SCOPES: DataScope[] = [
 
 const ROLE_LABEL = {
   birey: "Panelin sahibi",
-  "bakim-veren": "Birincil bakım veren",
+  "bakim-veren": "Süreci yürüten",
   "aile-uyesi": "Aile üyesi",
 } as const;
 
@@ -49,7 +49,7 @@ export default async function ErisimSayfasi() {
         <p>
           <strong>Ödeme yapmak, sağlık ve görüşme verisini görme hakkı
           vermez.</strong> Bunlar birbirinden bağımsız iki yetkidir. Bir kişi
-          ödemeyi yapıyor olabilir ve bakım planını hiç görmüyor olabilir.
+          ödemeyi yapıyor olabilir ve danışmanlık planını hiç görmüyor olabilir.
         </p>
       </Notice>
 
@@ -168,7 +168,7 @@ export default async function ErisimSayfasi() {
         <h2 className="mb-2 text-2xl">Erişim kaydı</h2>
         <p className="mb-6 text-ink-600">
           Kim, ne zaman, hangi bölümü açtı. Bu kayıt {consultant.name} ve
-          birincil bakım verene görünür.
+          süreci yürüten kişiye görünür.
         </p>
         {log.length === 0 ? (
           <p className="text-ink-600">Henüz bir erişim kaydı yok.</p>

@@ -49,7 +49,7 @@ const DANISAN: Madde[] = [
     link: "Formlarımı görün",
   },
   {
-    baslik: "Bakım planı nedir?",
+    baslik: "Danışmanlık planı nedir?",
     metin:
       "Görüşmenin kalıcı çıktısı. Maddeler hâlinde yazılır ve her maddenin durumunu (yapılacak / sürüyor / tamamlandı) siz güncellersiniz.",
     href: "/panel/plan",
@@ -75,7 +75,7 @@ const UZMAN: Madde[] = [
   {
     baslik: "Dosya içindeki sekmeler ne işe yarar?",
     metin:
-      "Yazışma: mesajlar ve görüşme takvimi. Seanslar: her görüşmeden sonraki notlarınız ve ölçümler. Formlar: atadığınız değerlendirmeler ve gelen yanıtlar. Görevler: bakım planına eklediğiniz maddeler.",
+      "Yazışma: mesajlar ve görüşme takvimi. Seanslar: her görüşmeden sonraki notlarınız ve ölçümler. Formlar: atadığınız değerlendirmeler ve gelen yanıtlar. Görevler: danışmanlık planına eklediğiniz maddeler.",
   },
   {
     baslik: "Görüşmeyi nasıl ayarlarım?",

@@ -13,7 +13,7 @@ import { BrandPath } from "@/components/BrandPath";
 export const metadata: Metadata = {
   title: "Nasıl çalışır",
   description:
-    "Ücretsiz ihtiyaç netleştirmeden başlayan, uzman görüşmesi ve yazılı bakım " +
+    "Ücretsiz ihtiyaç netleştirmeden başlayan, uzman görüşmesi ve yazılı " +
     "planıyla devam eden, takibi isteğe bağlı bırakan üç adımlı akış.",
 };
 
@@ -59,11 +59,11 @@ export default function NasilCalisirSayfasi() {
 
             <StepCard
               step={3}
-              title="Yazılı bakım planı ve takip"
+              title="Yazılı danışmanlık planı ve takip"
               meta="Takip isteğe bağlı"
             >
               <p>
-                Görüşmenin teslimatı, maddeler hâlinde yazılı bir bakım planıdır
+                Görüşmenin teslimatı, maddeler hâlinde yazılı bir danışmanlık planıdır
                 ve görüşme ücretine dahildir.
               </p>
               <p className="mt-3">

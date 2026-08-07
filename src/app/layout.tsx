@@ -34,12 +34,12 @@ const sourceSans = Source_Sans_3({
 
 export const metadata: Metadata = {
   title: {
-    default: "Hipokampüs — Bakım sürecinde yol arkadaşınız",
+    default: "Hipokampüs — Gerontoloji uzmanlarıyla görüşün",
     template: "%s · Hipokampüs",
   },
   description:
     "İleri yaştaki bireylerin ve ailelerinin ihtiyaçlarını netleştirmesine, " +
-    "doğrulanmış uzmanlarla buluşmasına ve bakım sürecini planlamasına yardımcı " +
+    "doğrulanmış gerontoloji uzmanlarıyla görüşmesine ve süreci planlamasına yardımcı " +
     "olmayı hedefleyen dijital koordinasyon platformu. Hipokampüs bir sağlık " +
     "kuruluşu değildir.",
   robots: {

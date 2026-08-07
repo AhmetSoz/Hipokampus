@@ -45,8 +45,8 @@ const ITEMS: {
   },
   {
     href: "/panel/plan",
-    label: "Bakım planı",
-    hint: "Uzmanın yazdığı maddeler",
+    label: "Danışmanlık planı",
+    hint: "Uzmanınızın yazdığı maddeler",
     scope: "saglik-gorusme",
   },
   {

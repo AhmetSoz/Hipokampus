@@ -173,7 +173,7 @@ export function ExpertTools({
       <section className="rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)]">
         <h2 className="mb-1 text-2xl">Görevler ve hedefler</h2>
         <p className="mb-5 text-ink-600">
-          Bakım planına madde ekleyin. Danışan panelinde durumunu kendisi
+          Danışmanlık planına madde ekleyin. Danışan panelinde durumunu kendisi
           güncelleyebilir.
         </p>
 

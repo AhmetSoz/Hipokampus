@@ -69,8 +69,8 @@ export default async function PanelGenelBakis() {
         </h1>
         <p className="text-lg text-ink-700">
           {canSeeHealth
-            ? `${consultant.name} için hazırlanan bakım planında ${open.length} madde bekliyor.`
-            : `${consultant.name} için bir bakım süreci yürüyor. Sağlık ve görüşme bilgilerine erişiminiz bulunmuyor.`}
+            ? `${consultant.name} için hazırlanan planda ${open.length} madde bekliyor.`
+            : `${consultant.name} için bir danışmanlık süreci yürüyor. Sağlık ve görüşme bilgilerine erişiminiz bulunmuyor.`}
         </p>
       </div>
 
@@ -143,7 +143,7 @@ export default async function PanelGenelBakis() {
                   aria-valuenow={done}
                   aria-valuemin={0}
                   aria-valuemax={plan.length}
-                  aria-label="Bakım planı ilerlemesi"
+                  aria-label="Danışmanlık planı ilerlemesi"
                 >
                   <div
                     className="h-full rounded-full bg-linear-to-r from-teal-500 to-teal-700"

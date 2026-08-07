@@ -28,7 +28,7 @@ const NAV_ZIYARETCI = [
 const NAV_DANISAN = [
   { href: "/panel", label: "Panelim" },
   { href: "/panel/mesajlar", label: "Mesajlarım" },
-  { href: "/panel/plan", label: "Bakım planım" },
+  { href: "/panel/plan", label: "Planım" },
   { href: "/uzmanlar", label: "Uzman bulun" },
 ];
 

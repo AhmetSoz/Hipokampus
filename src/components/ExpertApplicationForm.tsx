@@ -110,7 +110,7 @@ export function ExpertApplicationForm() {
       <Field
         label="Neyin üzerine çalışıyorsunuz?"
         htmlFor="uzmanlik"
-        hint="Profilinizde gösterilecek asıl bilgi budur. Her satıra bir konu yazın — örneğin “evde bakım düzeni kurma”, “bakım verenin tükenmişliği”."
+        hint="Profilinizde gösterilecek asıl bilgi budur. Her satıra bir konu yazın — örneğin “günlük yaşam düzeni”, “yakının tükenmişliği”."
       >
         <textarea
           id="uzmanlik"

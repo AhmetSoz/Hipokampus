@@ -79,7 +79,7 @@ export default async function BasvuruSayfasi({
               id="konu"
               name="konu"
               type="text"
-              placeholder="Örn. Evde bakım düzeni kurmak"
+              placeholder="Örn. Günlük düzeni yeniden kurmak"
               required
               className="mb-5 min-h-[3.25rem] w-full rounded-xl border-2 border-ink-200 bg-white px-4 text-lg text-ink-900 focus:border-teal-600"
             />
