@@ -364,24 +364,55 @@ html[data-motion="az"] *::after {
   animation: hk-net-draw 1.1s var(--ease-calm) both;
 }
 
-/* Sayfa geçişi — bkz. components/PageTransition.tsx */
+/*
+  SAYFA GEÇİŞİ — bkz. components/PageTransition.tsx
+
+  Önce içerik 14px yükselerek geliyordu; arka plan ağı da aynı kapsayıcı
+  içinde olduğu için tüm sayfa kayıyor ve "kasma" hissi veriyordu.
+  Artık yalnızca opaklık ve çok küçük bir ölçek var — hiçbir şey yer
+  değiştirmiyor, geçiş erimiş gibi oluyor.
+*/
 @keyframes hk-page-enter {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: scale(0.994);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
   }
 }
 
 .hk-page-enter {
-  animation: hk-page-enter 380ms var(--ease-calm) both;
+  animation: hk-page-enter 460ms var(--ease-calm) both;
+  /* Alt piksel titremesini önler; geçiş sırasında metin kaymaz. */
+  will-change: opacity;
+}
+
+/*
+  Ağın "varış" darbesi. Sayfa erirken arka plandaki sinir ağı da bir
+  sinyal geçiyormuş gibi kısaca parlıyor — geçiş ve marka hareketi eş
+  zamanlı oluyor. Süre sayfa geçişiyle aynı ailede tutuldu.
+*/
+@keyframes hk-net-arrive {
+  0% {
+    opacity: 0.25;
+  }
+  45% {
+    opacity: 1.15;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.hk-net-arrive {
+  animation: hk-net-arrive 900ms var(--ease-calm) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hk-page-enter {
+  .hk-page-enter,
+  .hk-net-arrive {
     animation: none;
   }
 }

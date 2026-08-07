@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import { BrandPath } from "@/components/BrandPath";
 import { ButtonLink, Container, Notice } from "@/components/ui";
 
 export const metadata: Metadata = { title: "Sayfa bulunamadı" };
 
 export default function BulunamadiSayfasi() {
   return (
-    <div className="bg-linear-to-b from-sky-50 to-paper py-20 sm:py-28">
-      <Container width="narrow">
+    <div className="relative isolate overflow-hidden bg-linear-to-b from-sky-50 to-paper py-20 sm:py-28">
+      <BrandPath className="absolute inset-0 h-full w-full opacity-60" />
+      <Container width="narrow" className="relative">
         <p className="mb-4 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
           Sayfa bulunamadı
         </p>

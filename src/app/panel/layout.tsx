@@ -71,9 +71,11 @@ export default async function PanelLayout({
     <div className="relative isolate overflow-hidden bg-paper-warm">
       {/* Marka dili panelde de sürüyor — burada çok daha soluk, çünkü
           panel bir çalışma alanı; ağ dikkat çekmemeli. */}
+      {/* Tüm yüksekliği kaplıyor: uzun panel sayfalarında ağ yarıda
+          kesilip zemin boşalıyordu. */}
       <BrandPath
         soften={false}
-        className="absolute inset-x-0 top-0 h-[28rem] w-full opacity-25"
+        className="absolute inset-0 h-full w-full opacity-25"
       />
       <div className="relative mx-auto w-full max-w-6xl px-6 py-10 sm:px-8">
         <div className="mb-8 flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)]">

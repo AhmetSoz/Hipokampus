@@ -136,7 +136,10 @@ export function BrandPath({
       aria-hidden
       viewBox={`0 0 ${VB_W} ${VB_H}`}
       preserveAspectRatio="xMidYMid slice"
-      className={`pointer-events-none ${className}`}
+      /* `hk-net-arrive`: sayfa değişiminde ağ da bir sinyal geçiyormuş
+         gibi kısaca parlıyor. Bileşen her gezinmede yeniden kurulduğu
+         için animasyon kendiliğinden tekrar çalışıyor. */
+      className={`pointer-events-none hk-net-arrive ${className}`}
       style={mask ? { maskImage: mask, WebkitMaskImage: mask } : undefined}
     >
       {/* Bağlar — ağın omurgası */}

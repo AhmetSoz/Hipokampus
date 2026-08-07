@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BrandPath } from "@/components/BrandPath";
 import { AvailabilityTag, VerifiedBadge } from "@/components/ExpertCard";
 import { NeedIcon } from "@/components/NeedIcon";
 import { ButtonLink, Container, DemoNotice, Notice } from "@/components/ui";
@@ -39,8 +40,9 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
   });
 
   return (
-    <div className="bg-linear-to-b from-sky-50 to-paper py-12 sm:py-16">
-      <Container>
+    <div className="relative isolate overflow-hidden bg-linear-to-b from-sky-50 to-paper py-12 sm:py-16">
+      <BrandPath className="absolute inset-0 h-full w-full opacity-50" />
+      <Container className="relative">
         <Link
           href="/uzmanlar"
           className="mb-8 inline-flex items-center gap-2 text-teal-800 underline underline-offset-4"

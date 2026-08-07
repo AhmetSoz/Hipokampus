@@ -3,6 +3,7 @@ import { listConversations } from "@/data/conversations";
 import { listExperts } from "@/data/experts";
 import { getConsultant, listFamily } from "@/data/household";
 import { DEMO_CONSULTANT, isAdmin } from "@/data/session";
+import { BrandPath } from "@/components/BrandPath";
 import { Card, Container, DemoNotice, Notice } from "@/components/ui";
 import { adminLogin, adminLogout, viewAsExpert, viewAsMember } from "./actions";
 
@@ -81,8 +82,9 @@ export default async function AdminSayfasi({
   const open = conversations.filter((c) => c.status !== "tamamlandi").length;
 
   return (
-    <div className="bg-paper-warm py-12 sm:py-16">
-      <Container width="wide">
+    <div className="relative isolate overflow-hidden bg-paper-warm py-12 sm:py-16">
+      <BrandPath soften={false} className="absolute inset-0 h-full w-full opacity-25" />
+      <Container width="wide" className="relative">
         <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="mb-2 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
