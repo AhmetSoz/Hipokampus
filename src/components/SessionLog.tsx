@@ -1,5 +1,6 @@
 import { addSessionNote, publishSession } from "@/app/actions/sessions";
 import type { SessionNote } from "@/data/types";
+import { BarChart } from "./Charts";
 import { SessionChart } from "./SessionChart";
 
 function formatDate(iso: string) {
@@ -83,6 +84,11 @@ export function SessionLog({
     return null;
   };
 
+  /* En son seansın sayısal ölçümleri — yan yana karşılaştırma için. */
+  const sonOlcumler = (sessions[0]?.measurements ?? [])
+    .map((m) => ({ label: m.label, value: Number(m.value.replace(",", ".")) }))
+    .filter((m) => !Number.isNaN(m.value));
+
   /* Daha önce kullanılmış etiketler (birimiyle), en yeniden eskiye —
      yeni seans formunda öneri olarak sunulur. */
   const oncekiEtiketler: { label: string; unit: string | null }[] = [];
@@ -104,7 +110,7 @@ export function SessionLog({
             : "Uzmanın yayınladığı seans notları."}
         </p>
 
-        {charts.length > 0 && (
+        {(charts.length > 0 || sonOlcumler.length > 1) && (
           <div className="mb-6 grid gap-4 sm:grid-cols-2">
             {charts.map(([label, points]) => (
               <SessionChart
@@ -114,6 +120,14 @@ export function SessionLog({
                 points={points}
               />
             ))}
+            {/* Tek ölçüm türü tek grafik demek; birden fazla ölçüm varsa
+                son seanstaki değerleri yan yana karşılaştırmak da gerekir. */}
+            {sonOlcumler.length > 1 && (
+              <BarChart
+                title="Son seanstaki ölçümler"
+                items={sonOlcumler}
+              />
+            )}
           </div>
         )}
 

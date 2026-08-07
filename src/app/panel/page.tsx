@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BarChart, ProgressRing } from "@/components/Charts";
 import { DemoNotice, Notice } from "@/components/ui";
 import { listAppointmentsForConsultant } from "@/data/appointments";
 import { listAssignmentsForConsultant } from "@/data/assessments";
@@ -45,6 +46,16 @@ export default async function PanelGenelBakis() {
     : [[], []];
   const bekleyenRandevular = randevular.filter((r) => r.status === "teklif");
   const bekleyenFormlar = formlar.filter((f) => f.status === "atandi");
+
+  /* Plan maddelerinin hangi konularda yoğunlaştığı — çubuk grafik için. */
+  const konuSayilari = new Map<string, number>();
+  for (const p of plan) {
+    const ad = needArea(p.needArea).label;
+    konuSayilari.set(ad, (konuSayilari.get(ad) ?? 0) + 1);
+  }
+  const konuDagilimi = [...konuSayilari.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value);
   // Planı yazan uzman; yeni hesapta plan boş olabilir.
   const expert = plan[0]
     ? await getExpertById(plan[0].authorExpertId)
@@ -130,28 +141,22 @@ export default async function PanelGenelBakis() {
               </Link>
             </div>
 
-            {/* İlerleme çubuğu: "4 maddeden 1 tanesi" düz metin olarak
-                okunuyordu; oran tek bakışta anlaşılmalı. */}
-            <div className="mb-6">
-              <p className="mb-2 text-ink-600">
-                {plan.length} maddeden {done} tanesi tamamlandı.
-              </p>
-              {plan.length > 0 && (
-                <div
-                  className="h-2 w-full overflow-hidden rounded-full bg-ink-100"
-                  role="progressbar"
-                  aria-valuenow={done}
-                  aria-valuemin={0}
-                  aria-valuemax={plan.length}
-                  aria-label="Danışmanlık planı ilerlemesi"
-                >
-                  <div
-                    className="h-full rounded-full bg-linear-to-r from-teal-500 to-teal-700"
-                    style={{ width: `${(done / plan.length) * 100}%` }}
-                  />
-                </div>
-              )}
-            </div>
+            {/* İlerleme: halka + konu dağılımı. Düz metin ("4 maddeden 1
+                tanesi") oranı da dağılımı da anlatmıyordu. */}
+            {plan.length > 0 && (
+              <div className="mb-6 grid gap-4 sm:grid-cols-2">
+                <ProgressRing
+                  done={done}
+                  total={plan.length}
+                  label="plan maddesi tamamlandı"
+                />
+                <BarChart
+                  title="Konu dağılımı"
+                  items={konuDagilimi}
+                  unit="madde"
+                />
+              </div>
+            )}
 
             <ul className="space-y-4">
               {open.slice(0, 3).map((item) => (

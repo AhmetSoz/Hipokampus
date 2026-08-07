@@ -35,6 +35,33 @@ const STEPS = [
   "Plan teslim edildi",
 ];
 
+/** Sohbet balonu için: yalnızca saat. Gün, ayırıcı şeritte yazılıyor. */
+function formatTime(iso: string) {
+  return new Date(iso).toLocaleTimeString("tr-TR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatDay(iso: string) {
+  return new Date(iso).toLocaleDateString("tr-TR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function initials(name: string) {
+  return name
+    .replace(/\(.*\)/, "")
+    .trim()
+    .split(/\s+/)
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toLocaleUpperCase("tr");
+}
+
 function formatWhen(iso: string) {
   return new Date(iso).toLocaleString("tr-TR", {
     day: "numeric",
@@ -131,41 +158,72 @@ export function ConversationThread({
         </p>
       )}
 
-      <ol className="space-y-5">
-        {conversation.messages.map((m) => {
-          const mine =
-            (viewer === "danisan" && m.author === "danisan") ||
-            (viewer === "uzman" && m.author === "uzman");
-          return (
-            <li
-              key={m.id}
-              className={`rounded-2xl border p-6 shadow-[var(--shadow-soft)] ${
-                m.author === "uzman"
-                  ? "border-teal-200 bg-teal-50"
-                  : "border-ink-200 bg-white"
-              }`}
-            >
-              <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                <p className="font-semibold text-ink-900">
-                  {m.authorName}
-                  {m.author === "uzman" && (
-                    <span className="ml-2 font-normal text-ink-600">uzman</span>
+      {/* Sohbet görünümü: kendi mesajın sağda ve dolu, karşınınki solda.
+          Önceden her mesaj tam genişlikte bir kart olduğu için yazışma
+          "sohbet" gibi okunmuyordu; sahibi mesajlaşmanın daha tanıdık ve
+          kolay olmasını istedi. */}
+      <div className="rounded-2xl border border-ink-200 bg-white p-4 shadow-[var(--shadow-soft)] sm:p-6">
+        <ol className="space-y-4">
+          {conversation.messages.map((m, i) => {
+            const mine =
+              (viewer === "danisan" && m.author === "danisan") ||
+              (viewer === "uzman" && m.author === "uzman");
+            const oncekiGun = conversation.messages[i - 1]
+              ? formatDay(conversation.messages[i - 1].sentAt)
+              : null;
+            const bugun = formatDay(m.sentAt);
+            const yeniGun = oncekiGun !== bugun;
+
+            return (
+              <li key={m.id}>
+                {yeniGun && (
+                  <p className="my-4 text-center text-base text-ink-500">
+                    <span className="rounded-full bg-ink-100 px-3 py-1">
+                      {bugun}
+                    </span>
+                  </p>
+                )}
+                <div
+                  className={`flex items-end gap-2 ${mine ? "justify-end" : "justify-start"}`}
+                >
+                  {!mine && (
+                    <span
+                      aria-hidden
+                      className="flex size-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-teal-600 to-teal-800 text-base font-semibold text-white"
+                    >
+                      {initials(m.authorName)}
+                    </span>
                   )}
-                  {mine && (
-                    <span className="ml-2 font-normal text-ink-600">siz</span>
-                  )}
-                </p>
-                <p className="text-base text-ink-600">{formatWhen(m.sentAt)}</p>
-              </div>
-              <div className="space-y-3 text-lg text-ink-800">
-                {m.body.split("\n\n").map((p, i) => (
-                  <p key={i}>{p}</p>
-                ))}
-              </div>
-            </li>
-          );
-        })}
-      </ol>
+                  <div className={`max-w-[75%] ${mine ? "text-right" : ""}`}>
+                    {!mine && (
+                      <p className="mb-1 text-base text-ink-600">
+                        {m.authorName}
+                        {m.author === "uzman" && " · uzman"}
+                      </p>
+                    )}
+                    <div
+                      className={`inline-block rounded-2xl px-4 py-3 text-left text-lg leading-relaxed ${
+                        mine
+                          ? "rounded-br-sm bg-teal-700 text-white"
+                          : "rounded-bl-sm bg-ink-100 text-ink-900"
+                      }`}
+                    >
+                      {m.body.split("\n\n").map((p, k) => (
+                        <p key={k} className={k > 0 ? "mt-3" : undefined}>
+                          {p}
+                        </p>
+                      ))}
+                    </div>
+                    <p className="mt-1 text-base text-ink-500">
+                      {formatTime(m.sentAt)}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
 
       {conversation.status === "tamamlandi" ? (
         <div className="rounded-2xl border-2 border-teal-700 bg-white p-7 shadow-[var(--shadow-soft)]">
@@ -196,10 +254,7 @@ export function ConversationThread({
           <input type="hidden" name="dosya" value={conversation.id} />
           <input type="hidden" name="taraf" value={viewer} />
 
-          <label
-            htmlFor="yeni-mesaj"
-            className="mb-3 block text-lg font-semibold text-ink-900"
-          >
+          <label htmlFor="yeni-mesaj" className="sr-only">
             {viewer === "uzman" ? "Yanıtınızı yazın" : "Mesajınızı yazın"}
           </label>
           {bosMesajHatasi && (
@@ -207,27 +262,43 @@ export function ConversationThread({
               Mesaj boş olamaz. Lütfen bir şeyler yazın.
             </p>
           )}
-          <textarea
-            id="yeni-mesaj"
-            name="mesaj"
-            rows={4}
-            required
-            className="min-h-[7rem] w-full rounded-xl border-2 border-ink-200 bg-white px-4 py-3 text-lg leading-relaxed text-ink-900 focus:border-teal-600"
-          />
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-            {/* Acil durum uyarısı: üçüncü katman.
-                Her mesajın üstünde değil, yalnızca yazma alanının altında. */}
-            <p className="text-base text-ink-600">
-              Acil bir durum için mesaj yazmayın — 112&apos;yi arayın.
-            </p>
+          {/* Yazma alanı ve gönder düğmesi yan yana — sohbet
+              uygulamalarındaki tanıdık düzen. */}
+          <div className="flex items-end gap-3">
+            <textarea
+              id="yeni-mesaj"
+              name="mesaj"
+              rows={2}
+              required
+              placeholder={
+                viewer === "uzman"
+                  ? "Yanıtınızı yazın…"
+                  : "Mesajınızı yazın…"
+              }
+              className="min-h-[3.5rem] flex-1 resize-y rounded-2xl border-2 border-ink-200 bg-white px-4 py-3 text-lg leading-relaxed text-ink-900 focus:border-teal-600"
+            />
             <button
               type="submit"
-              className="min-h-[3.75rem] rounded-xl bg-teal-700 px-8 text-lg font-semibold text-white shadow-[var(--shadow-soft)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.97]"
+              aria-label="Gönderin"
+              className="flex size-14 shrink-0 items-center justify-center rounded-full bg-teal-700 text-white shadow-[var(--shadow-soft)] transition-[transform,box-shadow,background-color] duration-[var(--dur-base)] ease-[var(--ease-calm)] hover:-translate-y-px hover:bg-teal-800 hover:shadow-[var(--shadow-pop)] active:scale-[0.95]"
             >
-              Gönderin
+              <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden fill="none">
+                <path
+                  d="M3 11h13M11 4.5 17.5 11 11 17.5"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
           </div>
+
+          {/* Acil durum uyarısı: yalnızca yazma alanının altında. */}
+          <p className="mt-3 text-base text-ink-600">
+            Acil bir durum için mesaj yazmayın — 112&apos;yi arayın.
+          </p>
         </form>
       )}
     </div>

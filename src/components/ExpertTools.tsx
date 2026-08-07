@@ -1,4 +1,5 @@
 import { assignAssessment, createTask } from "@/app/actions/care";
+import { ScaleBar } from "./Charts";
 import { NEED_AREAS } from "@/data/needs";
 import type {
   AssessmentAssignment,
@@ -150,11 +151,25 @@ export function ExpertTools({
                             {item.prompt}
                           </td>
                           <td className="py-3 font-semibold text-ink-900">
-                            {a.answers[item.id] ?? (
-                              <span className="font-normal text-ink-500">
-                                Yanıtlanmadı
-                              </span>
-                            )}
+                            {(() => {
+                              const yanit = a.answers[item.id];
+                              if (!yanit)
+                                return (
+                                  <span className="font-normal text-ink-500">
+                                    Yanıtlanmadı
+                                  </span>
+                                );
+                              /* Ölçek yanıtı sayı olarak okunuyordu ("3");
+                                 nokta göstergesi nerede durduğunu tek
+                                 bakışta veriyor. Puan değil, yanıtın
+                                 kendisi. */
+                              if (item.responseType === "olcek") {
+                                const n = Number(yanit);
+                                if (!Number.isNaN(n))
+                                  return <ScaleBar value={n} />;
+                              }
+                              return yanit;
+                            })()}
                           </td>
                         </tr>
                       ))}
