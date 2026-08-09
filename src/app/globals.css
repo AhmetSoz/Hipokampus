@@ -420,6 +420,20 @@ html[data-motion="az"] *::after {
   }
 }
 
+/*
+  Kaydırmayla açılan bölümler (components/Belirdiginde.tsx).
+  Hareket hassasiyeti burada ele alınıyor: JS tarafında dallanmak efekt
+  içinde setState gerektiriyordu. Bu override, gözlemci hiç çalışmasa
+  bile içeriği görünür bırakır — tanıtım sayfası boş kalmaz.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .hk-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 /* Mesaj kutusu: mobilde alttan, masaüstünde sağ alttan belirir. */
 @keyframes hk-kutu-ac {
   from {

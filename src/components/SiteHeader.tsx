@@ -27,7 +27,7 @@ export type HeaderSession = {
 const NAV_ZIYARETCI = [
   { href: "/nasil-calisir", label: "Nasıl çalışır" },
   { href: "/uzmanlar", label: "Uzmanlar" },
-  { href: "/dogrulama", label: "Doğrulama" },
+  { href: "/hakkimizda", label: "Hakkımızda" },
   { href: "/uzman", label: "Uzman mısınız?" },
 ];
 

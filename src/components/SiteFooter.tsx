@@ -26,6 +26,11 @@ export function SiteFooter() {
             <h2 className="mb-4 text-lg text-ink-900">Sayfalar</h2>
             <ul className="space-y-3 text-ink-700">
               <li>
+                <Link href="/hakkimizda" className="hover:text-teal-700">
+                  Hakkımızda
+                </Link>
+              </li>
+              <li>
                 <Link href="/nasil-calisir" className="hover:text-teal-700">
                   Nasıl çalışır
                 </Link>
