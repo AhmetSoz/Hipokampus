@@ -3,6 +3,9 @@ import { Belirdiginde } from "@/components/Belirdiginde";
 import { BrandPath } from "@/components/BrandPath";
 import { Logo } from "@/components/Logo";
 import { NeedIcon } from "@/components/NeedIcon";
+import { SinirBaslik } from "@/components/SinirBaslik";
+import { SinirOmurgasi } from "@/components/SinirOmurgasi";
+import { VizyonMisyon } from "@/components/VizyonMisyon";
 import { ButtonLink, Container, Notice } from "@/components/ui";
 import { NEED_AREAS } from "@/data/needs";
 
@@ -30,6 +33,19 @@ export const metadata: Metadata = {
  * karar kaydındaki "kabul oranı iddiası kaldırıldı" ve "bilimsel kurul
  * yok" kararlarıyla aynı ilke.
  */
+
+/**
+ * İçerik bölümlerinde ağ dokusunun kullanıldığı sınıf.
+ *
+ * Tam güçte bırakıldığında kartların önüne geçiyor ve okumayı zorluyordu
+ * ("karman çorman olmasın" kuralı). Ortadan dışa açılan bir maske,
+ * yoğunluğu kenarlarda tutup metnin arkasını boş bırakıyor — doku duruyor,
+ * gürültü gidiyor.
+ */
+const AG_MASKE =
+  "absolute inset-0 h-full w-full " +
+  "[mask-image:radial-gradient(ellipse_at_center,transparent_12%,rgba(0,0,0,0.3)_46%,#000_88%)] " +
+  "[-webkit-mask-image:radial-gradient(ellipse_at_center,transparent_12%,rgba(0,0,0,0.3)_46%,#000_88%)]";
 
 const INANCLAR = [
   {
@@ -113,17 +129,21 @@ export default function HakkimizdaSayfasi() {
         </Container>
       </div>
 
+      {/* Buradan itibaren anlatı tek bir sinir lifine bağlı: omurga
+          kaydırdıkça çiziliyor, her bölüm üzerindeki düğüm yanıyor. */}
+      <div className="relative">
+        <SinirOmurgasi />
+
       {/* --- Neden varız --------------------------------------------- */}
-      <div className="bg-paper py-20 sm:py-28">
+      <div className="bg-paper py-20 sm:py-28" data-omurga="Neden varız">
         <Container width="wide">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
             <Belirdiginde>
-              <p className="mb-4 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
-                Neden varız
-              </p>
-              <h2 className="text-3xl leading-tight sm:text-4xl">
-                Süreç bir teşhisle değil, bir belirsizlikle başlıyor.
-              </h2>
+              <SinirBaslik ustBaslik="Neden varız">
+                <h2 className="text-3xl leading-tight sm:text-4xl">
+                  Süreç bir teşhisle değil, bir belirsizlikle başlıyor.
+                </h2>
+              </SinirBaslik>
             </Belirdiginde>
 
             <div className="space-y-6 text-lg text-ink-700">
@@ -158,18 +178,60 @@ export default function HakkimizdaSayfasi() {
         </Container>
       </div>
 
+      {/* --- Misyon ve vizyon: birbirine bağlı iki düğüm -------------- */}
+      <div className="bg-paper-warm py-20 sm:py-28" data-omurga="Misyon ve vizyon">
+        <Container width="wide">
+          <Belirdiginde>
+            <SinirBaslik ustBaslik="Misyon ve vizyon">
+              <h2 className="max-w-2xl text-3xl leading-tight sm:text-4xl">
+                Bugün yaptığımız iş, varmak istediğimiz yere bağlı.
+              </h2>
+            </SinirBaslik>
+          </Belirdiginde>
+
+          <div className="mt-12">
+            <VizyonMisyon
+              misyon={{
+                baslik: "Misyonumuz",
+                metin:
+                  "Bir yakınının durumunda değişiklik fark eden ailenin, ilk adımını doğru atmasını sağlamak.",
+                maddeler: [
+                  "Dağınık kaygıyı konuşulabilir başlıklara ayırmak",
+                  "Doğrulanmış uzmanla, karşılaştırma baskısı olmadan buluşturmak",
+                  "Süreci tek yerden izlenebilir kılmak",
+                  "Kimin neyi göreceğine ailenin kendisinin karar vermesini sağlamak",
+                ],
+              }}
+              vizyon={{
+                baslik: "Vizyonumuz",
+                metin:
+                  "İleri yaş sürecinin, kriz anında değil başında yönetildiği bir düzen.",
+                maddeler: [
+                  "Tek görüşme değil, izlenebilir ve sürekli bir süreç",
+                  "Gerontolojiyle başlayıp ilgili tüm alanları aynı sürece katmak",
+                  "Kararın ailede kaldığı, uzmanın yol gösterdiği bir model",
+                  "Güvenin ölçütlerle değil, şeffaflıkla kurulduğu bir platform",
+                ],
+              }}
+            />
+          </div>
+        </Container>
+      </div>
+
       {/* --- Neye inanıyoruz — ağ genişliyor -------------------------- */}
-      <div className="relative isolate overflow-hidden bg-paper-warm py-20 sm:py-28">
-        <BrandPath soften={false} className="absolute inset-0 h-full w-full opacity-40" />
+      <div
+        className="relative isolate overflow-hidden bg-paper py-20 sm:py-28"
+        data-omurga="Neye inanıyoruz"
+      >
+        <BrandPath soften={false} className={`${AG_MASKE} opacity-30`} />
         <Container width="wide" className="relative">
           <Belirdiginde>
-            <p className="mb-4 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
-              Neye inanıyoruz
-            </p>
-            <h2 className="mb-4 max-w-2xl text-3xl leading-tight sm:text-4xl">
-              Güven, verdiğimiz sözlerden çok vermediklerimizle kuruluyor.
-            </h2>
-            <p className="mb-12 max-w-2xl text-lg text-ink-700">
+            <SinirBaslik ustBaslik="Neye inanıyoruz">
+              <h2 className="max-w-2xl text-3xl leading-tight sm:text-4xl">
+                Güven, verdiğimiz sözlerden çok vermediklerimizle kuruluyor.
+              </h2>
+            </SinirBaslik>
+            <p className="mt-5 mb-12 max-w-2xl text-lg text-ink-700">
               Aşağıdakiler pazarlama cümleleri değil; ürünün içine
               yazılmış, değiştirilmesi bilinçli bir karar gerektiren
               kurallar.
@@ -192,25 +254,30 @@ export default function HakkimizdaSayfasi() {
       </div>
 
       {/* --- Nasıl çalışıyoruz --------------------------------------- */}
-      <div className="bg-paper py-20 sm:py-28">
+      <div className="bg-paper-warm py-20 sm:py-28" data-omurga="Nasıl çalışıyoruz">
         <Container width="wide">
           <Belirdiginde>
-            <p className="mb-4 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
-              Nasıl çalışıyoruz
-            </p>
-            <h2 className="mb-12 max-w-2xl text-3xl leading-tight sm:text-4xl">
-              Üç adım, ve her adımda ne olacağını önceden bilirsiniz.
-            </h2>
+            <SinirBaslik ustBaslik="Nasıl çalışıyoruz">
+              <h2 className="max-w-2xl text-3xl leading-tight sm:text-4xl">
+                Üç adım, ve her adımda ne olacağını önceden bilirsiniz.
+              </h2>
+            </SinirBaslik>
+            <div className="mb-12" />
           </Belirdiginde>
 
           <ol className="grid gap-6 md:grid-cols-3">
             {ADIMLAR.map((a, i) => (
               <li key={a.no}>
                 <Belirdiginde gecikme={0.12 * i}>
-                  <div className="h-full rounded-2xl border border-ink-200 bg-paper-warm p-7 shadow-[var(--shadow-soft)]">
-                    <p className="mb-4 font-[family-name:var(--font-display)] text-4xl text-teal-700">
+                  <div className="group h-full rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)] transition-[transform,box-shadow,border-color] duration-[var(--dur-base)] ease-[var(--ease-calm)] hover:-translate-y-1 hover:border-teal-300 hover:shadow-[var(--shadow-lift)]">
+                    {/* Adım numarası bir düğüm olarak duruyor — omurgadaki
+                        düğümlerle aynı dil. */}
+                    <span
+                      aria-hidden
+                      className="mb-5 flex size-14 items-center justify-center rounded-full bg-teal-50 font-[family-name:var(--font-display)] text-2xl text-teal-700 transition-[background-color,box-shadow] duration-[var(--dur-base)] group-hover:bg-teal-100 group-hover:shadow-[0_0_0_6px_var(--color-teal-50)]"
+                    >
                       {a.no}
-                    </p>
+                    </span>
                     <h3 className="mb-2 text-xl text-ink-900">{a.baslik}</h3>
                     <p className="text-ink-700">{a.metin}</p>
                   </div>
@@ -222,26 +289,29 @@ export default function HakkimizdaSayfasi() {
       </div>
 
       {/* --- Hangi konularda ----------------------------------------- */}
-      <div className="relative isolate overflow-hidden bg-paper-warm py-20 sm:py-28">
-        <BrandPath soften={false} className="absolute inset-0 h-full w-full opacity-35" />
+      <div
+        className="relative isolate overflow-hidden bg-paper py-20 sm:py-28"
+        data-omurga="Hangi konularda"
+      >
+        <BrandPath soften={false} className={`${AG_MASKE} opacity-25`} />
         <Container width="wide" className="relative">
           <Belirdiginde>
-            <p className="mb-4 text-base font-semibold tracking-[0.14em] text-teal-600 uppercase">
-              Hangi konularda
-            </p>
-            <h2 className="mb-12 max-w-2xl text-3xl leading-tight sm:text-4xl">
-              Sekiz başlık — ve hiçbiri bir tanı değil.
-            </h2>
+            <SinirBaslik ustBaslik="Hangi konularda">
+              <h2 className="max-w-2xl text-3xl leading-tight sm:text-4xl">
+                Sekiz başlık — ve hiçbiri bir tanı değil.
+              </h2>
+            </SinirBaslik>
+            <div className="mb-12" />
           </Belirdiginde>
 
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {NEED_AREAS.map((n, i) => (
               <li key={n.id}>
                 <Belirdiginde gecikme={0.05 * i}>
-                  <div className="h-full rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)]">
+                  <div className="group h-full rounded-2xl border border-ink-200 bg-white p-6 shadow-[var(--shadow-soft)] transition-[transform,box-shadow,border-color] duration-[var(--dur-base)] ease-[var(--ease-calm)] hover:-translate-y-1 hover:border-teal-300 hover:shadow-[var(--shadow-lift)]">
                     <span
                       aria-hidden
-                      className="mb-4 flex size-11 items-center justify-center rounded-full bg-teal-50 text-teal-700"
+                      className="mb-4 flex size-11 items-center justify-center rounded-full bg-teal-50 text-teal-700 transition-[background-color,box-shadow] duration-[var(--dur-base)] group-hover:bg-teal-100 group-hover:shadow-[0_0_0_5px_var(--color-teal-50)]"
                     >
                       <NeedIcon area={n.id} className="size-6" />
                     </span>
@@ -256,8 +326,11 @@ export default function HakkimizdaSayfasi() {
       </div>
 
       {/* --- Nereye gidiyoruz ---------------------------------------- */}
-      <div className="relative isolate overflow-hidden bg-teal-800 py-20 text-teal-50 sm:py-28">
-        <BrandPath soften={false} className="absolute inset-0 h-full w-full opacity-30" />
+      <div
+        className="relative isolate overflow-hidden bg-teal-800 py-20 text-teal-50 sm:py-28"
+        data-omurga="Nereye gidiyoruz"
+      >
+        <BrandPath soften={false} className={`${AG_MASKE} opacity-30`} />
         <Container width="wide" className="relative">
           <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
             <Belirdiginde>
@@ -302,6 +375,9 @@ export default function HakkimizdaSayfasi() {
           </div>
         </Container>
       </div>
+
+      </div>
+      {/* /omurga sarmalayıcısı */}
 
       {/* --- Sınırlar ------------------------------------------------ */}
       <div className="bg-paper py-16">
