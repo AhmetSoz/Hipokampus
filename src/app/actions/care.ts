@@ -2,12 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { assignTemplate, submitResponses } from "@/data/assessments";
+import { assignTemplate, getAssignment, submitResponses } from "@/data/assessments";
+import {
+  guvenliBildir,
+  notifyConsultant,
+  notifyExpert,
+} from "@/data/notifications";
 import {
   proposeAppointment,
   setAppointmentStatus,
 } from "@/data/appointments";
-import { createConversation } from "@/data/conversations";
+import { createConversation, getConversation } from "@/data/conversations";
 import { createPlanItem, setPlanItemStatus } from "@/data/household";
 import {
   getCurrentConsultantId,
@@ -66,6 +71,14 @@ export async function applyToExpert(formData: FormData) {
     // Ön form şablonu yoksa başvuru yine de geçerlidir; sessizce geç.
   }
 
+  await guvenliBildir(
+    notifyExpert(expertId, {
+      title: "Yeni başvuru",
+      body: subject,
+      href: `/uzman-panel/mesajlar/${conversationId}`,
+    }),
+  );
+
   revalidatePath("/panel");
   revalidatePath("/panel/mesajlar");
   redirect(`/panel/mesajlar/${conversationId}`);
@@ -102,6 +115,17 @@ export async function proposeAppointmentAction(formData: FormData) {
     meetingUrl: meetingUrl || null,
   });
 
+  const dosya = await getConversation(conversationId);
+  if (dosya) {
+    await guvenliBildir(
+      notifyConsultant(dosya.consultantId, {
+        title: "Görüşme önerisi geldi",
+        body: `${expert.name} bir görüşme saati önerdi: ${startsAt.toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}`,
+        href: `/panel/mesajlar/${conversationId}`,
+      }),
+    );
+  }
+
   revalidatePath(base);
   revalidatePath(`/panel/mesajlar/${conversationId}`);
   revalidatePath("/panel");
@@ -116,6 +140,20 @@ export async function respondToAppointment(formData: FormData) {
   if (answer !== "kabul" && answer !== "reddedildi") return;
 
   await setAppointmentStatus(appointmentId, answer);
+
+  const dosya = await getConversation(conversationId);
+  if (dosya) {
+    await guvenliBildir(
+      notifyExpert(dosya.expertId, {
+        title:
+          answer === "kabul"
+            ? "Görüşme onaylandı"
+            : "Görüşme önerisi reddedildi",
+        body: dosya.subject,
+        href: `/uzman-panel/mesajlar/${conversationId}?sekme=yazisma`,
+      }),
+    );
+  }
 
   revalidatePath(`/panel/mesajlar/${conversationId}`);
   revalidatePath(`/uzman-panel/mesajlar/${conversationId}`);
@@ -150,6 +188,14 @@ export async function assignAssessment(formData: FormData) {
   const expert = await getCurrentExpert();
   await assignTemplate({ templateId, consultantId, expertId: expert.id, dueAt: null });
 
+  await guvenliBildir(
+    notifyConsultant(consultantId, {
+      title: "Yeni form atandı",
+      body: `${expert.name} doldurmanız için bir form gönderdi.`,
+      href: "/panel/formlar",
+    }),
+  );
+
   if (conversationId) {
     revalidatePath(`/uzman-panel/mesajlar/${conversationId}`);
   }
@@ -170,7 +216,18 @@ export async function submitAssessment(formData: FormData) {
     }
   }
 
+  const atama = await getAssignment(assignmentId);
   await submitResponses(assignmentId, answers);
+
+  if (atama) {
+    await guvenliBildir(
+      notifyExpert(atama.assignedByExpertId, {
+        title: "Form yanıtlandı",
+        body: `${atama.templateTitle} dolduruldu.`,
+        href: "/uzman-panel/danisanlar",
+      }),
+    );
+  }
 
   revalidatePath("/panel");
   revalidatePath("/panel/formlar");
@@ -203,6 +260,14 @@ export async function createTask(formData: FormData) {
     needAreaId,
     authorExpertId: expert.id,
   });
+
+  await guvenliBildir(
+    notifyConsultant(consultantId, {
+      title: "Planınıza yeni madde eklendi",
+      body: title,
+      href: "/panel/plan",
+    }),
+  );
 
   revalidatePath(`/uzman-panel/mesajlar/${conversationId}`);
   revalidatePath("/panel");

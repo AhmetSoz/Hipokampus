@@ -4,11 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { logout } from "@/app/actions/auth";
+import type { Bildirim } from "@/data/notifications";
+import { BildirimZili } from "./BildirimZili";
 import { Logo } from "./Logo";
 import { ReadingControls } from "./ReadingControls";
 
 /** Sunucudan gelen oturum özeti — bkz. app/layout.tsx. */
-export type HeaderSession = { role: "danisan" | "uzman" } | null;
+export type HeaderSession = {
+  role: "danisan" | "uzman";
+  bildirimler: Bildirim[];
+  okunmamis: number;
+} | null;
 
 /**
  * Menü role göre değişir.
@@ -144,6 +150,10 @@ export function SiteHeader({ session }: { session: HeaderSession }) {
           <ReadingControlsPopover />
           {session ? (
             <>
+              <BildirimZili
+                bildirimler={session.bildirimler}
+                okunmamis={session.okunmamis}
+              />
               {/* Danışanın en sık ihtiyacı: yeni bir uzmana başvurmak.
                   Panelde hiçbir yerde görünmüyordu. */}
               {session.role === "danisan" && (

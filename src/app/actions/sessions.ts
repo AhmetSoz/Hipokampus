@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getConversation } from "@/data/conversations";
+import { guvenliBildir, notifyConsultant } from "@/data/notifications";
 import { createSessionNote, publishSessionNote } from "@/data/sessions";
 import { getCurrentExpert } from "@/data/session";
 
@@ -57,6 +59,17 @@ export async function publishSession(formData: FormData) {
   if (!sessionId || !conversationId) return;
 
   await publishSessionNote(sessionId);
+
+  const dosya = await getConversation(conversationId);
+  if (dosya) {
+    await guvenliBildir(
+      notifyConsultant(dosya.consultantId, {
+        title: "Yeni seans notu yayınlandı",
+        body: dosya.subject,
+        href: `/panel/mesajlar/${conversationId}`,
+      }),
+    );
+  }
 
   revalidatePath(`/uzman-panel/mesajlar/${conversationId}`);
   revalidatePath(`/panel/mesajlar/${conversationId}`);

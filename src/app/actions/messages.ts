@@ -2,7 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { addMessage, setMeetingUrl } from "@/data/conversations";
+import {
+  addMessage,
+  getConversation,
+  setMeetingUrl,
+} from "@/data/conversations";
+import {
+  guvenliBildir,
+  notifyConsultant,
+  notifyExpert,
+} from "@/data/notifications";
 import { getCurrentExpert, getCurrentMember } from "@/data/session";
 import type { MessageAuthor } from "@/data/types";
 
@@ -41,6 +50,25 @@ export async function sendMessage(formData: FormData) {
   }
 
   await addMessage(conversationId, author, authorName, body);
+
+  /* Karşı tarafa haber ver. Mesajı yazan kişiye bildirim gitmez. */
+  const dosya = await getConversation(conversationId);
+  if (dosya) {
+    const ozet = body.trim().split("\n")[0].slice(0, 90);
+    await guvenliBildir(
+      author === "danisan"
+        ? notifyExpert(dosya.expertId, {
+            title: `${authorName} mesaj gönderdi`,
+            body: ozet,
+            href: `/uzman-panel/mesajlar/${conversationId}?sekme=yazisma`,
+          })
+        : notifyConsultant(dosya.consultantId, {
+            title: `${authorName} yanıtladı`,
+            body: ozet,
+            href: `/panel/mesajlar/${conversationId}`,
+          }),
+    );
+  }
 
   revalidatePath("/panel/mesajlar");
   revalidatePath(`/panel/mesajlar/${conversationId}`);

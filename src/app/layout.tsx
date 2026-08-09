@@ -3,6 +3,7 @@ import { Newsreader, Source_Sans_3 } from "next/font/google";
 import { PageTransition } from "@/components/PageTransition";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { countUnread, listNotifications } from "@/data/notifications";
 import { getCurrentUser } from "@/data/session";
 import "./globals.css";
 
@@ -14,7 +15,11 @@ import "./globals.css";
 async function getHeaderSession() {
   const user = await getCurrentUser();
   if (!user) return null;
-  return { role: user.role };
+  const [bildirimler, okunmamis] = await Promise.all([
+    listNotifications(user.id),
+    countUnread(user.id),
+  ]);
+  return { role: user.role, bildirimler, okunmamis };
 }
 
 /* Tipografi ÖNERİ statüsündedir (bkz. karar kaydı C bölümü).

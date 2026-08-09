@@ -346,6 +346,31 @@ export const users = pgTable("users", {
   createdAt: timestamp("created_at", { mode: "date" }).notNull(),
 });
 
+/* ------------------------------------------------------------------ */
+/* BİLDİRİMLER (2026-08-10)                                            */
+/*
+ * Ürünün en büyük işlevsel boşluğuydu: uzman randevu teklif ediyor,
+ * danışan panele girip bakmadıkça haberi olmuyordu. Asenkron bir üründe
+ * bu, akışın kopma noktası.
+ *
+ * Şimdilik YALNIZCA UYGULAMA İÇİ. E-posta/SMS ayrı bir iş (sağlayıcı
+ * seçimi, KVKK aydınlatması, gönderim izni). Burada kasıtlı olarak
+ * "bildirim tercihi" alanı da yok — kanal tek olduğu sürece gereksiz.
+ *
+ * `href` bildirime tıklayınca gidilecek yer; `readAt` null ise okunmamış.
+ */
+export const notifications = pgTable("notifications", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  body: text("body"),
+  href: text("href").notNull(),
+  readAt: timestamp("read_at", { mode: "date" }),
+  createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+});
+
 export const authSessions = pgTable("auth_sessions", {
   token: text("token").primaryKey(),
   userId: text("user_id")
