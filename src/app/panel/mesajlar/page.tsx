@@ -5,11 +5,12 @@ import { listConversationsForConsultant } from "@/data/conversations";
 import { getExpertById, RESPONSE_COMMITMENT } from "@/data/experts";
 import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 import type { ConversationStatus } from "@/data/types";
+import { trFormat } from "@/lib/zaman";
 
 export const metadata: Metadata = { title: "Mesajlarım" };
 
 function formatWhen(iso: string) {
-  return new Date(iso).toLocaleDateString("tr-TR", {
+  return trFormat(iso, {
     day: "numeric",
     month: "long",
   });

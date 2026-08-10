@@ -20,6 +20,12 @@ import {
   getCurrentMember,
 } from "@/data/session";
 import type { PlanItem } from "@/data/types";
+import {
+  gunGecerliMi,
+  saatToDakika,
+  trTarihSaat,
+  trYerelToUTC,
+} from "@/lib/zaman";
 
 /**
  * Danışmanlık akışının eylemleri: başvuru, randevu, değerlendirme ataması,
@@ -100,9 +106,20 @@ export async function proposeAppointmentAction(formData: FormData) {
   // Sekme korunur; aksi hâlde hata mesajı görünmeyen bir sekmede kalıyor.
   if (!dateRaw || !timeRaw) redirect(`${base}?sekme=yazisma&randevuHata=eksik`);
 
-  const startsAt = new Date(`${dateRaw}T${timeRaw}`);
-  if (Number.isNaN(startsAt.getTime())) {
+  /* Uzman Türkiye saatiyle düşünüp yazıyor. `new Date("2026-08-12T14:00")`
+     biçimi ofset taşımadığı için SUNUCUNUN yerel saatinde yorumlanır;
+     Vercel UTC olduğundan 14:00 → 14:00Z olarak kaydediliyor ve danışana
+     17:00 görünüyordu. Çeviri artık tek kapıdan. */
+  const dakika = saatToDakika(timeRaw);
+  if (!gunGecerliMi(dateRaw) || dakika === null) {
     redirect(`${base}?sekme=yazisma&randevuHata=tarih`);
+  }
+  const startsAt = trYerelToUTC(dateRaw, dakika);
+
+  /* Geçmişe randevu teklif edilemez. Önceden yalnızca `NaN` kontrolü
+     vardı; dünün tarihi sorunsuz kaydediliyordu. */
+  if (startsAt.getTime() <= Date.now()) {
+    redirect(`${base}?sekme=yazisma&randevuHata=gecmis`);
   }
 
   const expert = await getCurrentExpert();
@@ -120,7 +137,7 @@ export async function proposeAppointmentAction(formData: FormData) {
     await guvenliBildir(
       notifyConsultant(dosya.consultantId, {
         title: "Görüşme önerisi geldi",
-        body: `${expert.name} bir görüşme saati önerdi: ${startsAt.toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}`,
+        body: `${expert.name} bir görüşme saati önerdi: ${trTarihSaat(startsAt)}`,
         href: `/panel/mesajlar/${conversationId}`,
       }),
     );

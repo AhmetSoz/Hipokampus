@@ -2,13 +2,10 @@ import { addSessionNote, publishSession } from "@/app/actions/sessions";
 import type { SessionNote } from "@/data/types";
 import { BarChart } from "./Charts";
 import { SessionChart } from "./SessionChart";
+import { trTarih } from "@/lib/zaman";
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("tr-TR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  return trTarih(iso);
 }
 
 /**
@@ -294,26 +291,69 @@ export function SessionLog({
             ))}
           </datalist>
 
-          <div className="space-y-2">
+          {/* Üç sütun YALNIZCA sm: üstünde. 375px'te alanlar ~75px'e
+              sıkışıyordu ve içine yazılan hiçbir şey okunmuyordu.
+              Ayrıca alanların etiketi yoktu, yalnızca placeholder vardı:
+              placeholder etiket değildir (WCAG 3.3.2) ve odaklanınca
+              kaybolur. Her satır bir fieldset, her alanın gerçek label'ı
+              var; label mobilde görünür, geniş ekranda sütun başlıkları
+              bir kez yazıldığı için gizleniyor. */}
+          <div
+            aria-hidden
+            className="mb-1 hidden gap-2 px-1 text-base font-semibold text-ink-600 sm:grid sm:grid-cols-[1fr_1fr_6rem]"
+          >
+            <span>Etiket</span>
+            <span>Değer</span>
+            <span>Birim</span>
+          </div>
+          <div className="space-y-4 sm:space-y-2">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="grid grid-cols-[1fr_1fr_5rem] gap-2">
-                <input
-                  name="olcum-etiket"
-                  list="hk-olcum-etiketleri"
-                  placeholder="Etiket"
-                  className="min-h-[2.75rem] rounded-lg border-2 border-ink-200 bg-white px-3 text-ink-900 focus:border-teal-600"
-                />
-                <input
-                  name="olcum-deger"
-                  placeholder="Değer"
-                  className="min-h-[2.75rem] rounded-lg border-2 border-ink-200 bg-white px-3 text-ink-900 focus:border-teal-600"
-                />
-                <input
-                  name="olcum-birim"
-                  placeholder="Birim"
-                  className="min-h-[2.75rem] rounded-lg border-2 border-ink-200 bg-white px-3 text-ink-900 focus:border-teal-600"
-                />
-              </div>
+              <fieldset key={i} className="min-w-0">
+                <legend className="sr-only">{i + 1}. ölçüm</legend>
+                <div className="grid gap-2 sm:grid-cols-[1fr_1fr_6rem]">
+                  <div className="min-w-0">
+                    <label
+                      htmlFor={`olcum-etiket-${i}`}
+                      className="mb-1 block text-base text-ink-700 sm:sr-only"
+                    >
+                      Etiket
+                    </label>
+                    <input
+                      id={`olcum-etiket-${i}`}
+                      name="olcum-etiket"
+                      list="hk-olcum-etiketleri"
+                      className="min-h-[2.75rem] w-full rounded-lg border-2 border-ink-200 bg-white px-3 text-ink-900 focus:border-teal-600"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <label
+                      htmlFor={`olcum-deger-${i}`}
+                      className="mb-1 block text-base text-ink-700 sm:sr-only"
+                    >
+                      Değer
+                    </label>
+                    <input
+                      id={`olcum-deger-${i}`}
+                      name="olcum-deger"
+                      inputMode="decimal"
+                      className="min-h-[2.75rem] w-full rounded-lg border-2 border-ink-200 bg-white px-3 text-ink-900 focus:border-teal-600"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <label
+                      htmlFor={`olcum-birim-${i}`}
+                      className="mb-1 block text-base text-ink-700 sm:sr-only"
+                    >
+                      Birim
+                    </label>
+                    <input
+                      id={`olcum-birim-${i}`}
+                      name="olcum-birim"
+                      className="min-h-[2.75rem] w-full rounded-lg border-2 border-ink-200 bg-white px-3 text-ink-900 focus:border-teal-600"
+                    />
+                  </div>
+                </div>
+              </fieldset>
             ))}
           </div>
 

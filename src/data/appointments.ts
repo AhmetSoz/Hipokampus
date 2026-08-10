@@ -2,6 +2,7 @@ import { asc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/client";
 import { appointments, conversations } from "@/db/schema";
 import type { Appointment, AppointmentStatus } from "./types";
+import { yeniId } from "@/lib/kimlik";
 
 /**
  * Randevular. Akış: uzman saat teklif eder (`teklif`) → danışan kabul
@@ -66,7 +67,7 @@ export async function proposeAppointment(input: {
   meetingUrl: string | null;
 }): Promise<void> {
   await db.insert(appointments).values({
-    id: `r${Date.now()}`,
+    id: yeniId("r"),
     conversationId: input.conversationId,
     proposedByExpertId: input.expertId,
     startsAt: input.startsAt,

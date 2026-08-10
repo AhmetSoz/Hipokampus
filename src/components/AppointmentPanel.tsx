@@ -4,6 +4,7 @@ import {
   updateAppointmentByExpert,
 } from "@/app/actions/care";
 import { APPOINTMENT_STATUS_LABEL, type Appointment } from "@/data/types";
+import { trFormat } from "@/lib/zaman";
 
 /**
  * Randevu akışı. Uzman bir saat teklif eder; danışan kabul veya reddeder.
@@ -23,7 +24,7 @@ const TONE: Record<Appointment["status"], string> = {
 };
 
 function formatWhen(iso: string) {
-  return new Date(iso).toLocaleString("tr-TR", {
+  return trFormat(iso, {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -199,7 +200,9 @@ export function AppointmentPanel({
             <p className="mb-4 font-semibold text-danger-700">
               {hata === "tarih"
                 ? "Tarih veya saat geçerli değil."
-                : "Tarih ve saat gerekli."}
+                : hata === "gecmis"
+                  ? "Geçmiş bir saate görüşme önerilemez."
+                  : "Tarih ve saat gerekli."}
             </p>
           )}
 

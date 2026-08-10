@@ -13,16 +13,12 @@ import {
   getCurrentMember,
   getCurrentUser,
 } from "@/data/session";
+import { trTarihSaat } from "@/lib/zaman";
 
 export const metadata: Metadata = { title: "Genel bakış" };
 
 function formatRandevu(iso: string) {
-  return new Date(iso).toLocaleString("tr-TR", {
-    day: "numeric",
-    month: "long",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return trTarihSaat(iso);
 }
 
 export default async function PanelGenelBakis() {

@@ -1,6 +1,7 @@
-import { asc, desc, eq, sql as rawSql } from "drizzle-orm";
+import { asc, desc, eq, inArray, sql as rawSql, type SQL } from "drizzle-orm";
 import { db } from "@/db/client";
 import { conversations, messages } from "@/db/schema";
+import { yeniId } from "@/lib/kimlik";
 import type { Conversation, ConversationStatus, MessageAuthor } from "./types";
 
 /**
@@ -15,35 +16,75 @@ import type { Conversation, ConversationStatus, MessageAuthor } from "./types";
  *  - Görüşme kaydı alınmaz — kalıcı çıktı yazılı danışmanlık planıdır.
  */
 
+/**
+ * Dosyalara mesajlarını ekler.
+ *
+ * Önceden her dosya için ayrı bir sorgu atılıyordu (N+1). Bu, uzman
+ * panelinin HER sayfa yüklemesinde çalışan bir yoldu; dosya sayısı
+ * arttıkça istek sayısı doğrusal büyüyordu. Artık tek `inArray` sorgusu
+ * atılıp gruplama bellekte yapılıyor.
+ */
 async function attachMessages(
   rows: (typeof conversations.$inferSelect)[],
 ): Promise<Conversation[]> {
-  const result: Conversation[] = [];
-  for (const row of rows) {
-    const msgRows = await db
-      .select()
-      .from(messages)
-      .where(eq(messages.conversationId, row.id))
-      .orderBy(asc(messages.sentAt));
+  if (rows.length === 0) return [];
 
-    result.push({
-      id: row.id,
-      expertId: row.expertId,
-      consultantId: row.consultantId,
-      subject: row.subject,
-      status: row.status,
-      startedAt: row.startedAt.toISOString(),
-      meetingUrl: row.meetingUrl,
-      messages: msgRows.map((m) => ({
-        id: m.id,
-        author: m.author,
-        authorName: m.authorName,
-        body: m.body,
-        sentAt: m.sentAt.toISOString(),
-      })),
+  const msgRows = await db
+    .select()
+    .from(messages)
+    .where(
+      inArray(
+        messages.conversationId,
+        rows.map((r) => r.id),
+      ),
+    )
+    .orderBy(asc(messages.sentAt));
+
+  const byConversation = new Map<string, Conversation["messages"]>();
+  for (const m of msgRows) {
+    const liste = byConversation.get(m.conversationId) ?? [];
+    liste.push({
+      id: m.id,
+      author: m.author,
+      authorName: m.authorName,
+      body: m.body,
+      sentAt: m.sentAt.toISOString(),
     });
+    byConversation.set(m.conversationId, liste);
   }
-  return result;
+
+  return rows.map((row) => ({
+    id: row.id,
+    expertId: row.expertId,
+    consultantId: row.consultantId,
+    subject: row.subject,
+    status: row.status,
+    startedAt: row.startedAt.toISOString(),
+    meetingUrl: row.meetingUrl,
+    messages: byConversation.get(row.id) ?? [],
+  }));
+}
+
+/**
+ * Dosyaları son hareket sırasına göre okur. `where` verilmezse hepsi.
+ *
+ * Filtre SQL'de: önceden hane/uzman bazlı listeler ÖNCE tüm tabloyu
+ * (ve tüm mesajları) çekip sonra JS'te süzüyordu. Bu hem gereksiz
+ * yüktü hem de platformdaki her yazışmayı uygulama katmanına taşıyan
+ * kötü bir desendi — filtre kazara kaldırılırsa doğrudan sızıntı olurdu.
+ */
+async function listBy(where?: SQL): Promise<Conversation[]> {
+  const rows = await db
+    .select()
+    .from(conversations)
+    .where(where)
+    // Son mesaj zamanına göre; hiç mesajı yoksa açılış tarihine göre.
+    .orderBy(
+      desc(
+        rawSql`coalesce((select max(${messages.sentAt}) from ${messages} where ${messages.conversationId} = ${conversations.id}), ${conversations.startedAt})`,
+      ),
+    );
+  return attachMessages(rows);
 }
 
 /**
@@ -69,7 +110,7 @@ export async function addMessage(
   if (!conversation || conversation.status === "tamamlandi") return;
 
   await db.insert(messages).values({
-    id: `m${Date.now()}`,
+    id: yeniId("m"),
     conversationId,
     author,
     authorName,
@@ -91,24 +132,14 @@ export async function addMessage(
  * panel ekranları hane veya uzman bazlı olanları çağırmalı.
  */
 export async function listConversations(): Promise<Conversation[]> {
-  // Son mesaj zamanına göre sırala; hiç mesajı yoksa açılış tarihine göre.
-  const rows = await db
-    .select()
-    .from(conversations)
-    .orderBy(
-      desc(
-        rawSql`coalesce((select max(${messages.sentAt}) from ${messages} where ${messages.conversationId} = ${conversations.id}), ${conversations.startedAt})`,
-      ),
-    );
-  return attachMessages(rows);
+  return listBy();
 }
 
 /** Bir hanenin dosyaları. Danışan paneli bunu kullanır. */
 export async function listConversationsForConsultant(
   consultantId: string,
 ): Promise<Conversation[]> {
-  const all = await listConversations();
-  return all.filter((c) => c.consultantId === consultantId);
+  return listBy(eq(conversations.consultantId, consultantId));
 }
 
 /**
@@ -123,7 +154,7 @@ export async function createConversation(input: {
   firstMessage: string;
   authorName: string;
 }): Promise<string> {
-  const id = `g${Date.now()}`;
+  const id = yeniId("g");
   const now = new Date();
 
   await db.insert(conversations).values({
@@ -139,7 +170,7 @@ export async function createConversation(input: {
   const body = input.firstMessage.trim();
   if (body) {
     await db.insert(messages).values({
-      id: `m${Date.now()}`,
+      id: yeniId("m"),
       conversationId: id,
       author: "danisan",
       authorName: input.authorName,
@@ -164,8 +195,7 @@ export async function getConversation(id: string): Promise<Conversation | null> 
 export async function listConversationsForExpert(
   expertId: string,
 ): Promise<Conversation[]> {
-  const all = await listConversations();
-  return all.filter((c) => c.expertId === expertId);
+  return listBy(eq(conversations.expertId, expertId));
 }
 
 /**

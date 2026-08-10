@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { sendMessage } from "@/app/actions/messages";
+import { trFormat, trSaat } from "@/lib/zaman";
 
 /**
  * Yüzen mesaj kutusu — sağ altta, her panel sayfasından erişilebilir.
@@ -37,14 +38,11 @@ export type KutuDosya = {
 };
 
 function saat(iso: string) {
-  return new Date(iso).toLocaleTimeString("tr-TR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return trSaat(iso);
 }
 
 function gun(iso: string) {
-  return new Date(iso).toLocaleDateString("tr-TR", {
+  return trFormat(iso, {
     day: "numeric",
     month: "long",
   });

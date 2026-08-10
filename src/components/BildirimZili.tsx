@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { tumunuOkunduIsaretle } from "@/app/actions/notifications";
 import type { Bildirim } from "@/data/notifications";
+import { trFormat } from "@/lib/zaman";
 
 /**
  * Bildirim zili — başlıkta, okunmamış sayısıyla.
@@ -24,7 +25,7 @@ function ne_zaman(iso: string) {
   if (dk < 60) return `${dk} dk önce`;
   const sa = Math.round(dk / 60);
   if (sa < 24) return `${sa} saat önce`;
-  return new Date(iso).toLocaleDateString("tr-TR", {
+  return trFormat(iso, {
     day: "numeric",
     month: "long",
   });

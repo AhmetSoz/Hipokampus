@@ -3,15 +3,12 @@ import Link from "next/link";
 import { Notice } from "@/components/ui";
 import { listAssignmentsForConsultant } from "@/data/assessments";
 import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
+import { trTarih } from "@/lib/zaman";
 
 export const metadata: Metadata = { title: "Formlar" };
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("tr-TR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  return trTarih(iso);
 }
 
 export default async function FormlarSayfasi({

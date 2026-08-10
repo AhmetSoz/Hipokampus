@@ -1,6 +1,7 @@
 import { sendMessage } from "@/app/actions/messages";
 import { RESPONSE_COMMITMENT } from "@/data/experts";
 import type { Conversation, ConversationStatus } from "@/data/types";
+import { trFormat, trTarihSaat } from "@/lib/zaman";
 
 /**
  * Danışma dosyası görünümü. İki taraf da (danışan ve uzman) aynı bileşeni
@@ -37,14 +38,14 @@ const STEPS = [
 
 /** Sohbet balonu için: yalnızca saat. Gün, ayırıcı şeritte yazılıyor. */
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("tr-TR", {
+  return trFormat(iso, {
     hour: "2-digit",
     minute: "2-digit",
   });
 }
 
 function formatDay(iso: string) {
-  return new Date(iso).toLocaleDateString("tr-TR", {
+  return trFormat(iso, {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -63,12 +64,7 @@ function initials(name: string) {
 }
 
 function formatWhen(iso: string) {
-  return new Date(iso).toLocaleString("tr-TR", {
-    day: "numeric",
-    month: "long",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return trTarihSaat(iso);
 }
 
 /**

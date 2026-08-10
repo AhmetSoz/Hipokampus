@@ -1,5 +1,6 @@
 import {
   boolean,
+  index,
   integer,
   pgEnum,
   pgTable,
@@ -108,7 +109,7 @@ export const familyMembers = pgTable("family_members", {
   payer: boolean("payer").notNull().default(false),
   invitedAt: timestamp("invited_at", { mode: "date" }).notNull(),
   expiresAt: timestamp("expires_at", { mode: "date" }),
-});
+}, (t) => [index("family_members_consultant_idx").on(t.consultantId)]);
 
 /** Erişim kaydı — kim, ne zaman, hangi bölümü açtı. */
 export const accessLog = pgTable("access_log", {
@@ -119,7 +120,7 @@ export const accessLog = pgTable("access_log", {
   scope: text("scope").notNull(),
   section: text("section").notNull(),
   at: timestamp("at", { mode: "date" }).notNull(),
-});
+}, (t) => [index("access_log_member_idx").on(t.memberId, t.at)]);
 
 /** Danışmanlık planı maddeleri. */
 export const planItems = pgTable("plan_items", {
@@ -135,7 +136,7 @@ export const planItems = pgTable("plan_items", {
     .notNull()
     .references(() => experts.id),
   createdAt: timestamp("created_at", { mode: "date" }).notNull(),
-});
+}, (t) => [index("plan_items_consultant_idx").on(t.consultantId)]);
 
 /**
  * Danışma dosyaları. "Sohbet" değil, adı olan bir iş — bkz. context/07.
@@ -158,7 +159,10 @@ export const conversations = pgTable("conversations", {
   status: conversationStatusEnum("status").notNull(),
   startedAt: timestamp("started_at", { mode: "date" }).notNull(),
   meetingUrl: text("meeting_url"),
-});
+}, (t) => [
+    index("conversations_expert_idx").on(t.expertId),
+    index("conversations_consultant_idx").on(t.consultantId),
+  ]);
 
 /**
  * Mesajlar. Okundu bilgisi ve "yazıyor" durumu BİLEREK yok — araştırma
@@ -173,7 +177,7 @@ export const messages = pgTable("messages", {
   authorName: text("author_name").notNull(),
   body: text("body").notNull(),
   sentAt: timestamp("sent_at", { mode: "date" }).notNull(),
-});
+}, (t) => [index("messages_conversation_idx").on(t.conversationId, t.sentAt)]);
 
 /* ------------------------------------------------------------------ */
 /* DEĞERLENDİRME İSKELESİ (2026-08-05)                                  */
@@ -223,7 +227,7 @@ export const assessmentItems = pgTable("assessment_items", {
   responseType: assessmentResponseTypeEnum("response_type").notNull(),
   /** Yalnızca "cok-secmeli" için kullanılır. */
   options: text("options").array(),
-});
+}, (t) => [index("assessment_items_template_idx").on(t.templateId, t.position)]);
 
 /** Bir şablonun belirli bir danışana ataması. */
 export const assessmentAssignments = pgTable("assessment_assignments", {
@@ -240,7 +244,7 @@ export const assessmentAssignments = pgTable("assessment_assignments", {
   assignedAt: timestamp("assigned_at", { mode: "date" }).notNull(),
   dueAt: timestamp("due_at", { mode: "date" }),
   status: assessmentStatusEnum("status").notNull(),
-});
+}, (t) => [index("assessment_assignments_consultant_idx").on(t.consultantId, t.assignedAt)]);
 
 /** Ham yanıtlar. Hesaplanmış puan YOK — bkz. yukarıdaki not. */
 export const assessmentResponses = pgTable("assessment_responses", {
@@ -253,7 +257,7 @@ export const assessmentResponses = pgTable("assessment_responses", {
     .references(() => assessmentItems.id, { onDelete: "cascade" }),
   value: text("value").notNull(),
   respondedAt: timestamp("responded_at", { mode: "date" }).notNull(),
-});
+}, (t) => [index("assessment_responses_assignment_idx").on(t.assignmentId)]);
 
 /* ------------------------------------------------------------------ */
 /* SEANS NOTLARI (2026-08-06)                                          */
@@ -291,7 +295,7 @@ export const sessionNotes = pgTable("session_notes", {
   note: text("note").notNull(),
   status: sessionStatusEnum("status").notNull().default("taslak"),
   createdAt: timestamp("created_at", { mode: "date" }).notNull(),
-});
+}, (t) => [index("session_notes_conversation_idx").on(t.conversationId, t.occurredAt)]);
 
 /** Bir seansa bağlı, tamamen serbest etiket/değer/birim ölçümleri. */
 export const sessionMeasurements = pgTable("session_measurements", {
@@ -303,7 +307,7 @@ export const sessionMeasurements = pgTable("session_measurements", {
   value: text("value").notNull(),
   unit: text("unit"),
   sortOrder: integer("sort_order").notNull().default(0),
-});
+}, (t) => [index("session_measurements_session_idx").on(t.sessionId, t.sortOrder)]);
 
 /* ------------------------------------------------------------------ */
 /* GERÇEK HESAPLAR (2026-08-06)                                        */
@@ -344,7 +348,10 @@ export const users = pgTable("users", {
     onDelete: "cascade",
   }),
   createdAt: timestamp("created_at", { mode: "date" }).notNull(),
-});
+}, (t) => [
+    index("users_consultant_idx").on(t.consultantId),
+    index("users_expert_idx").on(t.expertId),
+  ]);
 
 /* ------------------------------------------------------------------ */
 /* BİLDİRİMLER (2026-08-10)                                            */
@@ -369,7 +376,7 @@ export const notifications = pgTable("notifications", {
   href: text("href").notNull(),
   readAt: timestamp("read_at", { mode: "date" }),
   createdAt: timestamp("created_at", { mode: "date" }).notNull(),
-});
+}, (t) => [index("notifications_user_idx").on(t.userId, t.createdAt)]);
 
 export const authSessions = pgTable("auth_sessions", {
   token: text("token").primaryKey(),
@@ -378,7 +385,10 @@ export const authSessions = pgTable("auth_sessions", {
     .references(() => users.id, { onDelete: "cascade" }),
   expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).notNull(),
-});
+}, (t) => [
+    index("auth_sessions_user_idx").on(t.userId),
+    index("auth_sessions_expires_idx").on(t.expiresAt),
+  ]);
 
 /* ------------------------------------------------------------------ */
 /* RANDEVULAR (2026-08-06)                                             */
@@ -411,4 +421,4 @@ export const appointments = pgTable("appointments", {
   note: text("note"),
   meetingUrl: text("meeting_url"),
   createdAt: timestamp("created_at", { mode: "date" }).notNull(),
-});
+}, (t) => [index("appointments_conversation_idx").on(t.conversationId, t.startsAt)]);

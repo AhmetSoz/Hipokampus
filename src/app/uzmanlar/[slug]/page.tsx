@@ -11,6 +11,7 @@ import {
   RESPONSE_COMMITMENT,
 } from "@/data/experts";
 import { needArea } from "@/data/needs";
+import { trFormat } from "@/lib/zaman";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -34,7 +35,7 @@ export default async function UzmanProfiliSayfasi({ params }: Props) {
   const expert = await getExpert(slug);
   if (!expert) notFound();
 
-  const verified = new Date(expert.verifiedAt).toLocaleDateString("tr-TR", {
+  const verified = trFormat(expert.verifiedAt, {
     year: "numeric",
     month: "long",
   });

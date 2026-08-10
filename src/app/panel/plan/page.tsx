@@ -7,6 +7,7 @@ import { getConsultant, listPlanItems } from "@/data/household";
 import { needArea } from "@/data/needs";
 import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 import type { PlanItemStatus } from "@/data/types";
+import { trFormat } from "@/lib/zaman";
 
 export const metadata: Metadata = { title: "Danışmanlık planı" };
 
@@ -87,7 +88,7 @@ export default async function BakimPlaniSayfasi() {
                 <p className="mb-4 pl-13 text-ink-700">{item.detail}</p>
                 <p className="mb-4 pl-13 text-base text-ink-600">
                   {needArea(item.needArea).label} ·{" "}
-                  {new Date(item.createdAt).toLocaleDateString("tr-TR", {
+                  {trFormat(item.createdAt, {
                     day: "numeric",
                     month: "long",
                   })}{" "}

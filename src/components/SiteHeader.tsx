@@ -146,6 +146,20 @@ export function SiteHeader({ session }: { session: HeaderSession }) {
           })}
         </nav>
 
+        {/* Bildirim zili menünün DIŞINDA duruyor.
+            Önceden `hidden md:flex` kabının içindeydi; telefonda hiçbir
+            şekilde erişilemiyordu — üstelik uygulama içi bildirim,
+            ürünün en büyük işlevsel boşluğu diye eklenmişti. Artık her
+            ekran boyunda, hamburgerin solunda. */}
+        {session && (
+          <div className="ml-auto flex items-center md:hidden">
+            <BildirimZili
+              bildirimler={session.bildirimler}
+              okunmamis={session.okunmamis}
+            />
+          </div>
+        )}
+
         <div className="hidden items-center gap-3 md:flex">
           <ReadingControlsPopover />
           {session ? (

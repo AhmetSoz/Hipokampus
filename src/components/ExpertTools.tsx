@@ -6,6 +6,7 @@ import type {
   AssessmentTemplate,
   PlanItem,
 } from "@/data/types";
+import { trTarih } from "@/lib/zaman";
 
 /**
  * Uzmanın dosya içinden yaptığı atamalar: değerlendirme formu ve görev.
@@ -27,11 +28,7 @@ const STATUS_LABEL: Record<PlanItem["status"], string> = {
 };
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("tr-TR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  return trTarih(iso);
 }
 
 export function ExpertTools({

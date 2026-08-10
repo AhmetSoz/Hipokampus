@@ -8,6 +8,7 @@ import type {
   FamilyMember,
   PlanItem,
 } from "./types";
+import { yeniId } from "@/lib/kimlik";
 
 /**
  * Panel verisi veritabanından okunur (bkz. scripts/seed.ts).
@@ -131,7 +132,7 @@ export async function createPlanItem(input: {
   authorExpertId: string;
 }): Promise<void> {
   await db.insert(planItems).values({
-    id: `p${Date.now()}`,
+    id: yeniId("p"),
     consultantId: input.consultantId,
     title: input.title,
     detail: input.detail,

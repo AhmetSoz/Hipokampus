@@ -4,6 +4,7 @@ import { listConversationsForConsultant } from "@/data/conversations";
 import { getExpertById } from "@/data/experts";
 import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 import type { ConversationStatus } from "@/data/types";
+import { trTarih } from "@/lib/zaman";
 
 export const metadata: Metadata = { title: "Ödeme ve abonelik" };
 
@@ -74,11 +75,7 @@ export default async function OdemeSayfasi() {
                     </p>
                     <p className="text-base text-ink-600">
                       {expert?.field} ·{" "}
-                      {new Date(c.startedAt).toLocaleDateString("tr-TR", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
+                      {trTarih(c.startedAt)}
                     </p>
                   </div>
                   <span

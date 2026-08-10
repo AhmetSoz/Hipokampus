@@ -8,6 +8,7 @@ import {
 import { getCurrentConsultantId, getCurrentMember } from "@/data/session";
 import { SCOPE_DESCRIPTION, SCOPE_LABEL } from "@/data/types";
 import type { DataScope } from "@/data/types";
+import { trFormat, trTarihSaat } from "@/lib/zaman";
 
 export const metadata: Metadata = { title: "Erişim ve izinler" };
 
@@ -103,7 +104,11 @@ export default async function ErisimSayfasi() {
                     {m.expiresAt && !suspended && (
                       <span className="mt-2 block text-base text-ink-600">
                         Bitiş:{" "}
-                        {new Date(m.expiresAt).toLocaleDateString("tr-TR")}
+                        {trFormat(m.expiresAt, {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}
                       </span>
                     )}
                   </th>
@@ -188,12 +193,7 @@ export default async function ErisimSayfasi() {
                     <span className="text-ink-600">{entry.section}</span>
                   </span>
                   <span className="text-base text-ink-600">
-                    {new Date(entry.at).toLocaleString("tr-TR", {
-                      day: "numeric",
-                      month: "long",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {trTarihSaat(entry.at)}
                   </span>
                 </li>
               );

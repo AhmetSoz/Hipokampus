@@ -1,4 +1,4 @@
-import { asc, desc, eq } from "drizzle-orm";
+import { asc, desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/client";
 import {
   assessmentAssignments,
@@ -11,6 +11,7 @@ import type {
   AssessmentItem,
   AssessmentTemplate,
 } from "./types";
+import { yeniId } from "@/lib/kimlik";
 
 /**
  * Değerlendirme formları.
@@ -31,13 +32,25 @@ function toItem(row: typeof assessmentItems.$inferSelect): AssessmentItem {
   };
 }
 
-async function itemsFor(templateId: string): Promise<AssessmentItem[]> {
+/** Birden çok şablonun maddelerini tek sorguda okuyup şablona göre gruplar. */
+async function itemsForMany(
+  templateIds: string[],
+): Promise<Map<string, AssessmentItem[]>> {
+  const grup = new Map<string, AssessmentItem[]>();
+  if (templateIds.length === 0) return grup;
+
   const rows = await db
     .select()
     .from(assessmentItems)
-    .where(eq(assessmentItems.templateId, templateId))
+    .where(inArray(assessmentItems.templateId, templateIds))
     .orderBy(asc(assessmentItems.position));
-  return rows.map(toItem);
+
+  for (const row of rows) {
+    const liste = grup.get(row.templateId) ?? [];
+    liste.push(toItem(row));
+    grup.set(row.templateId, liste);
+  }
+  return grup;
 }
 
 export async function listTemplates(): Promise<AssessmentTemplate[]> {
@@ -46,37 +59,58 @@ export async function listTemplates(): Promise<AssessmentTemplate[]> {
     .from(assessmentTemplates)
     .orderBy(asc(assessmentTemplates.title));
 
-  const result: AssessmentTemplate[] = [];
-  for (const row of rows) {
-    result.push({
-      id: row.id,
-      title: row.title,
-      description: row.description,
-      items: await itemsFor(row.id),
-    });
-  }
-  return result;
+  const maddeler = await itemsForMany(rows.map((r) => r.id));
+
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    description: row.description,
+    items: maddeler.get(row.id) ?? [],
+  }));
 }
 
+/**
+ * Atamalara şablon, madde ve yanıtlarını ekler.
+ *
+ * Önceden atama başına ÜÇ sorgu atılıyordu (şablon + yanıtlar + maddeler).
+ * Artık atama sayısından bağımsız olarak toplam üç sorgu.
+ */
 async function hydrate(
   rows: (typeof assessmentAssignments.$inferSelect)[],
 ): Promise<AssessmentAssignment[]> {
-  const result: AssessmentAssignment[] = [];
-  for (const row of rows) {
-    const [template] = await db
+  if (rows.length === 0) return [];
+
+  const templateIds = [...new Set(rows.map((r) => r.templateId))];
+
+  const [templateRows, responseRows, maddeler] = await Promise.all([
+    db
       .select()
       .from(assessmentTemplates)
-      .where(eq(assessmentTemplates.id, row.templateId));
-
-    const responseRows = await db
+      .where(inArray(assessmentTemplates.id, templateIds)),
+    db
       .select()
       .from(assessmentResponses)
-      .where(eq(assessmentResponses.assignmentId, row.id));
+      .where(
+        inArray(
+          assessmentResponses.assignmentId,
+          rows.map((r) => r.id),
+        ),
+      ),
+    itemsForMany(templateIds),
+  ]);
 
-    const answers: Record<string, string> = {};
-    for (const r of responseRows) answers[r.itemId] = r.value;
+  const sablonlar = new Map(templateRows.map((t) => [t.id, t]));
 
-    result.push({
+  const yanitlar = new Map<string, Record<string, string>>();
+  for (const r of responseRows) {
+    const mevcut = yanitlar.get(r.assignmentId) ?? {};
+    mevcut[r.itemId] = r.value;
+    yanitlar.set(r.assignmentId, mevcut);
+  }
+
+  return rows.map((row) => {
+    const template = sablonlar.get(row.templateId);
+    return {
       id: row.id,
       templateId: row.templateId,
       templateTitle: template?.title ?? "Form",
@@ -86,11 +120,10 @@ async function hydrate(
       assignedAt: row.assignedAt.toISOString(),
       dueAt: row.dueAt ? row.dueAt.toISOString() : null,
       status: row.status,
-      items: await itemsFor(row.templateId),
-      answers,
-    });
-  }
-  return result;
+      items: maddeler.get(row.templateId) ?? [],
+      answers: yanitlar.get(row.id) ?? {},
+    };
+  });
 }
 
 export async function listAssignmentsForConsultant(
@@ -122,7 +155,7 @@ export async function assignTemplate(input: {
   expertId: string;
   dueAt: Date | null;
 }): Promise<string> {
-  const id = `aa${Date.now()}`;
+  const id = yeniId("aa");
   await db.insert(assessmentAssignments).values({
     id,
     templateId: input.templateId,
@@ -153,7 +186,7 @@ export async function submitResponses(
     const now = new Date();
     await db.insert(assessmentResponses).values(
       filled.map((a, i) => ({
-        id: `ar${Date.now()}-${i}`,
+        id: yeniId("ar"),
         assignmentId,
         itemId: a.itemId,
         value: a.value.trim(),

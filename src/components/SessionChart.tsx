@@ -16,6 +16,8 @@
  *    üretilmez).
  */
 
+import { trKisaTarih } from "@/lib/zaman";
+
 const W = 320;
 const H = 132;
 const PAD_L = 34;
@@ -73,7 +75,7 @@ export function SessionChart({
   const yon = fark > 0 ? "↑" : fark < 0 ? "↓" : "→";
 
   const tarih = (iso: string) =>
-    new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+    trKisaTarih(iso);
 
   return (
     <div className="rounded-xl border border-ink-200 bg-paper-warm p-4">
