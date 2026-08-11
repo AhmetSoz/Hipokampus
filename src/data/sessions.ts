@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db/client";
-import { sessionMeasurements, sessionNotes } from "@/db/schema";
+import { conversations, sessionMeasurements, sessionNotes } from "@/db/schema";
 import type { SessionNote } from "./types";
 import { yeniId } from "@/lib/kimlik";
 
@@ -81,6 +81,47 @@ export async function listSessionNotes(
     .orderBy(desc(sessionNotes.occurredAt), desc(sessionNotes.createdAt));
 
   return attachMeasurements(rows);
+}
+
+/**
+ * Bir uzmanın belirli bir danışanla olan TÜM dosyalarındaki seanslar.
+ *
+ * Ölçüm trendi dosya sınırında kopmasın diye. Her seansa hangi dosyadan
+ * geldiği ekleniyor — birleşik listede rozet olarak gösteriliyor.
+ *
+ * `innerJoin` ile tek sorgu; yetki de aynı sorguda: yalnızca bu uzmana
+ * ait dosyalar geliyor, başka bir uzmanın seans notu asla dönmüyor.
+ */
+export async function listSessionNotesForConsultantAndExpert(
+  consultantId: string,
+  expertId: string,
+  options?: { onlyPublished?: boolean },
+): Promise<(SessionNote & { conversationSubject: string })[]> {
+  const kosullar = [
+    eq(conversations.consultantId, consultantId),
+    eq(conversations.expertId, expertId),
+  ];
+  if (options?.onlyPublished) {
+    kosullar.push(eq(sessionNotes.status, "yayinda"));
+  }
+
+  const rows = await db
+    .select({
+      seans: sessionNotes,
+      subject: conversations.subject,
+    })
+    .from(sessionNotes)
+    .innerJoin(conversations, eq(sessionNotes.conversationId, conversations.id))
+    .where(and(...kosullar))
+    .orderBy(desc(sessionNotes.occurredAt), desc(sessionNotes.createdAt));
+
+  const konular = new Map(rows.map((r) => [r.seans.id, r.subject]));
+  const tam = await attachMeasurements(rows.map((r) => r.seans));
+
+  return tam.map((s) => ({
+    ...s,
+    conversationSubject: konular.get(s.id) ?? "",
+  }));
 }
 
 export async function createSessionNote(input: {

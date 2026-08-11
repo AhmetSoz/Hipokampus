@@ -62,11 +62,23 @@ export default async function DanisanlarSayfasi() {
         groups.map(({ consultant, conversations: convs, withHealthAccess }) => (
           <section key={consultant.id} className="space-y-4">
             <article className="rounded-2xl border border-ink-200 bg-white p-7 shadow-[var(--shadow-soft)]">
-              <h2 className="mb-1 text-2xl">{consultant.name}</h2>
-              <p className="mb-5 text-ink-600">
-                {consultant.city} ·{" "}
-                {new Date().getFullYear() - consultant.birthYear} yaşında
-              </p>
+              <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h2 className="mb-1 text-2xl">{consultant.name}</h2>
+                  <p className="text-ink-600">
+                    {consultant.city} ·{" "}
+                    {new Date().getFullYear() - consultant.birthYear} yaşında
+                  </p>
+                </div>
+                {/* Danışanın tüm geçmişi (seanslar, ölçüm trendleri,
+                    formlar, randevular) tek ekranda. */}
+                <Link
+                  href={`/uzman-panel/danisanlar/${consultant.id}`}
+                  className="inline-flex min-h-[3rem] shrink-0 items-center rounded-xl border-2 border-teal-700 px-5 font-semibold text-teal-800 transition-[transform,background-color] duration-[var(--dur-fast)] hover:-translate-y-px hover:bg-teal-50"
+                >
+                  Tüm geçmişi açın →
+                </Link>
+              </div>
               <p className="mb-6 text-ink-700">{consultant.summary}</p>
 
               <div className="border-t border-ink-100 pt-5">

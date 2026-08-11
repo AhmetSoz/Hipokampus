@@ -529,6 +529,52 @@ export const expertAvailabilityRules = pgTable(
   (t) => [index("availability_rules_expert_idx").on(t.expertId, t.weekday)],
 );
 
+/* ------------------------------------------------------------------ */
+/* ÖLÇÜM ETİKETİ BİRLEŞTİRME (2026-08-11)                              */
+/*
+ * `session_measurements.label` serbest metindir ve seriler etiketin
+ * BİREBİR aynı olmasına göre gruplanır. "Tek ayak durma süresi" ile
+ * "tek ayak durma" iki ayrı seri olur ve trend kaybolur. Sorun tek dosya
+ * içinde `datalist` önerisiyle azalıyordu; dosyalar arası birleşik
+ * trendde ise tam olarak burada patlıyor.
+ *
+ * Bu tablo, "bu iki etiket aynı ölçümü anlatıyor" tespitini saklar.
+ *
+ * OTOMATİK BİRLEŞTİRME YAPILMAZ: sistem yalnızca ÖNERİR, uzman onaylar.
+ * Ham `label` hiçbir zaman değiştirilmez — geçmiş seans notu ne yazdıysa
+ * öyle kalır. Gerekçe proje boyunca uygulanan ilkenin aynısı: sistem
+ * yorum yapmaz, uzman yapar (puan yok, "iyi/kötü" yok, tanı yok).
+ * Etiketleri sessizce birleştirmek de bir yorumdur ve yanlışsa uzmanın
+ * göremediği bir veri hatası bırakır.
+ *
+ * `consultantId` bazlı, `expertId` bazlı DEĞİL: birleştirme verinin
+ * kendisi hakkında bir tespittir, bakan kişi hakkında değil. Uzman bazlı
+ * olsaydı iki uzman aynı veriyi farklı görürdü ve danışanın kendi
+ * ilerleme ekranı hiçbir birleştirmeyi göremezdi. Kimin yaptığı
+ * `createdByExpertId` ile izlenebilir kalıyor.
+ */
+export const measurementLabelAliases = pgTable(
+  "measurement_label_aliases",
+  {
+    id: text("id").primaryKey(),
+    /* NOT NULL şart: Postgres'te NULL ≠ NULL olduğu için nullable
+       olsaydı tekil indeks o satırlarda hiç çalışmazdı. */
+    consultantId: text("consultant_id")
+      .notNull()
+      .references(() => consultants.id, { onDelete: "cascade" }),
+    rawLabel: text("raw_label").notNull(),
+    canonicalLabel: text("canonical_label").notNull(),
+    canonicalUnit: text("canonical_unit"),
+    createdByExpertId: text("created_by_expert_id")
+      .notNull()
+      .references(() => experts.id),
+    createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+  },
+  (t) => [
+    uniqueIndex("measurement_alias_uq").on(t.consultantId, t.rawLabel),
+  ],
+);
+
 export const expertAvailabilityExceptions = pgTable(
   "expert_availability_exceptions",
   {

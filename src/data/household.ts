@@ -1,6 +1,12 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
-import { accessLog, consultants, familyMembers, planItems } from "@/db/schema";
+import {
+  accessLog,
+  consultants,
+  conversations,
+  familyMembers,
+  planItems,
+} from "@/db/schema";
 import type {
   AccessLogEntry,
   Consultant,
@@ -53,6 +59,33 @@ export async function getConsultant(
     city: row.city,
     summary: row.summary,
   };
+}
+
+/**
+ * Danışanı YALNIZCA bu uzmanın erişebileceği kadarıyla getirir.
+ *
+ * Uzmanın o danışanla en az bir dosyası yoksa `null` döner. Yetki
+ * kontrolü sayfada değil burada: bir danışan birden fazla uzmanla
+ * çalışabilir ve uzman A'ya uzman B'nin kayıtlarını göstermek,
+ * "ödeme yapmak sağlık verisini görme hakkı vermez" kilidiyle aynı
+ * kategoriden bir ihlal olurdu — yalnızca ekseni farklı.
+ */
+export async function getConsultantForExpert(
+  consultantId: string,
+  expertId: string,
+): Promise<Consultant | null> {
+  const [dosya] = await db
+    .select({ id: conversations.id })
+    .from(conversations)
+    .where(
+      and(
+        eq(conversations.consultantId, consultantId),
+        eq(conversations.expertId, expertId),
+      ),
+    )
+    .limit(1);
+  if (!dosya) return null;
+  return getConsultant(consultantId);
 }
 
 export async function listFamily(
