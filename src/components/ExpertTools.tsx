@@ -7,6 +7,7 @@ import type {
   PlanItem,
 } from "@/data/types";
 import { trTarih } from "@/lib/zaman";
+import { FormHatasi } from "./FormHatasi";
 
 /**
  * Uzmanın dosya içinden yaptığı atamalar: değerlendirme formu ve görev.
@@ -218,9 +219,7 @@ export function ExpertTools({
           <h3 className="mb-4 text-xl text-ink-900">Yeni görev</h3>
 
           {gorevHata && (
-            <p className="mb-4 font-semibold text-danger-700">
-              Başlık ve açıklama gerekli.
-            </p>
+            <FormHatasi>Başlık ve açıklama gerekli.</FormHatasi>
           )}
 
           <div className="grid gap-4 sm:grid-cols-[1fr_14rem]">

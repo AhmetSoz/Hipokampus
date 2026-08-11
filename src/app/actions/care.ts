@@ -123,7 +123,7 @@ export async function proposeAppointmentAction(formData: FormData) {
   }
 
   const expert = await getCurrentExpert();
-  await proposeAppointment({
+  const yazildi = await proposeAppointment({
     conversationId,
     expertId: expert.id,
     startsAt,
@@ -131,6 +131,12 @@ export async function proposeAppointmentAction(formData: FormData) {
     note: note || null,
     meetingUrl: meetingUrl || null,
   });
+
+  /* O saatte zaten aktif bir randevu var. Yakalanmazsa kısmi tekil
+     indeks hatası kullanıcıya hata sayfası olarak dönüyordu. */
+  if (!yazildi) {
+    redirect(`${base}?sekme=yazisma&randevuHata=dolu`);
+  }
 
   const dosya = await getConversation(conversationId);
   if (dosya) {

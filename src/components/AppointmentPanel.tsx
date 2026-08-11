@@ -5,6 +5,7 @@ import {
 } from "@/app/actions/care";
 import { randevuDurumEtiketi, type Appointment } from "@/data/types";
 import { trFormat } from "@/lib/zaman";
+import { FormHatasi } from "./FormHatasi";
 
 /**
  * Randevu akışı. Uzman bir saat teklif eder; danışan kabul veya reddeder.
@@ -197,13 +198,15 @@ export function AppointmentPanel({
           <h3 className="mb-4 text-xl text-ink-900">Yeni görüşme önerin</h3>
 
           {hata && (
-            <p className="mb-4 font-semibold text-danger-700">
+            <FormHatasi>
               {hata === "tarih"
                 ? "Tarih veya saat geçerli değil."
                 : hata === "gecmis"
                   ? "Geçmiş bir saate görüşme önerilemez."
-                  : "Tarih ve saat gerekli."}
-            </p>
+                  : hata === "dolu"
+                    ? "Bu saatte takviminizde başka bir görüşme var."
+                    : "Tarih ve saat gerekli."}
+            </FormHatasi>
           )}
 
           <div className="grid gap-4 sm:grid-cols-3">

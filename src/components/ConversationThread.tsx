@@ -2,6 +2,7 @@ import { sendMessage } from "@/app/actions/messages";
 import { RESPONSE_COMMITMENT } from "@/data/experts";
 import type { Conversation, ConversationStatus } from "@/data/types";
 import { trFormat, trTarihSaat } from "@/lib/zaman";
+import { FormHatasi } from "./FormHatasi";
 
 /**
  * Danışma dosyası görünümü. İki taraf da (danışan ve uzman) aynı bileşeni
@@ -254,9 +255,7 @@ export function ConversationThread({
             {viewer === "uzman" ? "Yanıtınızı yazın" : "Mesajınızı yazın"}
           </label>
           {bosMesajHatasi && (
-            <p className="mb-3 font-semibold text-danger-700">
-              Mesaj boş olamaz. Lütfen bir şeyler yazın.
-            </p>
+            <FormHatasi>Mesaj boş olamaz. Lütfen bir şeyler yazın.</FormHatasi>
           )}
 
           {/* Yazma alanı ve gönder düğmesi yan yana — sohbet

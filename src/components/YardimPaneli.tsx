@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { useOdakTuzagi } from "./hooks/useOdakTuzagi";
 import Link from "next/link";
 
 /**
@@ -96,17 +97,15 @@ const UZMAN: Madde[] = [
 
 export function YardimPaneli({ rol }: { rol: "danisan" | "uzman" }) {
   const [open, setOpen] = useState(false);
+  const panelRef = useRef<HTMLElement>(null);
   const maddeler = rol === "uzman" ? UZMAN : DANISAN;
+  const kapat = useCallback(() => setOpen(false), []);
 
-  // Esc ile kapansın — açık bir panelin kaçış yolu olmalı.
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
+  /* TUZAK AÇIK: panel arka planı karartıyor ve tıklamayı yutuyor, yani
+     fiilen modal. Tab'ın arkadaki içeriğe kaçması yanlış olurdu.
+     Kanca ayrıca Esc ile kapatmayı ve kapanışta odağı düğmeye geri
+     vermeyi üstleniyor — ikincisi daha önce hiçbir panelde yoktu. */
+  useOdakTuzagi(panelRef, { acik: open, kapat, tuzak: true });
 
   return (
     <>
@@ -141,8 +140,12 @@ export function YardimPaneli({ rol }: { rol: "danisan" | "uzman" }) {
             className="hk-fade fixed inset-0 z-40 bg-ink-900/20"
           />
           <aside
+            ref={panelRef}
             id="hk-yardim"
+            role="dialog"
+            aria-modal="true"
             aria-label="Ne nerede? yardım paneli"
+            tabIndex={-1}
             className="hk-slide-in fixed top-0 right-0 bottom-0 z-50 w-full max-w-md overflow-y-auto border-l border-ink-200 bg-paper p-6 shadow-[var(--shadow-pop)] sm:p-8"
           >
             <div className="mb-6 flex items-start justify-between gap-4">

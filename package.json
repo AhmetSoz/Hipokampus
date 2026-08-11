@@ -9,7 +9,9 @@
     "lint": "eslint",
     "db:push": "drizzle-kit push",
     "db:seed": "tsx scripts/seed.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "test": "playwright test",
+    "test:birim": "playwright test tests/zaman.spec.ts --project=masaustu"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
@@ -20,6 +22,7 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

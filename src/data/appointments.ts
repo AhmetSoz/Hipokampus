@@ -114,7 +114,32 @@ export async function cakismaVarMi(
   return Boolean(row);
 }
 
+/**
+ * Uzmanın elle saat teklif etmesi.
+ *
+ * `false` dönerse o saatte zaten aktif bir randevu var. Kısmi tekil
+ * indeks (`appointments_expert_slot_uq`) bunu veritabanı seviyesinde
+ * engelliyor; yakalanmazsa kullanıcı hata sayfası görüyordu. Testte
+ * yakalandı: aynı slota ikinci kez teklif verildiğinde 500 dönüyordu.
+ */
 export async function proposeAppointment(input: {
+  conversationId: string;
+  expertId: string;
+  startsAt: Date;
+  durationMinutes: number;
+  note: string | null;
+  meetingUrl: string | null;
+}): Promise<boolean> {
+  try {
+    await ekle(input);
+    return true;
+  } catch (e) {
+    if ((e as { code?: string })?.code === "23505") return false;
+    throw e;
+  }
+}
+
+async function ekle(input: {
   conversationId: string;
   expertId: string;
   startsAt: Date;

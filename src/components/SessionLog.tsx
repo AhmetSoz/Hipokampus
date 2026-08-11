@@ -3,6 +3,7 @@ import type { SessionNote } from "@/data/types";
 import { BarChart } from "./Charts";
 import { SessionChart } from "./SessionChart";
 import { trTarih } from "@/lib/zaman";
+import { FormHatasi } from "./FormHatasi";
 
 function formatDate(iso: string) {
   return trTarih(iso);
@@ -222,9 +223,7 @@ export function SessionLog({
           <h3 className="mb-4 text-xl text-ink-900">Yeni seans notu</h3>
 
           {seansHata && (
-            <p className="mb-3 font-semibold text-danger-700">
-              Başlık ve not alanları boş olamaz.
-            </p>
+            <FormHatasi>Başlık ve not alanları boş olamaz.</FormHatasi>
           )}
 
           <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">

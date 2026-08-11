@@ -40,6 +40,7 @@ export function BildirimZili({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const dugmeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -54,13 +55,23 @@ export function BildirimZili({
     return () => {
       document.removeEventListener("mousedown", disariTikla);
       document.removeEventListener("keydown", escBas);
+      /* Kapanışta odağı zile geri ver. Yoksa klavye kullanıcısı paneli
+         her kapattığında odak sayfa başına düşüyordu. Odak hâlâ panelin
+         içindeyse geri alıyoruz; kullanıcı başka bir yere tıkladıysa
+         onun seçimini bozmuyoruz. */
+      const aktif = document.activeElement;
+      if (!aktif || aktif === document.body || ref.current?.contains(aktif)) {
+        dugmeRef.current?.focus();
+      }
     };
   }, [open]);
 
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={dugmeRef}
         type="button"
+        aria-haspopup="dialog"
         onClick={() => {
           const acilacak = !open;
           setOpen(acilacak);

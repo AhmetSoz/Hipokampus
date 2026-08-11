@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { logout } from "@/app/actions/auth";
 import type { Bildirim } from "@/data/notifications";
 import { BildirimZili } from "./BildirimZili";
 import { Logo } from "./Logo";
 import { ReadingControls } from "./ReadingControls";
+import { useOdakTuzagi } from "./hooks/useOdakTuzagi";
 
 /** Sunucudan gelen oturum özeti — bkz. app/layout.tsx. */
 export type HeaderSession = {
@@ -104,7 +105,15 @@ function ReadingControlsPopover() {
 export function SiteHeader({ session }: { session: HeaderSession }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLElement>(null);
   const nav = navFor(session);
+  const kapat = useCallback(() => setOpen(false), []);
+
+  /* TUZAK KAPALI: mobil menü tam ekran değil, akış içinde açılıyor ve
+     arkayı karartmıyor. Kancadan alınan kazanç Esc ile kapanma (daha
+     önce YOKTU — diğer üç panel kapanırken menü kapanmıyordu) ve
+     kapanışta odağın hamburger düğmesine dönmesi. */
+  useOdakTuzagi(menuRef, { acik: open, kapat });
 
   return (
     <header
@@ -240,8 +249,10 @@ export function SiteHeader({ session }: { session: HeaderSession }) {
 
       {open && (
         <nav
+          ref={menuRef}
           id="mobil-menu"
           aria-label="Ana menü"
+          tabIndex={-1}
           className="hk-slide-down border-t border-ink-100 bg-paper px-6 pb-6 md:hidden"
         >
           {nav.map((item) => (

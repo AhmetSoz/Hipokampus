@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { useOdakTuzagi } from "./hooks/useOdakTuzagi";
 import Link from "next/link";
 import { sendMessage } from "@/app/actions/messages";
 import { trFormat, trSaat } from "@/lib/zaman";
@@ -71,17 +72,21 @@ export function MesajKutusu({
   const [open, setOpen] = useState(false);
   const [acikDosya, setAcikDosya] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      // Önce yazışmadan listeye, sonra kutuyu kapat.
-      if (acikDosya) setAcikDosya(null);
-      else setOpen(false);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, acikDosya]);
+  const kutuRef = useRef<HTMLElement>(null);
+
+  /* Escape iki kademeli: önce yazışmadan listeye, sonra kutuyu kapat. */
+  const kapat = useCallback(() => {
+    if (acikDosya) setAcikDosya(null);
+    else setOpen(false);
+  }, [acikDosya]);
+
+  /* TUZAK KAPALI — bilinçli. Kutu masaüstünde sayfayı karartmıyor ve
+     arkadaki içerik okunmaya devam ediyor; kullanıcıyı okuyabildiği
+     içerikten hapsetmek yanlış olurdu. (Mobilde tam ekran açılıp
+     karartıyor, ama aria-modal'ı ekran genişliğine göre değiştirmek
+     ekran okuyucuya tutarsız bir sözleşme sunardı.) Kancadan alınan
+     asıl kazanç Esc ve kapanışta odağın düğmeye geri dönmesi. */
+  useOdakTuzagi(kutuRef, { acik: open, kapat });
 
   /* Sıra kimde? Danışan için "acik" (uzman yanıtladı), uzman için
      "yanit-bekliyor" (danışan yazdı) sırayı bu tarafa geçirir. */
@@ -124,8 +129,12 @@ export function MesajKutusu({
             className="hk-fade fixed inset-0 z-40 bg-ink-900/20 sm:hidden"
           />
           <section
+            ref={kutuRef}
             id="hk-mesaj-kutusu"
+            role="dialog"
+            aria-modal="false"
             aria-label="Mesajlar"
+            tabIndex={-1}
             className="hk-kutu-ac fixed inset-x-0 bottom-0 z-50 flex h-[85vh] flex-col rounded-t-2xl border border-ink-200 bg-paper shadow-[var(--shadow-pop)] sm:inset-x-auto sm:right-5 sm:bottom-24 sm:h-[32rem] sm:w-[24rem] sm:rounded-2xl"
           >
             {/* Başlık */}
