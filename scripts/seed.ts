@@ -33,6 +33,8 @@ async function main() {
   await db.delete(schema.assessmentItems);
   await db.delete(schema.assessmentTemplates);
   await db.delete(schema.appointments);
+  await db.delete(schema.expertAvailabilityExceptions);
+  await db.delete(schema.expertAvailabilityRules);
   await db.delete(schema.sessionMeasurements);
   await db.delete(schema.sessionNotes);
   await db.delete(schema.messages);
@@ -631,6 +633,27 @@ async function main() {
       options: null,
     },
   ]);
+
+  /* Müsaitlik kuralları.
+     Tohumlanmıyorsa ajanda ve slot seçici boş açılıyor ve ürün
+     "çalışmıyor" gibi görünüyor. Her uzman için hafta içi bir düzen;
+     saatler uzmandan uzmana değişsin diye kaydırılıyor. */
+  const now = new Date();
+  await db.insert(schema.expertAvailabilityRules).values(
+    ["u1", "u2", "u3", "u4", "u5", "u6", "u7", "u8"].flatMap((expertId, i) =>
+      [1, 2, 3, 4, 5].map((weekday) => ({
+        id: `mk-${expertId}-${weekday}`,
+        expertId,
+        weekday,
+        // 09:00/10:00/11:00 başlangıç, altı saatlik pencere
+        startMinute: 540 + (i % 3) * 60,
+        endMinute: 540 + (i % 3) * 60 + 360,
+        slotMinutes: 45,
+        gapMinutes: 15,
+        createdAt: now,
+      })),
+    ),
+  );
 
   console.log("Tamamlandı.");
 }

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SekmeCubugu, sekmeCoz } from "./SekmeCubugu";
 
 /**
  * Dosya sekmeleri.
@@ -7,8 +7,9 @@ import Link from "next/link";
  * uzunluğundaydı; not eklemek için sayfanın yarısını kaydırmak
  * gerekiyordu. Sekmeler tek ekrana indiriyor.
  *
- * URL tabanlı (`?sekme=`), istemci durumu yok: sunucuda render edilir,
- * bağlantı paylaşılabilir, geri tuşu çalışır ve JavaScript gerektirmez.
+ * Görünüm ve davranış `SekmeCubugu`'na taşındı (danışan detay sayfası da
+ * aynısını kullanıyor). Bu dosya, dosya sayfasına özgü sekme listesini
+ * tanımlayan ince bir sarmalayıcı olarak kaldı.
  */
 
 export type SekmeId = "yazisma" | "seanslar" | "formlar" | "gorevler";
@@ -21,7 +22,7 @@ export const SEKMELER: { id: SekmeId; label: string }[] = [
 ];
 
 export function normalizeSekme(value: unknown): SekmeId {
-  return SEKMELER.some((s) => s.id === value) ? (value as SekmeId) : "yazisma";
+  return sekmeCoz(value, SEKMELER);
 }
 
 export function DosyaSekmeleri({
@@ -35,37 +36,12 @@ export function DosyaSekmeleri({
   rozetler?: Partial<Record<SekmeId, number>>;
 }) {
   return (
-    <nav aria-label="Dosya bölümleri">
-      <ul className="flex flex-wrap gap-2">
-        {SEKMELER.map((s) => {
-          const active = s.id === aktif;
-          const rozet = rozetler[s.id] ?? 0;
-          return (
-            <li key={s.id}>
-              <Link
-                href={`${basePath}?sekme=${s.id}`}
-                aria-current={active ? "page" : undefined}
-                className={`flex min-h-[3rem] items-center gap-2 rounded-xl border-2 px-5 font-semibold ${
-                  active
-                    ? "border-teal-700 bg-teal-700 text-white shadow-[var(--shadow-card)]"
-                    : "border-ink-200 bg-white text-ink-800 hover:-translate-y-px hover:border-teal-300 hover:bg-teal-50"
-                }`}
-              >
-                {s.label}
-                {rozet > 0 && (
-                  <span
-                    className={`flex size-6 items-center justify-center rounded-full text-base ${
-                      active ? "bg-white/25 text-white" : "bg-teal-100 text-teal-900"
-                    }`}
-                  >
-                    {rozet}
-                  </span>
-                )}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+    <SekmeCubugu
+      basePath={basePath}
+      sekmeler={SEKMELER}
+      aktif={aktif}
+      rozetler={rozetler}
+      etiket="Dosya bölümleri"
+    />
   );
 }

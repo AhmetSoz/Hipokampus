@@ -3,7 +3,7 @@ import {
   respondToAppointment,
   updateAppointmentByExpert,
 } from "@/app/actions/care";
-import { APPOINTMENT_STATUS_LABEL, type Appointment } from "@/data/types";
+import { randevuDurumEtiketi, type Appointment } from "@/data/types";
 import { trFormat } from "@/lib/zaman";
 
 /**
@@ -83,7 +83,7 @@ export function AppointmentPanel({
                   <span
                     className={`rounded-full px-4 py-1 text-base font-semibold ${TONE[a.status]}`}
                   >
-                    {APPOINTMENT_STATUS_LABEL[a.status]}
+                    {randevuDurumEtiketi(a.status, a.proposedBy, viewer)}
                   </span>
                 </div>
                 <p className="mb-3 text-base text-ink-600">
@@ -179,7 +179,7 @@ export function AppointmentPanel({
                   <span
                     className={`rounded-full px-3 py-1 text-base ${TONE[a.status]}`}
                   >
-                    {APPOINTMENT_STATUS_LABEL[a.status]}
+                    {randevuDurumEtiketi(a.status, a.proposedBy, viewer)}
                   </span>
                 </li>
               ))}

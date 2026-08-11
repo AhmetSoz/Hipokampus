@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BrandPath } from "@/components/BrandPath";
 import { MesajKutusu } from "@/components/MesajKutusu";
 import { DemoNotice } from "@/components/ui";
+import { UzmanNav } from "@/components/UzmanNav";
 import { YardimPaneli } from "@/components/YardimPaneli";
 import { listConversationsForExpert } from "@/data/conversations";
 import { getConsultant } from "@/data/household";
@@ -58,6 +59,16 @@ export default async function UzmanPanelLayout({
       label: "Danışanlarım",
       hint: "Kişiler ve açık dosyalar",
     },
+    {
+      href: "/uzman-panel/ajanda",
+      label: "Ajandam",
+      hint: "Bu haftaki görüşmeleriniz",
+    },
+    {
+      href: "/uzman-panel/musaitlik",
+      label: "Müsaitliğim",
+      hint: "Hangi saatlerde görüşürsünüz",
+    },
   ];
 
   return (
@@ -102,25 +113,7 @@ export default async function UzmanPanelLayout({
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[16rem_1fr]">
-          <nav aria-label="Uzman paneli bölümleri">
-            <ul className="space-y-2">
-              {nav.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="flex min-h-[3.5rem] items-center justify-between gap-3 rounded-xl border border-ink-200 bg-white px-5 py-4 text-ink-800 shadow-[var(--shadow-soft)] transition-[transform,box-shadow,background-color,border-color] duration-[var(--dur-base)] ease-[var(--ease-calm)] hover:-translate-y-px hover:border-teal-300 hover:bg-teal-50"
-                  >
-                    <span>
-                      <span className="block font-semibold">{item.label}</span>
-                      <span className="block text-base text-ink-600">
-                        {item.hint}
-                      </span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <UzmanNav ogeler={nav} />
           <div className="min-w-0">{children}</div>
         </div>
       </div>

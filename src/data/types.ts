@@ -59,6 +59,15 @@ export type Expert = {
   /** Hangi ihtiyaç başlıklarında çalıştığı. */
   needAreas: NeedAreaId[];
   languages: string[];
+
+  /* Randevu ayarları. Hiçbiri karşılaştırılabilir bir ölçüt değildir;
+     profilde gösterilmez, yalnızca takvim akışını sürer. */
+  /** Danışan slot seçtiğinde randevuya yazılacak harici bağlantı. */
+  defaultMeetingUrl: string | null;
+  /** En erken kaç saat sonrasına randevu alınabilir. */
+  bookingLeadHours: number;
+  /** Takvimin kaç gün ilerisi gösterilir. */
+  bookingHorizonDays: number;
 };
 
 /** Panelde ileri yaştaki bireyin kaydı. Merkezdeki kişi budur. */
@@ -219,20 +228,50 @@ export type AppointmentStatus =
   | "iptal"
   | "tamamlandi";
 
-export const APPOINTMENT_STATUS_LABEL: Record<AppointmentStatus, string> = {
-  teklif: "Onayınız bekleniyor",
-  kabul: "Onaylandı",
-  reddedildi: "Reddedildi",
-  iptal: "İptal edildi",
-  tamamlandi: "Tamamlandı",
-};
+/**
+ * Randevu durumunun okunabilir karşılığı.
+ *
+ * Sabit bir sözlük değil, fonksiyon: `teklif` durumu bakan kişiye göre
+ * farklı okunur. Eskiden tek metin vardı ("Onayınız bekleniyor") ve
+ * danışan bakış açısıyla yazılmıştı; danışan da slot seçebildiğine göre
+ * o metin uzman tarafında ters düşüyor.
+ */
+export function randevuDurumEtiketi(
+  status: AppointmentStatus,
+  proposedBy: AppointmentProposer,
+  viewer: "danisan" | "uzman",
+): string {
+  if (status === "teklif") {
+    /* Teklifi yazan taraf bekleyen taraftır. */
+    const bekleyen = proposedBy === "uzman" ? "danisan" : "uzman";
+    return viewer === bekleyen ? "Onayınız bekleniyor" : "Yanıt bekleniyor";
+  }
+  if (status === "kabul") {
+    return proposedBy === "danisan" && viewer === "uzman"
+      ? "Danışan seçti"
+      : "Onaylandı";
+  }
+  return {
+    reddedildi: "Reddedildi",
+    iptal: "İptal edildi",
+    tamamlandi: "Tamamlandı",
+  }[status];
+}
+
+/** Randevuyu kimin başlattığı. Danışan yayınlanmış slottan seçebiliyor. */
+export type AppointmentProposer = "uzman" | "danisan";
 
 export type Appointment = {
   id: string;
   conversationId: string;
+  /** Teklifi kim yazdı (geçmiş kayıtlarda uzmanla aynı). */
   proposedByExpertId: string;
+  /** Randevunun kimin takviminde olduğu. Ajanda ve çakışma bunu kullanır. */
+  expertId: string;
   startsAt: string;
+  endsAt: string;
   durationMinutes: number;
+  proposedBy: AppointmentProposer;
   status: AppointmentStatus;
   note: string | null;
   meetingUrl: string | null;

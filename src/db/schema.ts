@@ -1,11 +1,14 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
+  date,
   index,
   integer,
   pgEnum,
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -81,6 +84,22 @@ export const experts = pgTable("experts", {
   about: text("about").notNull(),
   needAreaIds: text("need_area_ids").array().notNull(),
   languages: text("languages").array().notNull(),
+
+  /* Randevu ayarları (2026-08-11). Hiçbiri ücret/puan/sıralama alanı
+     değildir; kilitli kararlarla çelişmez. */
+
+  /* Danışan yayınlanmış bir slottan seçtiğinde randevu doğrudan kabul
+     olur, dolayısıyla bağlantının hazır olması gerekir. Boşsa randevu
+     yine geçerlidir, bağlantı sonradan girilir. */
+  defaultMeetingUrl: text("default_meeting_url"),
+  /* Bugün tek değer. Kuralların "kimin saatine göre" yorumlandığını
+     şemada açık kılmak için var; yurt dışındaki bir uzman eklenirse
+     tek satır değişikliğiyle çalışır. */
+  timezone: text("timezone").notNull().default("Europe/Istanbul"),
+  /** En erken kaç saat sonrasına randevu alınabilir. */
+  bookingLeadHours: integer("booking_lead_hours").notNull().default(24),
+  /** Takvimin kaç gün ilerisi gösterilir. */
+  bookingHorizonDays: integer("booking_horizon_days").notNull().default(28),
 });
 
 /** Panelin sahibi olan ileri yaştaki birey. */
@@ -407,6 +426,13 @@ export const appointmentStatusEnum = pgEnum("appointment_status", [
   "tamamlandi",
 ]);
 
+/** Randevuyu kimin başlattığı. Danışan artık yayınlanmış bir slottan
+ *  kendisi seçebiliyor; durum etiketi buna göre değişiyor. */
+export const appointmentProposerEnum = pgEnum("appointment_proposer", [
+  "uzman",
+  "danisan",
+]);
+
 export const appointments = pgTable("appointments", {
   id: text("id").primaryKey(),
   conversationId: text("conversation_id")
@@ -415,10 +441,110 @@ export const appointments = pgTable("appointments", {
   proposedByExpertId: text("proposed_by_expert_id")
     .notNull()
     .references(() => experts.id),
+  /* `proposedByExpertId` "kim teklif etti", bu ise "kimin takviminde".
+     Ajanda sorgusu ve çakışma kısıtı tek tablo üzerinden çalışabilsin
+     diye ayrı kolon; aksi hâlde her ikisi de conversations join'i
+     gerektirirdi ve kısmi tekil indeks kurulamazdı.
+     GÖÇ: önce nullable eklendi, backfill-appointments.mts çalıştı,
+     sonra notNull yapıldı. */
+  expertId: text("expert_id")
+    .notNull()
+    .references(() => experts.id),
   startsAt: timestamp("starts_at", { mode: "date" }).notNull(),
+  /* `durationMinutes`'tan türetilebilir ama örtüşme sorgusunu SQL'de
+     yazılabilir kılıyor: starts_at < :yeniBitis AND ends_at > :yeniBaslangic */
+  endsAt: timestamp("ends_at", { mode: "date" }).notNull(),
   durationMinutes: integer("duration_minutes").notNull().default(45),
+  proposedBy: appointmentProposerEnum("proposed_by")
+    .notNull()
+    .default("uzman"),
   status: appointmentStatusEnum("status").notNull().default("teklif"),
   note: text("note"),
   meetingUrl: text("meeting_url"),
   createdAt: timestamp("created_at", { mode: "date" }).notNull(),
-}, (t) => [index("appointments_conversation_idx").on(t.conversationId, t.startsAt)]);
+}, (t) => [
+  index("appointments_conversation_idx").on(t.conversationId, t.startsAt),
+  index("appointments_expert_idx").on(t.expertId, t.startsAt),
+  /* Yarış durumunun SERT garantisi. neon-http'de transaction yok ve
+     db.batch() interaktif değil (birinci sorgunun sonucuna bakıp
+     ikinciyi kurgulayamazsınız), bu yüzden karar veritabanı kısıtına
+     gömülüyor: tek INSERT zaten atomiktir, ikinci istek 23505 alır.
+     `where` şart — reddedilen/iptal edilen randevu o slotu yeniden açar.
+
+     SINIR: yalnızca birebir aynı başlangıcı engeller. Rezerve edilebilir
+     tüm slotlar kural ızgarasında durduğu için pratikte tam koruma.
+     Değişken süreye izin verilirse doğru araç
+     `EXCLUDE USING gist (expert_id WITH =, tsrange(...) WITH &&)` +
+     btree_gist olur; drizzle şemasında ifade edilemez, ham SQL göçü ister. */
+  uniqueIndex("appointments_expert_slot_uq")
+    .on(t.expertId, t.startsAt)
+    .where(sql`status in ('teklif', 'kabul')`),
+]);
+
+/* ------------------------------------------------------------------ */
+/* MÜSAİTLİK (2026-08-11)                                              */
+/*
+ * Uzman haftalık bir kural tanımlar ("her salı 10:00–16:00, 45 dakikalık
+ * görüşmeler"), danışan üretilen boş slotlardan seçer.
+ *
+ * MODEL: tekrarlayan kural + gün bazlı istisna. Somut slot satırı
+ * ÜRETİLMEZ. Gerekçe: uzmanın zihnindeki model bu ("salı öğleden
+ * sonraları müsaitim, 3 Eylül izinliyim") ve tek doğruluk kaynağı
+ * `appointments` olarak kalıyor. Materyalize slot üretmek hem haftada
+ * yüzlerce satır demek hem de "kuralı değiştirdim, üretilmiş slotlara ne
+ * olacak?" sorusunu sürekli açık bırakır. Slot listesi her istekte saf
+ * bir fonksiyonla hesaplanıyor (~220 nesne, ihmal edilebilir).
+ *
+ * SAAT DİLİMİ: kural kolonları DUVAR SAATİ tutar (Türkiye yerel,
+ * gün başından dakika). Uzmanın niyeti "her pazartesi 10:00" — bir an
+ * değil, takvimdeki bir saat. `appointments.startsAt` ise mutlak andır.
+ * İkisi arasındaki çeviri yalnızca `lib/zaman.ts` üzerinden yapılır.
+ *
+ * Tamsayı dakika kullanılıyor, `time` kolonu değil: projede tarih
+ * kütüphanesi yok ve `time` her kullanımda dize ayrıştırması isterdi;
+ * tamsayı ise slot üretimini saf bir döngüye indiriyor.
+ */
+export const availabilityExceptionKindEnum = pgEnum(
+  "availability_exception_kind",
+  ["kapali", "ek-slot"],
+);
+
+export const expertAvailabilityRules = pgTable(
+  "expert_availability_rules",
+  {
+    id: text("id").primaryKey(),
+    expertId: text("expert_id")
+      .notNull()
+      .references(() => experts.id, { onDelete: "cascade" }),
+    /** ISO hafta günü: 1 = Pazartesi … 7 = Pazar. */
+    weekday: integer("weekday").notNull(),
+    /** Türkiye yerel saatiyle gün başından dakika (0–1440). */
+    startMinute: integer("start_minute").notNull(),
+    endMinute: integer("end_minute").notNull(),
+    slotMinutes: integer("slot_minutes").notNull().default(45),
+    /** Görüşmeler arası nefes payı. */
+    gapMinutes: integer("gap_minutes").notNull().default(15),
+    createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+  },
+  (t) => [index("availability_rules_expert_idx").on(t.expertId, t.weekday)],
+);
+
+export const expertAvailabilityExceptions = pgTable(
+  "expert_availability_exceptions",
+  {
+    id: text("id").primaryKey(),
+    expertId: text("expert_id")
+      .notNull()
+      .references(() => experts.id, { onDelete: "cascade" }),
+    /* `date`, `timestamp` DEĞİL: bu bir takvim günü, bir an değil.
+       `timestamp` kullanmak saat dilimi belirsizliğini geri getirirdi. */
+    day: date("day", { mode: "string" }).notNull(),
+    kind: availabilityExceptionKindEnum("kind").notNull(),
+    /** Yalnızca `ek-slot` için; `kapali`da null. */
+    startMinute: integer("start_minute"),
+    endMinute: integer("end_minute"),
+    note: text("note"),
+    createdAt: timestamp("created_at", { mode: "date" }).notNull(),
+  },
+  (t) => [index("availability_exceptions_expert_idx").on(t.expertId, t.day)],
+);

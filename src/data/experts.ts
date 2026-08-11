@@ -24,6 +24,9 @@ function toExpert(row: typeof experts.$inferSelect): Expert {
     about: row.about,
     needAreas: row.needAreaIds as NeedAreaId[],
     languages: row.languages,
+    defaultMeetingUrl: row.defaultMeetingUrl,
+    bookingLeadHours: row.bookingLeadHours,
+    bookingHorizonDays: row.bookingHorizonDays,
   };
 }
 
