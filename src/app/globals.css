@@ -680,3 +680,116 @@ html[data-motion="az"] *::after {
     display: none;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* VERİ KATMANI ANİMASYONLARI                                          */
+/*
+ * Markanın "elle çiziliyor" dili veriye de taşınıyor: seri soldan sağa
+ * çiziliyor, tablo satırları sırayla beliriyor. Yeni keyframe sayısı
+ * bilinçli olarak İKİ ile sınırlı — mevcut sözlük (hk-net-draw,
+ * hk-draw-path, hk-pop, hk-net-arrive, hk-slide-in) zaten zengin ve
+ * her ekrana yeni bir hareket eklemek "karman çorman" olur.
+ */
+
+@keyframes hk-seri-ciz {
+  from {
+    stroke-dashoffset: var(--hk-seri-len, 1000);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hk-seri-ciz {
+  stroke-dasharray: var(--hk-seri-len, 1000);
+  animation: hk-seri-ciz 1.2s var(--ease-calm) both;
+}
+
+@keyframes hk-satir-belir {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hk-satir-belir {
+  /* Gecikme sekizinci satırdan sonra sabitleniyor: uzun tabloda
+     kullanıcıyı bekletmemek için. */
+  animation: hk-satir-belir var(--dur-slow) var(--ease-calm) both;
+  animation-delay: calc(min(var(--i, 0), 8) * 40ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hk-seri-ciz,
+  .hk-satir-belir {
+    animation: none;
+    stroke-dasharray: none;
+  }
+}
+
+html[data-motion="az"] .hk-seri-ciz,
+html[data-motion="az"] .hk-satir-belir {
+  animation: none;
+  stroke-dasharray: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* YAZDIRMA                                                            */
+/*
+ * Raporlar `(yazdir)` rota grubunda kendi minimal kabuğuyla açılıyor;
+ * buradaki kurallar geri kalan her sayfadan da temiz bir çıktı almayı
+ * mümkün kılıyor.
+ */
+
+@media print {
+  /* Ekran kabuğu: menü, altbilgi, yüzen kutular, arka plan ağı.
+     `header` / `footer` ETİKETLERİ HEDEFLENMEZ — raporun kendi
+     <header>'ı da onlara dahil ve gizlenirse basılı belgede danışan
+     adı, tarih ve uzman bilgisi kaybolur. Bileşenler `data-yazdirma`
+     ile işaretli. */
+  [data-yazdirma="gizle"] {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  /* Kart ve tablo satırları sayfa sonunda ortadan bölünmesin. */
+  section,
+  li,
+  tr,
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  /* Link URL'lerini basma: metin içi bağlantılar okumayı zorlaştırıyor
+     ve rapor zaten bağlantısız okunabilir olmalı. */
+  a[href]::after {
+    content: "" !important;
+  }
+
+  /* Grafik dolguları boş basılmasın. */
+  svg,
+  .hk-baski-renk {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Animasyonlar baskıda anlamsız ve yarım kalmış görünüyor. */
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

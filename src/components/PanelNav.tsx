@@ -50,6 +50,12 @@ const ITEMS: {
     scope: "saglik-gorusme",
   },
   {
+    href: "/panel/ilerleme",
+    label: "İlerlemem",
+    hint: "Zaman içinde ne değişti",
+    scope: "saglik-gorusme",
+  },
+  {
     href: "/panel/odeme",
     label: "Ödeme ve abonelik",
     hint: "Hizmet kalemleri",

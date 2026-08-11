@@ -114,10 +114,19 @@ export default async function DanisanDetaySayfasi({
           {danisan.city} · {simdi.getFullYear() - danisan.birthYear} yaşında
         </p>
         <p className="text-ink-700">{danisan.summary}</p>
-        <p className="mt-5 border-t border-ink-100 pt-4 text-base text-ink-600">
-          Bu sayfada yalnızca <strong>sizinle açılan dosyalar</strong> görünür.
-          Danışanın başka uzmanlarla yürüttüğü süreçler burada yer almaz.
-        </p>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-ink-100 pt-4">
+          <p className="max-w-xl text-base text-ink-600">
+            Bu sayfada yalnızca <strong>sizinle açılan dosyalar</strong>{" "}
+            görünür. Danışanın başka uzmanlarla yürüttüğü süreçler burada yer
+            almaz.
+          </p>
+          <Link
+            href={`/rapor/danisan/${id}`}
+            className="inline-flex min-h-[3rem] shrink-0 items-center rounded-xl border-2 border-ink-300 px-5 font-semibold text-ink-800 transition-[transform,border-color] duration-[var(--dur-fast)] hover:-translate-y-px hover:border-teal-300 hover:bg-teal-50"
+          >
+            Kayıt özetini yazdırın
+          </Link>
+        </div>
       </header>
 
       <SekmeCubugu

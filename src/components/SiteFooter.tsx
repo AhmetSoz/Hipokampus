@@ -11,7 +11,10 @@ import { Logo } from "./Logo";
  */
 export function SiteFooter() {
   return (
-    <footer className="border-t border-ink-200 bg-paper-warm">
+    <footer
+      data-yazdirma="gizle"
+      className="border-t border-ink-200 bg-paper-warm"
+    >
       <div className="mx-auto w-full max-w-6xl px-6 py-14 sm:px-8">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>

@@ -107,7 +107,12 @@ export function SiteHeader({ session }: { session: HeaderSession }) {
   const nav = navFor(session);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-ink-100 bg-paper/90 backdrop-blur-sm">
+    <header
+      /* Baskıda site kabuğu görünmez; raporun KENDİ <header>'ı görünür
+         kalmalı, bu yüzden etiket değil bu işaret hedefleniyor. */
+      data-yazdirma="gizle"
+      className="sticky top-0 z-40 border-b border-ink-100 bg-paper/90 backdrop-blur-sm"
+    >
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-6 py-3 sm:px-8">
         <Link
           href="/"
