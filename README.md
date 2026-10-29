@@ -46,3 +46,8 @@ npm run dev
 Playwright ile: `npm test`.
 
 Tasarım yönü [`DESIGN.md`](DESIGN.md) dosyasında.
+
+## Lisans
+
+[AGPL-3.0](LICENSE). Kodu değiştirip bir hizmet olarak yayınlayan, değiştirdiği
+kodu da aynı lisansla açar.
