@@ -4,6 +4,8 @@ import { BarChart } from "./Charts";
 import { SessionChart } from "./SessionChart";
 import { trTarih } from "@/lib/zaman";
 import { FormHatasi } from "./FormHatasi";
+import { SeansNotuAlani } from "./SeansNotuAlani";
+import { claudeAcikMi } from "@/lib/claude";
 
 function formatDate(iso: string) {
   return trTarih(iso);
@@ -265,12 +267,7 @@ export function SessionLog({
           >
             Not
           </label>
-          <textarea
-            id="seans-not"
-            name="not"
-            rows={4}
-            className="w-full rounded-xl border-2 border-ink-200 bg-white px-4 py-3 text-ink-900 focus:border-teal-600"
-          />
+          <SeansNotuAlani claudeAcik={claudeAcikMi()} />
 
           <p className="mt-5 mb-2 font-semibold text-ink-900">
             Ölçümler (opsiyonel)

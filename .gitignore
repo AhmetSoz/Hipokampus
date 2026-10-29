@@ -45,3 +45,8 @@ context/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Ajan yönergeleri — yerelde tutulur
+CLAUDE.md
+AGENTS.md
+.claude/launch.json

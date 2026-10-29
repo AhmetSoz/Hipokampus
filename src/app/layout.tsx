@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Newsreader, Source_Sans_3 } from "next/font/google";
+import { Atkinson_Hyperlegible_Next, Newsreader } from "next/font/google";
 import { PageTransition } from "@/components/PageTransition";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -22,8 +22,9 @@ async function getHeaderSession() {
   return { role: user.role, bildirimler, okunmamis };
 }
 
-/* Tipografi ÖNERİ statüsündedir (bkz. karar kaydı C bölümü).
-   Değiştirmek için bu iki tanım ve globals.css'teki iki satır yeterli. */
+/* Başlık ve yazma alanı Newsreader; gövde Atkinson Hyperlegible Next —
+   Braille Institute'un az gören okurlar için çizdiği aile. Harf karışıklığı
+   (I/l/1, rn/m) düşük; ileri yaştaki kullanıcı için seçildi. */
 const newsreader = Newsreader({
   subsets: ["latin", "latin-ext"],
   variable: "--font-newsreader",
@@ -31,9 +32,9 @@ const newsreader = Newsreader({
   weight: ["400", "500"],
 });
 
-const sourceSans = Source_Sans_3({
+const atkinson = Atkinson_Hyperlegible_Next({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-source-sans",
+  variable: "--font-atkinson",
   display: "swap",
   weight: ["400", "600"],
 });
@@ -63,7 +64,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="tr"
-      className={`${newsreader.variable} ${sourceSans.variable} h-full`}
+      className={`${newsreader.variable} ${atkinson.variable} h-full`}
     >
       <body className="flex min-h-full flex-col bg-paper">
         {/* Kayıtlı okuma tercihlerini ilk boyamadan önce uygula —

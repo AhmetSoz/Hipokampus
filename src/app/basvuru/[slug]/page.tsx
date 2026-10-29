@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { applyToExpert } from "@/app/actions/care";
+import { BasvuruAlanlari } from "@/components/BasvuruAlanlari";
 import { BrandPath } from "@/components/BrandPath";
 import { Container, Notice } from "@/components/ui";
 import { getExpert, RESPONSE_COMMITMENT } from "@/data/experts";
@@ -69,35 +70,7 @@ export default async function BasvuruSayfasi({
               </p>
             )}
 
-            <label
-              htmlFor="konu"
-              className="mb-2 block font-semibold text-ink-900"
-            >
-              Konu
-            </label>
-            <input
-              id="konu"
-              name="konu"
-              type="text"
-              placeholder="Örn. Günlük düzeni yeniden kurmak"
-              required
-              className="mb-5 min-h-[3.25rem] w-full rounded-xl border-2 border-ink-200 bg-white px-4 text-lg text-ink-900 focus:border-teal-600"
-            />
-
-            <label
-              htmlFor="aciklama"
-              className="mb-2 block font-semibold text-ink-900"
-            >
-              Durumunuzu kısaca anlatın
-            </label>
-            <textarea
-              id="aciklama"
-              name="aciklama"
-              rows={6}
-              required
-              placeholder="Neyle zorlanıyorsunuz, nereden başlamak istiyorsunuz?"
-              className="w-full rounded-xl border-2 border-ink-200 bg-white px-4 py-3 text-lg leading-relaxed text-ink-900 focus:border-teal-600"
-            />
+            <BasvuruAlanlari slug={expert.slug} />
             <p className="mt-2 mb-6 text-base text-ink-600">
               Acil bir durum için buraya yazmayın — 112&apos;yi arayın.
             </p>
